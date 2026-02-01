@@ -1,0 +1,85 @@
+# Aldur Documentation Site Configuration
+# https://zensical.org/docs/
+
+[project]
+site_name = "Aldur"
+site_description = "Binary security analyzer for PE, ELF, and Mach-O binaries"
+site_url = "https://scovetta.github.io/aldur/"
+repo_url = "https://github.com/scovetta/aldur"
+repo_name = "scovetta/aldur"
+edit_uri = "edit/main/docs/"
+
+[theme]
+name = "material"
+palette = [
+    { media = "(prefers-color-scheme: light)", scheme = "default", primary = "indigo", accent = "indigo" },
+    { media = "(prefers-color-scheme: dark)", scheme = "slate", primary = "indigo", accent = "indigo" }
+]
+features = [
+    "navigation.instant",
+    "navigation.tracking",
+    "navigation.tabs",
+    "navigation.sections",
+    "navigation.expand",
+    "navigation.top",
+    "search.suggest",
+    "search.highlight",
+    "content.code.copy",
+    "content.action.edit"
+]
+
+[theme.icon]
+repo = "fontawesome/brands/github"
+
+[extra]
+social = [
+    { icon = "fontawesome/brands/github", link = "https://github.com/scovetta/aldur" }
+]
+
+[extra.css]
+extra = ["stylesheets/extra.css"]
+
+[[nav]]
+title = "Home"
+path = "index.md"
+
+[[nav]]
+title = "Getting Started"
+children = [
+    { title = "Installation", path = "getting-started/installation.md" },
+    { title = "Quick Start", path = "getting-started/quickstart.md" },
+    { title = "GitHub Action", path = "getting-started/github-action.md" }
+]
+
+[[nav]]
+title = "User Guide"
+children = [
+    { title = "Command Reference", path = "guide/commands.md" },
+    { title = "Security Profiles", path = "guide/profiles.md" },
+    { title = "Configuration", path = "guide/configuration.md" },
+    { title = "CI/CD Integration", path = "guide/ci-cd.md" }
+]
+
+[[nav]]
+title = "Security Rules"
+children = [
+    { title = "Overview", path = "rules/index.md" },
+    { title = "PE (Windows)", path = "rules/pe.md" },
+    { title = "ELF (Linux)", path = "rules/elf.md" },
+    { title = "Mach-O (macOS)", path = "rules/macho.md" }
+]
+
+[[nav]]
+title = "Supply Chain"
+children = [
+    { title = "Verifying Releases", path = "supply-chain/verification.md" },
+    { title = "SBOM", path = "supply-chain/sbom.md" }
+]
+
+[[nav]]
+title = "Contributing"
+path = "contributing.md"
+
+[[nav]]
+title = "Changelog"
+path = "changelog.md"

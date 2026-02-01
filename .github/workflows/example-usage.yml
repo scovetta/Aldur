@@ -1,0 +1,61 @@
+# Example workflow demonstrating how to use the aldur GitHub Action
+#
+# Add this to your repository at .github/workflows/security-scan.yml
+
+name: Binary Security Scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  scan:
+    name: Scan Binaries
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Required for uploading SARIF results to Code Scanning
+      security-events: write
+      # Required for checking out the repository
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Build your project first (example for Rust)
+      - name: Build project
+        run: cargo build --release
+
+      # Run aldur on the built binaries
+      - name: Run aldur security scan
+        uses: scovetta/aldur@v1
+        with:
+          # Scan all binaries in the release directory
+          targets: 'target/release'
+
+          # Output SARIF for GitHub Code Scanning integration
+          format: sarif
+          output: aldur-results.sarif
+
+          # Recurse into subdirectories
+          recurse: true
+
+          # Upload results to GitHub Code Scanning
+          upload-sarif: true
+
+          # Fail the workflow if errors are found
+          fail-on-error: true
+
+      # Optional: Upload SARIF as an artifact for debugging
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aldur-sarif
+          path: aldur-results.sarif
+          retention-days: 30

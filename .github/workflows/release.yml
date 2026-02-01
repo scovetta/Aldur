@@ -1,0 +1,315 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.1.0)'
+        required: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64 (glibc)
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            archive: tar.gz
+
+          # Linux x86_64 (musl - static binary)
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            archive: tar.gz
+
+          # Linux ARM64
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            archive: tar.gz
+            cross: true
+
+          # Windows x86_64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            archive: zip
+            ext: .exe
+
+          # Windows ARM64
+          - target: aarch64-pc-windows-msvc
+            os: windows-latest
+            archive: zip
+            ext: .exe
+
+          # macOS x86_64
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            archive: tar.gz
+
+          # macOS ARM64 (Apple Silicon)
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            archive: tar.gz
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross (Linux ARM)
+        if: matrix.cross
+        run: cargo install cross --git https://github.com/cross-rs/cross
+
+      - name: Install musl tools (Linux musl)
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Build
+        working-directory: src
+        run: |
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
+        shell: bash
+
+      - name: Prepare release assets
+        id: prepare
+        shell: bash
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="${VERSION#v}"
+          BINARY_NAME="aldur${{ matrix.ext }}"
+          ARCHIVE_NAME="aldur-${VERSION}-${{ matrix.target }}"
+
+          mkdir -p staging
+          cp "src/target/${{ matrix.target }}/release/${BINARY_NAME}" staging/
+          cp README.md staging/ || true
+          cp LICENSE staging/ || true
+
+          cd staging
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            7z a "../${ARCHIVE_NAME}.zip" .
+            echo "archive=${ARCHIVE_NAME}.zip" >> $GITHUB_OUTPUT
+          else
+            tar -czf "../${ARCHIVE_NAME}.tar.gz" .
+            echo "archive=${ARCHIVE_NAME}.tar.gz" >> $GITHUB_OUTPUT
+          fi
+
+      # Generate attestation at build time for better provenance
+      - name: Generate build provenance attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: ${{ steps.prepare.outputs.archive }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ${{ steps.prepare.outputs.archive }}
+
+  # Generate SBOM for supply chain security
+  sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Install cargo-sbom
+        run: cargo install cargo-sbom
+
+      - name: Generate SBOM (SPDX format)
+        working-directory: src
+        run: |
+          cargo sbom --output-format spdx_json_2_3 > ../aldur-sbom.spdx.json
+
+      - name: Generate SBOM (CycloneDX format)
+        working-directory: src
+        run: |
+          cargo sbom --output-format cyclone_dx_json_1_4 > ../aldur-sbom.cdx.json
+
+      - name: Validate SBOM files
+        run: |
+          echo "Validating SBOM files..."
+          python3 -c "import json; data=json.load(open('aldur-sbom.spdx.json')); print(f'SPDX SBOM: {len(data.get(\"packages\", []))} packages')"
+          python3 -c "import json; data=json.load(open('aldur-sbom.cdx.json')); print(f'CycloneDX SBOM: {len(data.get(\"components\", []))} components')"
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: |
+            aldur-sbom.spdx.json
+            aldur-sbom.cdx.json
+
+  release:
+    name: Create Release
+    needs: [build, sbom]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write  # For sigstore signing
+      attestations: write  # For GitHub attestations
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          cd artifacts
+          # Move all archives to root of artifacts folder
+          find . -type f \( -name "*.tar.gz" -o -name "*.zip" \) -exec mv {} . \;
+          # Move SBOM files
+          mv sbom/*.json . || true
+          # Clean up empty directories
+          find . -type d -empty -delete || true
+          ls -la
+
+      - name: Create checksums
+        run: |
+          cd artifacts
+          # Create SHA-256 checksums for all release files
+          sha256sum *.tar.gz *.zip *.json 2>/dev/null | tee checksums-sha256.txt
+          # Create SHA-512 checksums for extra verification
+          sha512sum *.tar.gz *.zip *.json 2>/dev/null | tee checksums-sha512.txt
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign checksums with cosign (keyless)
+        run: |
+          cd artifacts
+          # Sign the checksums file using keyless signing (OIDC)
+          cosign sign-blob --yes \
+            --output-signature checksums-sha256.txt.sig \
+            --output-certificate checksums-sha256.txt.pem \
+            checksums-sha256.txt
+
+      # Attest SBOM files to the release artifacts
+      - name: Generate SBOM attestation (SPDX)
+        uses: actions/attest-sbom@v2
+        with:
+          subject-path: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
+          sbom-path: artifacts/aldur-sbom.spdx.json
+
+      - name: Generate SBOM attestation (CycloneDX)
+        uses: actions/attest-sbom@v2
+        with:
+          subject-path: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
+          sbom-path: artifacts/aldur-sbom.cdx.json
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: aldur ${{ github.ref_name }}
+          body: |
+            ## aldur ${{ github.ref_name }}
+
+            Binary security analyzer for PE, ELF, and Mach-O binaries.
+
+            ### Installation
+
+            Download the appropriate archive for your platform and extract the `aldur` binary.
+
+            ### Platforms
+
+            | Platform | Architecture | File |
+            |----------|--------------|------|
+            | Linux (glibc) | x86_64 | `aldur-*-x86_64-unknown-linux-gnu.tar.gz` |
+            | Linux (musl) | x86_64 | `aldur-*-x86_64-unknown-linux-musl.tar.gz` |
+            | Linux | ARM64 | `aldur-*-aarch64-unknown-linux-gnu.tar.gz` |
+            | Windows | x86_64 | `aldur-*-x86_64-pc-windows-msvc.zip` |
+            | Windows | ARM64 | `aldur-*-aarch64-pc-windows-msvc.zip` |
+            | macOS | x86_64 | `aldur-*-x86_64-apple-darwin.tar.gz` |
+            | macOS | ARM64 | `aldur-*-aarch64-apple-darwin.tar.gz` |
+
+            ### Security & Supply Chain
+
+            This release includes:
+            - **SBOM (Software Bill of Materials)** in SPDX and CycloneDX formats
+            - **SHA-256 and SHA-512 checksums** for all artifacts
+            - **Sigstore cosign signature** for checksum verification
+            - **GitHub build provenance attestation** for each platform artifact
+            - **GitHub SBOM attestation** linking SBOMs to release artifacts
+
+            ### Verify checksums
+
+            ```bash
+            # Verify SHA-256 checksums
+            sha256sum -c checksums-sha256.txt
+
+            # Verify cosign signature (requires cosign installed)
+            cosign verify-blob \
+              --signature checksums-sha256.txt.sig \
+              --certificate checksums-sha256.txt.pem \
+              --certificate-identity-regexp "https://github.com/${{ github.repository }}/.*" \
+              --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+              checksums-sha256.txt
+            ```
+
+            ### Verify build provenance
+
+            ```bash
+            # Verify GitHub build attestation (requires gh CLI)
+            gh attestation verify aldur-*-x86_64-unknown-linux-gnu.tar.gz \
+              --owner ${{ github.repository_owner }}
+            ```
+
+            ### Verify SBOM attestation
+
+            ```bash
+            # Verify SBOM attestation (SPDX)
+            gh attestation verify aldur-*-x86_64-unknown-linux-gnu.tar.gz \
+              --owner ${{ github.repository_owner }} \
+              --predicate-type https://spdx.dev/Document/v2.3
+
+            # View SBOM contents from attestation
+            gh attestation verify aldur-*-x86_64-unknown-linux-gnu.tar.gz \
+              --owner ${{ github.repository_owner }} \
+              --predicate-type https://spdx.dev/Document/v2.3 \
+              --format json | jq '.[].verificationResult.statement.predicate'
+            ```
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
+            artifacts/checksums-sha256.txt
+            artifacts/checksums-sha512.txt
+            artifacts/checksums-sha256.txt.sig
+            artifacts/checksums-sha256.txt.pem
+            artifacts/aldur-sbom.spdx.json
+            artifacts/aldur-sbom.cdx.json
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
