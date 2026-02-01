@@ -216,6 +216,8 @@ pub struct ElfBinary {
     pub has_exception_handling: bool,
     /// Whether this binary was compiled from Rust
     pub is_rust_binary: bool,
+    /// Packer detection information
+    pub packer_info: crate::packer::PackerInfo,
 }
 
 impl ElfBinary {
@@ -341,6 +343,18 @@ impl ElfBinary {
         // Detect if this is a Rust binary by looking for Rust-specific symbols
         let is_rust_binary = detect_rust_binary(&elf);
 
+        // Collect section names for packer detection
+        let section_names: Vec<String> = elf
+            .section_headers
+            .iter()
+            .filter_map(|sh| elf.shdr_strtab.get_at(sh.sh_name).map(|s| s.to_string()))
+            .collect();
+        let section_name_refs: Vec<&str> = section_names.iter().map(|s| s.as_str()).collect();
+
+        // Detect if the binary is packed
+        let packer_info = crate::packer::detect_packer(&data, &section_name_refs);
+
+
         let binary = ElfBinary {
             path,
             valid: true,
@@ -363,6 +377,7 @@ impl ElfBinary {
             gnu_property_aarch64_features,
             has_exception_handling,
             is_rust_binary,
+            packer_info,
             data,
         };
 
@@ -377,6 +392,16 @@ impl ElfBinary {
     /// Get the raw binary data
     pub fn data(&self) -> &[u8] {
         &self.data
+    }
+
+    /// Check if this binary appears to be packed
+    pub fn is_packed(&self) -> bool {
+        self.packer_info.is_packed
+    }
+
+    /// Get packer information
+    pub fn packer_info(&self) -> &crate::packer::PackerInfo {
+        &self.packer_info
     }
 
     /// Check if this is a Position Independent Executable (PIE)

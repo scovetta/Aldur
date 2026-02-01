@@ -45,6 +45,7 @@ mod ad2051_check_minimum_library_versions;
 mod ad2052_require_authenticode;
 mod ad2053_allow_isolation;
 mod ad2054_enable_rfg;
+mod ad2060_detect_packed_binary;
 mod ad3034_rust_enable_cfg;
 mod ad4001_report_pe_compiler_data;
 mod ad6001_disable_incremental_linking;
@@ -99,6 +100,7 @@ pub use ad2051_check_minimum_library_versions::CheckMinimumLibraryVersions;
 pub use ad2052_require_authenticode::RequireAuthenticode;
 pub use ad2053_allow_isolation::AllowIsolation;
 pub use ad2054_enable_rfg::EnableReturnFlowGuard;
+pub use ad2060_detect_packed_binary::DetectPackedBinaryPE;
 pub use ad3034_rust_enable_cfg::RustEnableControlFlowGuard;
 pub use ad4001_report_pe_compiler_data::ReportPECompilerData;
 pub use ad6001_disable_incremental_linking::DisableIncrementalLinkingInReleaseBuilds;
@@ -164,5 +166,6 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
         Box::new(RequireAuthenticode::new()),
         Box::new(AllowIsolation::new()),
         Box::new(EnableReturnFlowGuard::new()),
+        Box::new(DetectPackedBinaryPE::new()),
     ]
 }

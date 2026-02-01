@@ -11,6 +11,7 @@ pub mod dwarf;
 pub mod elf;
 pub mod macho;
 pub mod memory;
+pub mod packer;
 pub mod pdb;
 pub mod pe;
 
