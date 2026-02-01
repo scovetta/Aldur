@@ -62,7 +62,7 @@ jobs:
           output: zizmor-results.sarif
 
       - name: Upload Zizmor SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: zizmor-results.sarif
           category: zizmor
@@ -122,13 +122,17 @@ jobs:
 
       - name: Verify SARIF output
         shell: bash
+        env:
+          FILES_ANALYZED: ${{ steps.action-sarif.outputs.files-analyzed }}
+          ERRORS_FOUND: ${{ steps.action-sarif.outputs.errors }}
+          WARNINGS_FOUND: ${{ steps.action-sarif.outputs.warnings }}
         run: |
           test -f action-results.sarif || { echo "❌ SARIF file not created"; exit 1; }
           python3 -c "import json; json.load(open('action-results.sarif'))"
           echo "✓ SARIF output is valid JSON"
-          echo "✓ Files analyzed: ${{ steps.action-sarif.outputs.files-analyzed }}"
-          echo "✓ Errors found: ${{ steps.action-sarif.outputs.errors }}"
-          echo "✓ Warnings found: ${{ steps.action-sarif.outputs.warnings }}"
+          echo "✓ Files analyzed: $FILES_ANALYZED"
+          echo "✓ Errors found: $ERRORS_FOUND"
+          echo "✓ Warnings found: $WARNINGS_FOUND"
 
       # Test with text format
       - name: Test Action - Text format
