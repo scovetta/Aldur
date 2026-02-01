@@ -442,146 +442,146 @@ Aldur implements comprehensive security rules organized by binary format.
 
 | Rule ID | Name | Category | MSVC | Clang | Rust | .NET |
 |---------|------|----------|:----:|:-----:|:----:|:----:|
-| AD2001 | [LoadImagesAboveFourGigabyteAddress](docs/AD2001.LoadImagesAboveFourGigabyteAddress.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2004 | [EnableSecureSourceCodeHashing](docs/AD2004.EnableSecureSourceCodeHashing.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2006 | [BuildWithSecureTools](docs/AD2006.BuildWithSecureTools.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2007 | [EnableCriticalCompilerWarnings](docs/AD2007.EnableCriticalCompilerWarnings.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2008 | [EnableControlFlowGuard](docs/AD2008.EnableControlFlowGuard.md) | Security | ✓ | ✓ | ✓ | ✗ |
-| AD2009 | [EnableAddressSpaceLayoutRandomization](docs/AD2009.EnableAddressSpaceLayoutRandomization.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2010 | [DoNotMarkImportsSectionAsExecutable](docs/AD2010.DoNotMarkImportsSectionAsExecutable.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2011 | [EnableStackProtection](docs/AD2011.EnableStackProtection.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2012 | [DoNotModifyStackProtectionCookie](docs/AD2012.DoNotModifyStackProtectionCookie.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2013 | [InitializeStackProtection](docs/AD2013.InitializeStackProtection.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2014 | [DoNotDisableStackProtectionForFunctions](docs/AD2014.DoNotDisableStackProtectionForFunctions.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2015 | [EnableHighEntropyVirtualAddresses](docs/AD2015.EnableHighEntropyVirtualAddresses.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2016 | [MarkImageAsNXCompatible](docs/AD2016.MarkImageAsNXCompatible.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2018 | [EnableSafeSEH](docs/AD2018.EnableSafeSEH.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2019 | [DoNotMarkWritableSectionsAsShared](docs/AD2019.DoNotMarkWritableSectionsAsShared.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2021 | [DoNotMarkWritableSectionsAsExecutable](docs/AD2021.DoNotMarkWritableSectionsAsExecutable.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2024 | [EnableSpectreMitigations](docs/AD2024.EnableSpectreMitigations.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2025 | [EnableShadowStack](docs/AD2025.EnableShadowStack.md) | Security | ✓ | ✓ | ✓ | ✗ |
-| AD2026 | [EnableMicrosoftCompilerSdlSwitch](docs/AD2026.EnableMicrosoftCompilerSdlSwitch.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2027 | [EnableSourceLink](docs/AD2027.EnableSourceLink.md) | Debugging | ✓ | ✗ | ✗ | ✓ |
-| AD2029 | [EnableIntegrityCheck](docs/AD2029.EnableIntegrityCheck.md) | Security | ✓ | ✓ | ✓ | ✓ |
-| AD2030 | [EnableCastGuard](docs/AD2030.EnableCastGuard.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2031 | [EnableControlStackChecking](docs/AD2031.EnableControlStackChecking.md) | Security | ✓ | ✗ | ✗ | ✗ |
-| AD2032 | [DotNetEnableHighEntropyVA](docs/AD2032.DotNetEnableHighEntropyVA.md) | Security | ✗ | ✗ | ✗ | ✓ |
-| AD4001 | [ReportPECompilerData](docs/AD4001.ReportPECompilerData.md) | Reporting | ✓ | ✓ | ✓ | ✓ |
-| AD6001 | [DisableIncrementalLinkingInReleaseBuilds](docs/AD6001.DisableIncrementalLinkingInReleaseBuilds.md) | Performance | ✓ | ✗ | ✗ | ✗ |
-| AD6002 | [EliminateDuplicateStrings](docs/AD6002.EliminateDuplicateStrings.md) | Performance | ✓ | ✗ | ✗ | ✗ |
-| AD6004 | [EnableComdatFolding](docs/AD6004.EnableComdatFolding.md) | Performance | ✓ | ✓ | ✗ | ✗ |
-| AD6005 | [EnableOptimizeReferences](docs/AD6005.EnableOptimizeReferences.md) | Performance | ✓ | ✓ | ✗ | ✗ |
-| AD6006 | [EnableLinkTimeCodeGeneration](docs/AD6006.EnableLinkTimeCodeGeneration.md) | Performance | ✓ | ✓ | ✓ | ✗ |
+| AD2001 | [LoadImagesAboveFourGigabyteAddress](docs/rules/AD2001.LoadImagesAboveFourGigabyteAddress.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2004 | [EnableSecureSourceCodeHashing](docs/rules/AD2004.EnableSecureSourceCodeHashing.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2006 | [BuildWithSecureTools](docs/rules/AD2006.BuildWithSecureTools.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2007 | [EnableCriticalCompilerWarnings](docs/rules/AD2007.EnableCriticalCompilerWarnings.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2008 | [EnableControlFlowGuard](docs/rules/AD2008.EnableControlFlowGuard.md) | Security | ✓ | ✓ | ✓ | ✗ |
+| AD2009 | [EnableAddressSpaceLayoutRandomization](docs/rules/AD2009.EnableAddressSpaceLayoutRandomization.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2010 | [DoNotMarkImportsSectionAsExecutable](docs/rules/AD2010.DoNotMarkImportsSectionAsExecutable.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2011 | [EnableStackProtection](docs/rules/AD2011.EnableStackProtection.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2012 | [DoNotModifyStackProtectionCookie](docs/rules/AD2012.DoNotModifyStackProtectionCookie.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2013 | [InitializeStackProtection](docs/rules/AD2013.InitializeStackProtection.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2014 | [DoNotDisableStackProtectionForFunctions](docs/rules/AD2014.DoNotDisableStackProtectionForFunctions.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2015 | [EnableHighEntropyVirtualAddresses](docs/rules/AD2015.EnableHighEntropyVirtualAddresses.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2016 | [MarkImageAsNXCompatible](docs/rules/AD2016.MarkImageAsNXCompatible.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2018 | [EnableSafeSEH](docs/rules/AD2018.EnableSafeSEH.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2019 | [DoNotMarkWritableSectionsAsShared](docs/rules/AD2019.DoNotMarkWritableSectionsAsShared.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2021 | [DoNotMarkWritableSectionsAsExecutable](docs/rules/AD2021.DoNotMarkWritableSectionsAsExecutable.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2024 | [EnableSpectreMitigations](docs/rules/AD2024.EnableSpectreMitigations.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2025 | [EnableShadowStack](docs/rules/AD2025.EnableShadowStack.md) | Security | ✓ | ✓ | ✓ | ✗ |
+| AD2026 | [EnableMicrosoftCompilerSdlSwitch](docs/rules/AD2026.EnableMicrosoftCompilerSdlSwitch.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2027 | [EnableSourceLink](docs/rules/AD2027.EnableSourceLink.md) | Debugging | ✓ | ✗ | ✗ | ✓ |
+| AD2029 | [EnableIntegrityCheck](docs/rules/AD2029.EnableIntegrityCheck.md) | Security | ✓ | ✓ | ✓ | ✓ |
+| AD2030 | [EnableCastGuard](docs/rules/AD2030.EnableCastGuard.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2031 | [EnableControlStackChecking](docs/rules/AD2031.EnableControlStackChecking.md) | Security | ✓ | ✗ | ✗ | ✗ |
+| AD2032 | [DotNetEnableHighEntropyVA](docs/rules/AD2032.DotNetEnableHighEntropyVA.md) | Security | ✗ | ✗ | ✗ | ✓ |
+| AD4001 | [ReportPECompilerData](docs/rules/AD4001.ReportPECompilerData.md) | Reporting | ✓ | ✓ | ✓ | ✓ |
+| AD6001 | [DisableIncrementalLinkingInReleaseBuilds](docs/rules/AD6001.DisableIncrementalLinkingInReleaseBuilds.md) | Performance | ✓ | ✗ | ✗ | ✗ |
+| AD6002 | [EliminateDuplicateStrings](docs/rules/AD6002.EliminateDuplicateStrings.md) | Performance | ✓ | ✗ | ✗ | ✗ |
+| AD6004 | [EnableComdatFolding](docs/rules/AD6004.EnableComdatFolding.md) | Performance | ✓ | ✓ | ✗ | ✗ |
+| AD6005 | [EnableOptimizeReferences](docs/rules/AD6005.EnableOptimizeReferences.md) | Performance | ✓ | ✓ | ✗ | ✗ |
+| AD6006 | [EnableLinkTimeCodeGeneration](docs/rules/AD6006.EnableLinkTimeCodeGeneration.md) | Performance | ✓ | ✓ | ✓ | ✗ |
 
 #### Additional PE Rules (Clang/Rust/DWARF)
 
 | Rule ID | Name | Category | Clang | Rust |
 |---------|------|----------|:-----:|:----:|
-| AD2033 | [PeEnableStackProtectorDwarf](docs/AD2033.PeEnableStackProtectorDwarf.md) | Security | ✓ | ✗ |
-| AD2034 | [PeEnableLtoDwarf](docs/AD2034.PeEnableLtoDwarf.md) | Security | ✓ | ✓ |
-| AD2035 | [PeReportCompilerDataDwarf](docs/AD2035.PeReportCompilerDataDwarf.md) | Reporting | ✓ | ✓ |
-| AD2036 | [PeEnableControlFlowIntegrity](docs/AD2036.PeEnableControlFlowIntegrity.md) | Security | ✓ | ✗ |
-| AD2037 | [PeEnableStackClashProtection](docs/AD2037.PeEnableStackClashProtection.md) | Security | ✓ | ✗ |
-| AD2038 | [PeEnableClangSafeStack](docs/AD2038.PeEnableClangSafeStack.md) | Security | ✓ | ✗ |
-| AD2039 | [PeEnableArmPAC](docs/AD2039.PeEnableArmPAC.md) | Security | ✓ | ✓ |
-| AD2040 | [PeEnableArmBTI](docs/AD2040.PeEnableArmBTI.md) | Security | ✓ | ✓ |
-| AD2041 | [RustEnableSanitizersPE](docs/AD2041.RustEnableSanitizersPE.md) | Security | ✗ | ✓ |
-| AD2042 | [NoUnicodeSymbolsPE](docs/AD2042.NoUnicodeSymbolsPE.md) | Security | ✓ | ✓ |
-| AD2043 | [DoNotUseBannedApisPE](docs/AD2043.DoNotUseBannedApisPE.md) | Security | ✓ | ✗ |
-| AD2044 | [DoNotStaticallyLinkOpenSSLPE](docs/AD2044.DoNotStaticallyLinkOpenSSLPE.md) | Security | ✓ | ✓ |
-| AD2045 | [EnableUBSanPE](docs/AD2045.EnableUBSanPE.md) | Security | ✓ | ✗ |
-| AD2046 | [EnableAddressSanitizerPE](docs/AD2046.EnableAddressSanitizerPE.md) | Security | ✓ | ✗ |
-| AD2047 | [PeEnableShadowCallStack](docs/AD2047.PeEnableShadowCallStack.md) | Security | ✓ | ✗ |
-| AD2048 | [PeEnableStackVariableInitialization](docs/AD2048.PeEnableStackVariableInitialization.md) | Security | ✓ | ✗ |
-| AD2050 | [DoNotUseCustomBaseAddress](docs/AD2050.DoNotUseCustomBaseAddress.md) | Security | ✓ | ✓ |
-| AD2051 | [CheckMinimumLibraryVersions](docs/AD2051.CheckMinimumLibraryVersions.md) | Security | ✓ | ✓ |
-| AD2052 | [RequireAuthenticode](docs/AD2052.RequireAuthenticode.md) | Security | ✓ | ✓ |
-| AD2053 | [AllowIsolation](docs/AD2053.AllowIsolation.md) | Security | ✓ | ✓ |
-| AD2054 | [EnableReturnFlowGuard](docs/AD2054.EnableReturnFlowGuard.md) | Security | ✓ | ✓ |
-| AD3034 | [RustEnableControlFlowGuard](docs/AD3034.RustEnableControlFlowGuard.md) | Security | ✗ | ✓ |
+| AD2033 | [PeEnableStackProtectorDwarf](docs/rules/AD2033.PeEnableStackProtectorDwarf.md) | Security | ✓ | ✗ |
+| AD2034 | [PeEnableLtoDwarf](docs/rules/AD2034.PeEnableLtoDwarf.md) | Security | ✓ | ✓ |
+| AD2035 | [PeReportCompilerDataDwarf](docs/rules/AD2035.PeReportCompilerDataDwarf.md) | Reporting | ✓ | ✓ |
+| AD2036 | [PeEnableControlFlowIntegrity](docs/rules/AD2036.PeEnableControlFlowIntegrity.md) | Security | ✓ | ✗ |
+| AD2037 | [PeEnableStackClashProtection](docs/rules/AD2037.PeEnableStackClashProtection.md) | Security | ✓ | ✗ |
+| AD2038 | [PeEnableClangSafeStack](docs/rules/AD2038.PeEnableClangSafeStack.md) | Security | ✓ | ✗ |
+| AD2039 | [PeEnableArmPAC](docs/rules/AD2039.PeEnableArmPAC.md) | Security | ✓ | ✓ |
+| AD2040 | [PeEnableArmBTI](docs/rules/AD2040.PeEnableArmBTI.md) | Security | ✓ | ✓ |
+| AD2041 | [RustEnableSanitizersPE](docs/rules/AD2041.RustEnableSanitizersPE.md) | Security | ✗ | ✓ |
+| AD2042 | [NoUnicodeSymbolsPE](docs/rules/AD2042.NoUnicodeSymbolsPE.md) | Security | ✓ | ✓ |
+| AD2043 | [DoNotUseBannedApisPE](docs/rules/AD2043.DoNotUseBannedApisPE.md) | Security | ✓ | ✗ |
+| AD2044 | [DoNotStaticallyLinkOpenSSLPE](docs/rules/AD2044.DoNotStaticallyLinkOpenSSLPE.md) | Security | ✓ | ✓ |
+| AD2045 | [EnableUBSanPE](docs/rules/AD2045.EnableUBSanPE.md) | Security | ✓ | ✗ |
+| AD2046 | [EnableAddressSanitizerPE](docs/rules/AD2046.EnableAddressSanitizerPE.md) | Security | ✓ | ✗ |
+| AD2047 | [PeEnableShadowCallStack](docs/rules/AD2047.PeEnableShadowCallStack.md) | Security | ✓ | ✗ |
+| AD2048 | [PeEnableStackVariableInitialization](docs/rules/AD2048.PeEnableStackVariableInitialization.md) | Security | ✓ | ✗ |
+| AD2050 | [DoNotUseCustomBaseAddress](docs/rules/AD2050.DoNotUseCustomBaseAddress.md) | Security | ✓ | ✓ |
+| AD2051 | [CheckMinimumLibraryVersions](docs/rules/AD2051.CheckMinimumLibraryVersions.md) | Security | ✓ | ✓ |
+| AD2052 | [RequireAuthenticode](docs/rules/AD2052.RequireAuthenticode.md) | Security | ✓ | ✓ |
+| AD2053 | [AllowIsolation](docs/rules/AD2053.AllowIsolation.md) | Security | ✓ | ✓ |
+| AD2054 | [EnableReturnFlowGuard](docs/rules/AD2054.EnableReturnFlowGuard.md) | Security | ✓ | ✓ |
+| AD3034 | [RustEnableControlFlowGuard](docs/rules/AD3034.RustEnableControlFlowGuard.md) | Security | ✗ | ✓ |
 
 ### ELF (Linux/Unix) Rules — 41 rules
 
 | Rule ID | Name | Category | GCC | Clang | Rust |
 |---------|------|----------|:---:|:-----:|:----:|
-| AD3001 | [EnablePositionIndependentExecutable](docs/AD3001.EnablePositionIndependentExecutable.md) | Security | ✓ | ✓ | ✓ |
-| AD3002 | [DoNotMarkStackAsExecutable](docs/AD3002.DoNotMarkStackAsExecutable.md) | Security | ✓ | ✓ | ✓ |
-| AD3003 | [EnableStackProtector](docs/AD3003.EnableStackProtector.md) | Security | ✓ | ✓ | ✗ |
-| AD3004 | [GenerateRequiredSymbolFormat](docs/AD3004.GenerateRequiredSymbolFormat.md) | Debugging | ✓ | ✓ | ✓ |
-| AD3005 | [EnableStackClashProtection](docs/AD3005.EnableStackClashProtection.md) | Security | ✓ | ✓ | ✗ |
-| AD3006 | [EnableNonExecutableStack](docs/AD3006.EnableNonExecutableStack.md) | Security | ✓ | ✓ | ✓ |
-| AD3010 | [EnableReadOnlyRelocations](docs/AD3010.EnableReadOnlyRelocations.md) | Security | ✓ | ✓ | ✓ |
-| AD3011 | [EnableBindNow](docs/AD3011.EnableBindNow.md) | Security | ✓ | ✓ | ✓ |
-| AD3012 | [DoNotUseRpath](docs/AD3012.DoNotUseRpath.md) | Security | ✓ | ✓ | ✓ |
-| AD3013 | [ValidateRunpath](docs/AD3013.ValidateRunpath.md) | Security | ✓ | ✓ | ✓ |
-| AD3014 | [NoTextRelocations](docs/AD3014.NoTextRelocations.md) | Security | ✓ | ✓ | ✓ |
-| AD3015 | [EnableIntelCET](docs/AD3015.EnableIntelCET.md) | Security | ✓ | ✓ | ✓ |
-| AD3016 | [EnableIntelShadowStack](docs/AD3016.EnableIntelShadowStack.md) | Security | ✓ | ✓ | ✓ |
-| AD3017 | [EnableArmBTI](docs/AD3017.EnableArmBTI.md) | Security | ✓ | ✓ | ✓ |
-| AD3018 | [EnableArmPAC](docs/AD3018.EnableArmPAC.md) | Security | ✓ | ✓ | ✓ |
-| AD3019 | [EnableLTO](docs/AD3019.EnableLTO.md) | Performance | ✓ | ✓ | ✓ |
-| AD3020 | [EnableOptimization](docs/AD3020.EnableOptimization.md) | Performance | ✓ | ✓ | ✓ |
-| AD3021 | [NoUnicodeSymbols](docs/AD3021.NoUnicodeSymbols.md) | Security | ✓ | ✓ | ✓ |
-| AD3022 | [WritableGotProtection](docs/AD3022.WritableGotProtection.md) | Security | ✓ | ✓ | ✓ |
-| AD3023 | [ProperLoadSegments](docs/AD3023.ProperLoadSegments.md) | Security | ✓ | ✓ | ✓ |
-| AD3024 | [RestrictDlopen](docs/AD3024.RestrictDlopen.md) | Security | ✓ | ✓ | ✓ |
-| AD3025 | [EnableExceptionHandling](docs/AD3025.EnableExceptionHandling.md) | Security | ✓ | ✓ | ✓ |
-| AD3030 | [UseGccCheckedFunctions](docs/AD3030.UseGccCheckedFunctions.md) | Security | ✓ | ✓ | ✗ |
-| AD3031 | [EnableClangSafeStack](docs/AD3031.EnableClangSafeStack.md) | Security | ✗ | ✓ | ✗ |
-| AD3032 | [EnableSpeculativeLoadHardening](docs/AD3032.EnableSpeculativeLoadHardening.md) | Security | ✗ | ✓ | ✗ |
-| AD3033 | [RustEnableCET](docs/AD3033.RustEnableCET.md) | Security | ✗ | ✗ | ✓ |
-| AD3034 | [RustEnableControlFlowGuard](docs/AD3034.RustEnableControlFlowGuard.md) | Security | ✗ | ✗ | ✓ |
-| AD3035 | [RustEnableSecureSourceHash](docs/AD3035.RustEnableSecureSourceHash.md) | Security | ✗ | ✗ | ✓ |
-| AD3036 | [EnableControlFlowIntegrity](docs/AD3036.EnableControlFlowIntegrity.md) | Security | ✗ | ✓ | ✗ |
-| AD3037 | [RustEnableSanitizers](docs/AD3037.RustEnableSanitizers.md) | Security | ✗ | ✗ | ✓ |
-| AD3038 | [EnableUBSan](docs/AD3038.EnableUBSan.md) | Security | ✓ | ✓ | ✗ |
-| AD3039 | [EnableArmMTE](docs/AD3039.EnableArmMTE.md) | Security | ✓ | ✓ | ✓ |
-| AD3040 | [EnableAddressSanitizerELF](docs/AD3040.EnableAddressSanitizerELF.md) | Security | ✓ | ✓ | ✗ |
-| AD3041 | [DoNotUseBannedApisELF](docs/AD3041.DoNotUseBannedApisELF.md) | Security | ✓ | ✓ | ✗ |
-| AD3042 | [DoNotStaticallyLinkOpenSSLELF](docs/AD3042.DoNotStaticallyLinkOpenSSLELF.md) | Security | ✓ | ✓ | ✓ |
-| AD3043 | [EnableKernelCFI](docs/AD3043.EnableKernelCFI.md) | Security | ✗ | ✓ | ✗ |
-| AD3044 | [EnableShadowCallStack](docs/AD3044.EnableShadowCallStack.md) | Security | ✗ | ✓ | ✗ |
-| AD3045 | [EnableStackVariableInitialization](docs/AD3045.EnableStackVariableInitialization.md) | Security | ✗ | ✓ | ✗ |
-| AD3050 | [EnableGccDefs](docs/AD3050.EnableGccDefs.md) | Security | ✓ | ✓ | ✗ |
-| AD3051 | [CheckFortifySourceLevel](docs/AD3051.CheckFortifySourceLevel.md) | Security | ✓ | ✓ | ✗ |
-| AD4002 | [ReportElfOrMachoCompilerData](docs/AD4002.ReportElfOrMachoCompilerData.md) | Reporting | ✓ | ✓ | ✓ |
+| AD3001 | [EnablePositionIndependentExecutable](docs/rules/AD3001.EnablePositionIndependentExecutable.md) | Security | ✓ | ✓ | ✓ |
+| AD3002 | [DoNotMarkStackAsExecutable](docs/rules/AD3002.DoNotMarkStackAsExecutable.md) | Security | ✓ | ✓ | ✓ |
+| AD3003 | [EnableStackProtector](docs/rules/AD3003.EnableStackProtector.md) | Security | ✓ | ✓ | ✗ |
+| AD3004 | [GenerateRequiredSymbolFormat](docs/rules/AD3004.GenerateRequiredSymbolFormat.md) | Debugging | ✓ | ✓ | ✓ |
+| AD3005 | [EnableStackClashProtection](docs/rules/AD3005.EnableStackClashProtection.md) | Security | ✓ | ✓ | ✗ |
+| AD3006 | [EnableNonExecutableStack](docs/rules/AD3006.EnableNonExecutableStack.md) | Security | ✓ | ✓ | ✓ |
+| AD3010 | [EnableReadOnlyRelocations](docs/rules/AD3010.EnableReadOnlyRelocations.md) | Security | ✓ | ✓ | ✓ |
+| AD3011 | [EnableBindNow](docs/rules/AD3011.EnableBindNow.md) | Security | ✓ | ✓ | ✓ |
+| AD3012 | [DoNotUseRpath](docs/rules/AD3012.DoNotUseRpath.md) | Security | ✓ | ✓ | ✓ |
+| AD3013 | [ValidateRunpath](docs/rules/AD3013.ValidateRunpath.md) | Security | ✓ | ✓ | ✓ |
+| AD3014 | [NoTextRelocations](docs/rules/AD3014.NoTextRelocations.md) | Security | ✓ | ✓ | ✓ |
+| AD3015 | [EnableIntelCET](docs/rules/AD3015.EnableIntelCET.md) | Security | ✓ | ✓ | ✓ |
+| AD3016 | [EnableIntelShadowStack](docs/rules/AD3016.EnableIntelShadowStack.md) | Security | ✓ | ✓ | ✓ |
+| AD3017 | [EnableArmBTI](docs/rules/AD3017.EnableArmBTI.md) | Security | ✓ | ✓ | ✓ |
+| AD3018 | [EnableArmPAC](docs/rules/AD3018.EnableArmPAC.md) | Security | ✓ | ✓ | ✓ |
+| AD3019 | [EnableLTO](docs/rules/AD3019.EnableLTO.md) | Performance | ✓ | ✓ | ✓ |
+| AD3020 | [EnableOptimization](docs/rules/AD3020.EnableOptimization.md) | Performance | ✓ | ✓ | ✓ |
+| AD3021 | [NoUnicodeSymbols](docs/rules/AD3021.NoUnicodeSymbols.md) | Security | ✓ | ✓ | ✓ |
+| AD3022 | [WritableGotProtection](docs/rules/AD3022.WritableGotProtection.md) | Security | ✓ | ✓ | ✓ |
+| AD3023 | [ProperLoadSegments](docs/rules/AD3023.ProperLoadSegments.md) | Security | ✓ | ✓ | ✓ |
+| AD3024 | [RestrictDlopen](docs/rules/AD3024.RestrictDlopen.md) | Security | ✓ | ✓ | ✓ |
+| AD3025 | [EnableExceptionHandling](docs/rules/AD3025.EnableExceptionHandling.md) | Security | ✓ | ✓ | ✓ |
+| AD3030 | [UseGccCheckedFunctions](docs/rules/AD3030.UseGccCheckedFunctions.md) | Security | ✓ | ✓ | ✗ |
+| AD3031 | [EnableClangSafeStack](docs/rules/AD3031.EnableClangSafeStack.md) | Security | ✗ | ✓ | ✗ |
+| AD3032 | [EnableSpeculativeLoadHardening](docs/rules/AD3032.EnableSpeculativeLoadHardening.md) | Security | ✗ | ✓ | ✗ |
+| AD3033 | [RustEnableCET](docs/rules/AD3033.RustEnableCET.md) | Security | ✗ | ✗ | ✓ |
+| AD3034 | [RustEnableControlFlowGuard](docs/rules/AD3034.RustEnableControlFlowGuard.md) | Security | ✗ | ✗ | ✓ |
+| AD3035 | [RustEnableSecureSourceHash](docs/rules/AD3035.RustEnableSecureSourceHash.md) | Security | ✗ | ✗ | ✓ |
+| AD3036 | [EnableControlFlowIntegrity](docs/rules/AD3036.EnableControlFlowIntegrity.md) | Security | ✗ | ✓ | ✗ |
+| AD3037 | [RustEnableSanitizers](docs/rules/AD3037.RustEnableSanitizers.md) | Security | ✗ | ✗ | ✓ |
+| AD3038 | [EnableUBSan](docs/rules/AD3038.EnableUBSan.md) | Security | ✓ | ✓ | ✗ |
+| AD3039 | [EnableArmMTE](docs/rules/AD3039.EnableArmMTE.md) | Security | ✓ | ✓ | ✓ |
+| AD3040 | [EnableAddressSanitizerELF](docs/rules/AD3040.EnableAddressSanitizerELF.md) | Security | ✓ | ✓ | ✗ |
+| AD3041 | [DoNotUseBannedApisELF](docs/rules/AD3041.DoNotUseBannedApisELF.md) | Security | ✓ | ✓ | ✗ |
+| AD3042 | [DoNotStaticallyLinkOpenSSLELF](docs/rules/AD3042.DoNotStaticallyLinkOpenSSLELF.md) | Security | ✓ | ✓ | ✓ |
+| AD3043 | [EnableKernelCFI](docs/rules/AD3043.EnableKernelCFI.md) | Security | ✗ | ✓ | ✗ |
+| AD3044 | [EnableShadowCallStack](docs/rules/AD3044.EnableShadowCallStack.md) | Security | ✗ | ✓ | ✗ |
+| AD3045 | [EnableStackVariableInitialization](docs/rules/AD3045.EnableStackVariableInitialization.md) | Security | ✗ | ✓ | ✗ |
+| AD3050 | [EnableGccDefs](docs/rules/AD3050.EnableGccDefs.md) | Security | ✓ | ✓ | ✗ |
+| AD3051 | [CheckFortifySourceLevel](docs/rules/AD3051.CheckFortifySourceLevel.md) | Security | ✓ | ✓ | ✗ |
+| AD4002 | [ReportElfOrMachoCompilerData](docs/rules/AD4002.ReportElfOrMachoCompilerData.md) | Reporting | ✓ | ✓ | ✓ |
 
 ### Mach-O (macOS) Rules — 32 rules
 
 | Rule ID | Name | Category | Clang | Rust | Swift |
 |---------|------|----------|:-----:|:----:|:-----:|
-| AD5001 | [EnablePositionIndependentExecutableMachO](docs/AD5001.EnablePositionIndependentExecutableMachO.md) | Security | ✓ | ✓ | ✓ |
-| AD5002 | [DoNotAllowExecutableStack](docs/AD5002.DoNotAllowExecutableStack.md) | Security | ✓ | ✓ | ✓ |
-| AD5003 | [EnableStackProtectorMachO](docs/AD5003.EnableStackProtectorMachO.md) | Security | ✓ | ✗ | ✓ |
-| AD5004 | [UseFortifiedFunctionsMachO](docs/AD5004.UseFortifiedFunctionsMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5005 | [DoNotAllowExecutableHeap](docs/AD5005.DoNotAllowExecutableHeap.md) | Security | ✓ | ✓ | ✓ |
-| AD5006 | [UseTwoLevelNamespace](docs/AD5006.UseTwoLevelNamespace.md) | Security | ✓ | ✓ | ✓ |
-| AD5007 | [EnableArmPACMachO](docs/AD5007.EnableArmPACMachO.md) | Security | ✓ | ✓ | ✓ |
-| AD5008 | [EnableClangSafeStackMachO](docs/AD5008.EnableClangSafeStackMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5009 | [DoNotUseWeakDylib](docs/AD5009.DoNotUseWeakDylib.md) | Security | ✓ | ✓ | ✓ |
-| AD5010 | [EnableAutomaticReferenceCounting](docs/AD5010.EnableAutomaticReferenceCounting.md) | Security | ✓ | ✗ | ✗ |
-| AD5011 | [RequireCodeSignature](docs/AD5011.RequireCodeSignature.md) | Security | ✓ | ✓ | ✓ |
-| AD5012 | [ValidateSegmentPermissions](docs/AD5012.ValidateSegmentPermissions.md) | Security | ✓ | ✓ | ✓ |
-| AD5013 | [DoNotUseBannedApis](docs/AD5013.DoNotUseBannedApis.md) | Security | ✓ | ✗ | ✓ |
-| AD5014 | [UseAddressSanitizer](docs/AD5014.UseAddressSanitizer.md) | Security | ✓ | ✗ | ✓ |
-| AD5015 | [DoNotStaticallyLinkOpenSSL](docs/AD5015.DoNotStaticallyLinkOpenSSL.md) | Security | ✓ | ✓ | ✓ |
-| AD5016 | [NoUnicodeSymbolsMachO](docs/AD5016.NoUnicodeSymbolsMachO.md) | Security | ✓ | ✓ | ✓ |
-| AD5017 | [EnableLTOMachO](docs/AD5017.EnableLTOMachO.md) | Performance | ✓ | ✓ | ✓ |
-| AD5018 | [RequireMinimumOSVersion](docs/AD5018.RequireMinimumOSVersion.md) | Security | ✓ | ✓ | ✓ |
-| AD5019 | [UseRestrictSegment](docs/AD5019.UseRestrictSegment.md) | Security | ✓ | ✓ | ✓ |
-| AD5020 | [RustEnableSanitizersMachO](docs/AD5020.RustEnableSanitizersMachO.md) | Security | ✗ | ✓ | ✗ |
-| AD5021 | [RustEnableSecureSourceHashMachO](docs/AD5021.RustEnableSecureSourceHashMachO.md) | Security | ✗ | ✓ | ✗ |
-| AD5022 | [RustMachOEnableLTO](docs/AD5022.RustMachOEnableLTO.md) | Performance | ✗ | ✓ | ✗ |
-| AD5023 | [EnableUBSanMachO](docs/AD5023.EnableUBSanMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5024 | [EnableStackClashProtectionMachO](docs/AD5024.EnableStackClashProtectionMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5025 | [EnableControlFlowIntegrityMachO](docs/AD5025.EnableControlFlowIntegrityMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5026 | [EnableArmBTIMachO](docs/AD5026.EnableArmBTIMachO.md) | Security | ✓ | ✓ | ✓ |
-| AD5027 | [EnableSpeculativeLoadHardeningMachO](docs/AD5027.EnableSpeculativeLoadHardeningMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5028 | [EnableOptimizationMachO](docs/AD5028.EnableOptimizationMachO.md) | Performance | ✓ | ✓ | ✓ |
-| AD5029 | [EnableArmMTEMachO](docs/AD5029.EnableArmMTEMachO.md) | Security | ✓ | ✗ | ✗ |
-| AD5030 | [EnableExceptionHandlingMachO](docs/AD5030.EnableExceptionHandlingMachO.md) | Security | ✓ | ✓ | ✓ |
-| AD5031 | [CheckNotEncrypted](docs/AD5031.CheckNotEncrypted.md) | Security | ✓ | ✓ | ✓ |
-| AD5040 | [DoNotUseUncheckedOptimization](docs/AD5040.DoNotUseUncheckedOptimization.md) | Security | ✓ | ✓ | ✓ |
+| AD5001 | [EnablePositionIndependentExecutableMachO](docs/rules/AD5001.EnablePositionIndependentExecutableMachO.md) | Security | ✓ | ✓ | ✓ |
+| AD5002 | [DoNotAllowExecutableStack](docs/rules/AD5002.DoNotAllowExecutableStack.md) | Security | ✓ | ✓ | ✓ |
+| AD5003 | [EnableStackProtectorMachO](docs/rules/AD5003.EnableStackProtectorMachO.md) | Security | ✓ | ✗ | ✓ |
+| AD5004 | [UseFortifiedFunctionsMachO](docs/rules/AD5004.UseFortifiedFunctionsMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5005 | [DoNotAllowExecutableHeap](docs/rules/AD5005.DoNotAllowExecutableHeap.md) | Security | ✓ | ✓ | ✓ |
+| AD5006 | [UseTwoLevelNamespace](docs/rules/AD5006.UseTwoLevelNamespace.md) | Security | ✓ | ✓ | ✓ |
+| AD5007 | [EnableArmPACMachO](docs/rules/AD5007.EnableArmPACMachO.md) | Security | ✓ | ✓ | ✓ |
+| AD5008 | [EnableClangSafeStackMachO](docs/rules/AD5008.EnableClangSafeStackMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5009 | [DoNotUseWeakDylib](docs/rules/AD5009.DoNotUseWeakDylib.md) | Security | ✓ | ✓ | ✓ |
+| AD5010 | [EnableAutomaticReferenceCounting](docs/rules/AD5010.EnableAutomaticReferenceCounting.md) | Security | ✓ | ✗ | ✗ |
+| AD5011 | [RequireCodeSignature](docs/rules/AD5011.RequireCodeSignature.md) | Security | ✓ | ✓ | ✓ |
+| AD5012 | [ValidateSegmentPermissions](docs/rules/AD5012.ValidateSegmentPermissions.md) | Security | ✓ | ✓ | ✓ |
+| AD5013 | [DoNotUseBannedApis](docs/rules/AD5013.DoNotUseBannedApis.md) | Security | ✓ | ✗ | ✓ |
+| AD5014 | [UseAddressSanitizer](docs/rules/AD5014.UseAddressSanitizer.md) | Security | ✓ | ✗ | ✓ |
+| AD5015 | [DoNotStaticallyLinkOpenSSL](docs/rules/AD5015.DoNotStaticallyLinkOpenSSL.md) | Security | ✓ | ✓ | ✓ |
+| AD5016 | [NoUnicodeSymbolsMachO](docs/rules/AD5016.NoUnicodeSymbolsMachO.md) | Security | ✓ | ✓ | ✓ |
+| AD5017 | [EnableLTOMachO](docs/rules/AD5017.EnableLTOMachO.md) | Performance | ✓ | ✓ | ✓ |
+| AD5018 | [RequireMinimumOSVersion](docs/rules/AD5018.RequireMinimumOSVersion.md) | Security | ✓ | ✓ | ✓ |
+| AD5019 | [UseRestrictSegment](docs/rules/AD5019.UseRestrictSegment.md) | Security | ✓ | ✓ | ✓ |
+| AD5020 | [RustEnableSanitizersMachO](docs/rules/AD5020.RustEnableSanitizersMachO.md) | Security | ✗ | ✓ | ✗ |
+| AD5021 | [RustEnableSecureSourceHashMachO](docs/rules/AD5021.RustEnableSecureSourceHashMachO.md) | Security | ✗ | ✓ | ✗ |
+| AD5022 | [RustMachOEnableLTO](docs/rules/AD5022.RustMachOEnableLTO.md) | Performance | ✗ | ✓ | ✗ |
+| AD5023 | [EnableUBSanMachO](docs/rules/AD5023.EnableUBSanMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5024 | [EnableStackClashProtectionMachO](docs/rules/AD5024.EnableStackClashProtectionMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5025 | [EnableControlFlowIntegrityMachO](docs/rules/AD5025.EnableControlFlowIntegrityMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5026 | [EnableArmBTIMachO](docs/rules/AD5026.EnableArmBTIMachO.md) | Security | ✓ | ✓ | ✓ |
+| AD5027 | [EnableSpeculativeLoadHardeningMachO](docs/rules/AD5027.EnableSpeculativeLoadHardeningMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5028 | [EnableOptimizationMachO](docs/rules/AD5028.EnableOptimizationMachO.md) | Performance | ✓ | ✓ | ✓ |
+| AD5029 | [EnableArmMTEMachO](docs/rules/AD5029.EnableArmMTEMachO.md) | Security | ✓ | ✗ | ✗ |
+| AD5030 | [EnableExceptionHandlingMachO](docs/rules/AD5030.EnableExceptionHandlingMachO.md) | Security | ✓ | ✓ | ✓ |
+| AD5031 | [CheckNotEncrypted](docs/rules/AD5031.CheckNotEncrypted.md) | Security | ✓ | ✓ | ✓ |
+| AD5040 | [DoNotUseUncheckedOptimization](docs/rules/AD5040.DoNotUseUncheckedOptimization.md) | Security | ✓ | ✓ | ✓ |
 
 ## Output Formats
 

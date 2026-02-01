@@ -22,7 +22,7 @@ fn workspace_root() -> PathBuf {
 
 /// Get the docs directory
 fn docs_dir() -> PathBuf {
-    workspace_root().join("docs")
+    workspace_root().join("docs/rules")
 }
 
 /// Get all rule IDs from the codebase
@@ -100,8 +100,8 @@ fn test_all_rules_have_documentation() {
     if !missing_docs.is_empty() {
         missing_docs.sort();
         panic!(
-            "The following rules are missing documentation files in docs/:\n  - {}\n\n\
-            To fix: Create docs/{}.RuleName.md for each missing rule.",
+            "The following rules are missing documentation files in docs/rules/:\n  - {}\n\n\
+            To fix: Create docs/rules/{}.RuleName.md for each missing rule.",
             missing_docs.join("\n  - "),
             missing_docs.first().unwrap()
         );
