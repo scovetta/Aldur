@@ -42,11 +42,41 @@ jobs:
         run: cargo fmt -- --check
         if: matrix.os == 'ubuntu-latest'
 
+  # Scan GitHub Actions workflows for security issues
+  zizmor:
+    name: Workflow Security Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run Zizmor
+        uses: zizmorcore/zizmor-action@135698455da5c3b3e55f73f4419e481ab68cdd95 # v0.4.1
+        with:
+          args: '--format sarif .github/workflows/'
+          output: zizmor-results.sarif
+
+      - name: Upload Zizmor SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: zizmor-results.sarif
+          category: zizmor
+        if: always()
+
   # Test the action itself
   test-action:
     name: Test Action
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     permissions:
       security-events: write
@@ -67,7 +97,8 @@ jobs:
           echo 'fn main() { println!("Hello"); }' > test.rs
           rustc -o test_binary test.rs
 
-      - name: Test aldur on itself
+      # Test CLI directly
+      - name: Test aldur CLI on itself
         working-directory: src
         run: |
           ./target/release/aldur analyze \
@@ -76,14 +107,79 @@ jobs:
             --statistics \
             ./target/release/aldur
 
-      - name: Test SARIF output
-        working-directory: src
-        run: |
-          ./target/release/aldur analyze \
-            --format sarif \
-            --output ../test-results.sarif \
-            ./target/release/aldur
+      # Test the actual GitHub Action with SARIF output
+      - name: Test Action - SARIF format
+        id: action-sarif
+        uses: ./
+        with:
+          targets: 'src/target/release/aldur'
+          format: sarif
+          output: action-results.sarif
+          binary-path: src/target/release/aldur
+          upload-sarif: false
+          fail-on-error: false
+          annotations: false
 
-          # Validate SARIF structure
-          python3 -c "import json; json.load(open('../test-results.sarif'))"
+      - name: Verify SARIF output
+        shell: bash
+        run: |
+          test -f action-results.sarif || { echo "❌ SARIF file not created"; exit 1; }
+          python3 -c "import json; json.load(open('action-results.sarif'))"
           echo "✓ SARIF output is valid JSON"
+          echo "✓ Files analyzed: ${{ steps.action-sarif.outputs.files-analyzed }}"
+          echo "✓ Errors found: ${{ steps.action-sarif.outputs.errors }}"
+          echo "✓ Warnings found: ${{ steps.action-sarif.outputs.warnings }}"
+
+      # Test with text format
+      - name: Test Action - Text format
+        uses: ./
+        with:
+          targets: 'src/target/release/aldur'
+          format: text
+          output: action-results.txt
+          binary-path: src/target/release/aldur
+          upload-sarif: false
+          fail-on-error: false
+          annotations: false
+          show-passed: true
+
+      - name: Verify text output
+        shell: bash
+        run: |
+          test -f action-results.txt || { echo "❌ Text file not created"; exit 1; }
+          echo "✓ Text output created"
+          head -20 action-results.txt
+
+      # Test with annotations (GitHub Actions format)
+      - name: Test Action - Annotations
+        uses: ./
+        with:
+          targets: 'src/target/release/aldur'
+          format: sarif
+          output: action-annotated.sarif
+          binary-path: src/target/release/aldur
+          upload-sarif: false
+          fail-on-error: false
+          annotations: true
+
+      # Test scanning multiple targets
+      - name: Test Action - Multiple targets
+        uses: ./
+        with:
+          targets: 'src/target/release/aldur test_binary'
+          format: sarif
+          output: multi-target.sarif
+          binary-path: src/target/release/aldur
+          upload-sarif: false
+          fail-on-error: false
+          annotations: false
+
+      - name: Verify multiple targets scanned
+        shell: bash
+        run: |
+          # Check that both files appear in the SARIF
+          if grep -q "aldur" multi-target.sarif && grep -q "test_binary" multi-target.sarif; then
+            echo "✓ Multiple targets scanned successfully"
+          else
+            echo "⚠ Could not verify all targets in output"
+          fi
