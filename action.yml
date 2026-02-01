@@ -1,6 +1,6 @@
-name: 'Aldur-rs Security Scanner'
-description: 'Analyze PE, ELF, and Mach-O binaries for security vulnerabilities using aldur'
-author: 'Microsoft'
+name: 'Aldur Binary Scanner'
+description: 'A high-performance, cross-platform binary security analyzer written in Rust.'
+author: 'Michael Scovetta'
 branding:
   icon: 'shield'
   color: 'blue'
@@ -38,7 +38,7 @@ inputs:
     required: false
     default: 'true'
   version:
-    description: 'Version of aldur to use (defaults to latest)'
+    description: 'Version of Aldur to use (defaults to latest)'
     required: false
     default: 'latest'
   upload-sarif:
@@ -108,7 +108,7 @@ runs:
             ;;
         esac
 
-    - name: Download aldur
+    - name: Download Aldur
       id: download
       shell: bash
       run: |
@@ -195,7 +195,7 @@ runs:
 
         # Run with github-actions format for annotations (if enabled)
         if [ "${{ inputs.annotations }}" = "true" ]; then
-          echo "::group::Running aldur with annotations"
+          echo "::group::Running Aldur with annotations"
           ANNOTATION_ARGS="$BASE_ARGS --format github-actions ${{ inputs.targets }}"
           echo "Running: aldur $ANNOTATION_ARGS"
           set +e
@@ -210,7 +210,7 @@ runs:
 
         echo "Running: aldur $ARGS"
 
-        # Run aldur and capture exit code
+        # Run Aldur and capture exit code
         set +e
         "$ALDUR" $ARGS
         EXIT_CODE=$?
@@ -233,7 +233,7 @@ runs:
         echo "files-analyzed=$FILES" >> $GITHUB_OUTPUT
 
         # Create summary
-        echo "## 🔍 Aldur-rs Security Scan Results" >> $GITHUB_STEP_SUMMARY
+        echo "## 🔍 Aldur Security Scan Results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
         echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY

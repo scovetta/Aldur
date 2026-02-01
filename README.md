@@ -1,26 +1,18 @@
-<table>
- <tr>
-  <td>
-   <img src="logo.jpg" width="200"/>
-  </td>
-  <td>
-    <h1>Aldur: A Comprehensive Binary Hardening Checker</h1>
-  </td>
- </tr>
-</table>
+# Aldur: A Comprehensive Binary Hardening Checker
+<img align="left" width="200" height="200" src="logo.jpg" />
+
+Aldur is a high-performance, cross-platform binary security analyzer written in Rust. It inspects PE (Windows), ELF (Linux/Unix), and Mach-O (macOS) binaries for security vulnerabilities, misconfigurations, and missing hardening features, and is aware of MSVC, gcc, Clang, and Rust compilers.
 
 [![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Latest release](https://img.shields.io/github/v/release/scovetta/aldur)](Latest release)
-
-Aldur is a high-performance, cross-platform binary security analyzer written in Rust. It inspects PE (Windows), ELF (Linux/Unix), and Mach-O (macOS) binaries for security vulnerabilities, misconfigurations, and missing hardening features, and is aware of MSVC, gcc, Clang, and Rust compilers.
+[![Latest release](https://img.shields.io/github/v/release/scovetta/aldur)](/scovetta/Aldur/releases/)
 
 ## Features
 
 - 🔍 **Multi-format support**: Analyzes PE, ELF, and Mach-O binaries
 - ⚡ **High performance**: Written in Rust with parallel analysis support
-- 📊 **Useful output**: Industry-standard Static Analysis Results Interchange Format (SARIF) or text
-- 🔒 **Comprehensive security checks**: 125 security rules covering compiler flags, memory protections, and exploit mitigations
+- 📊 **Useful output**: Static Analysis Results Interchange Format (SARIF) or text output
+- 🔒 **Comprehensive security checks**: 125+ security rules covering compiler flags, memory protections, and exploit mitigations
 - 🖥️ **Cross-platform**: Runs on Windows, Linux, and macOS
 - 🔧 **PDB support**: Cross-platform Windows PDB analysis (no Windows SDK required)
 - 📁 **Flexible input**: Analyze individual files, directories, archives, or glob patterns
