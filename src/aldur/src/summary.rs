@@ -412,30 +412,6 @@ impl MultiTargetSummary {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aldur_core::{AnalysisApplicability, RuleResult};
-
-    fn mock_rule() -> Box<dyn aldur_core::Rule> {
-        struct MockRule;
-        impl aldur_core::Rule for MockRule {
-            fn descriptor(&self) -> &aldur_core::RuleDescriptor {
-                // Use a static descriptor for tests
-                static DESCRIPTOR: std::sync::OnceLock<aldur_core::RuleDescriptor> = std::sync::OnceLock::new();
-                DESCRIPTOR.get_or_init(|| {
-                    aldur_core::RuleDescriptor::new("AD0001", "MockRule")
-                        .with_category(aldur_core::RuleCategory::Security)
-                        .with_short_description("Test")
-                        .with_full_description("Test")
-                        .with_default_level(FailureLevel::Error)
-                })
-            }
-            fn can_analyze(&self, _ctx: &aldur_core::AnalysisContext) -> (AnalysisApplicability, Option<String>) {
-                (AnalysisApplicability::ApplicableToSpecifiedTarget, None)
-            }
-            fn analyze(&self, _ctx: &mut aldur_core::AnalysisContext) {
-            }
-        }
-        Box::new(MockRule)
-    }
 
     #[test]
     fn test_target_summary_score() {

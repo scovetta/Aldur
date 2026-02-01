@@ -238,23 +238,23 @@ mod ad5012_segment_permissions_tests {
 
 mod ad5013_banned_apis_tests {
     use super::*;
-    use aldur_rules::macho::DoNotUseBannedApis;
+    use aldur_rules::macho::DoNotUseBannedApisMachO;
 
     #[test]
     fn test_rule_descriptor() {
-        let rule = DoNotUseBannedApis::new();
-        verify_rule_descriptor(&rule, "AD5013", "DoNotUseBannedApis");
+        let rule = DoNotUseBannedApisMachO::new();
+        verify_rule_descriptor(&rule, "AD5013", "DoNotUseBannedApisMachO");
     }
 
     #[test]
     fn test_default_level() {
-        let rule = DoNotUseBannedApis::new();
+        let rule = DoNotUseBannedApisMachO::new();
         assert_eq!(rule.descriptor().default_level, FailureLevel::Warning);
     }
 
     #[test]
     fn test_has_messages() {
-        let rule = DoNotUseBannedApis::new();
+        let rule = DoNotUseBannedApisMachO::new();
         let desc = rule.descriptor();
         assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
         assert!(desc.messages.contains_key("Warning"), "Should have Warning message");
@@ -627,7 +627,7 @@ mod all_rules_tests {
         let _ = macho::EnableAutomaticReferenceCounting::new();
         let _ = macho::RequireCodeSignature::new();
         let _ = macho::ValidateSegmentPermissions::new();
-        let _ = macho::DoNotUseBannedApis::new();
+        let _ = macho::DoNotUseBannedApisMachO::new();
         let _ = macho::UseAddressSanitizer::new();
         let _ = macho::DoNotStaticallyLinkOpenSSL::new();
         let _ = macho::NoUnicodeSymbolsMachO::new();

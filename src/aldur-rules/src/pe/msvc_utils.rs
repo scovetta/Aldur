@@ -44,8 +44,6 @@ pub fn is_likely_msvc_binary(pe: &PeBinary) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_is_likely_msvc_binary_no_dwarf() {
         // This is a unit test for the logic - actual binary tests are in integration tests
