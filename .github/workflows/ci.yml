@@ -99,12 +99,15 @@ jobs:
       # Test CLI directly
       - name: Test aldur CLI on itself
         working-directory: src
+        shell: bash
         run: |
+          # Run aldur - exit 0=success, 1=errors, 2=warnings only
+          # We accept warnings (exit 2) as success for this test
           ./target/release/aldur analyze \
             --format text \
             --show-passed \
             --statistics \
-            ./target/release/aldur
+            ./target/release/aldur || [ $? -eq 2 ]
 
       # Test the actual GitHub Action with SARIF output
       - name: Test Action - SARIF format
