@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@df9545d60616606550658b163e0e47be792cdb69 # 1.70.0
+        uses: dtolnay/rust-toolchain@772c4490b37ea1c65caf6a53089a38ea1510cf4a # 1.93.0
 
       - name: Build
         working-directory: src
@@ -90,7 +90,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@df9545d60616606550658b163e0e47be792cdb69 # 1.70.0
+        uses: dtolnay/rust-toolchain@772c4490b37ea1c65caf6a53089a38ea1510cf4a # 1.93.0
 
       - name: Build aldur
         working-directory: src
