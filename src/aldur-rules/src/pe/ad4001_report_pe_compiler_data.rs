@@ -154,7 +154,7 @@ impl ReportPECompilerData {
         // 18.x = VS 2013
         // 17.x = VS 2012
         // 16.x = VS 2010
-        if major >= 14 && major <= 19 {
+        if (14..=19).contains(&major) {
             return format!("MSVC {}.{}", major, minor);
         }
 

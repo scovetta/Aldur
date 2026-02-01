@@ -174,14 +174,7 @@ impl Rule for RustEnableCET {
 
         if has_ibt && has_shstk {
             self.log_pass(context, "Pass", &[&file_name]);
-        } else if has_ibt {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Warning_PartialCET",
-                &[&file_name],
-            );
-        } else if has_shstk {
+        } else if has_ibt || has_shstk {
             self.log_fail(
                 context,
                 FailureLevel::Note,

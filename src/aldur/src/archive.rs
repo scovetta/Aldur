@@ -439,17 +439,15 @@ impl ArchiveExtractor {
 
                     // Extract the file
                     let mut buffer = Vec::new();
-                    if reader.read_to_end(&mut buffer).is_ok() {
-                        if std::fs::write(&dest_path, &buffer).is_ok() {
-                            // Verify it's actually a binary
-                            if aldur_parsers::can_load(&dest_path) {
-                                binaries.push(ExtractedBinary {
-                                    extracted_path: dest_path,
-                                    archive_source: archive_path.to_path_buf(),
-                                    logical_path: format!("{}!/{}", archive_path.display(), entry_name),
-                                });
-                            }
-                        }
+                    if reader.read_to_end(&mut buffer).is_ok()
+                        && std::fs::write(&dest_path, &buffer).is_ok()
+                        && aldur_parsers::can_load(&dest_path)
+                    {
+                        binaries.push(ExtractedBinary {
+                            extracted_path: dest_path,
+                            archive_source: archive_path.to_path_buf(),
+                            logical_path: format!("{}!/{}", archive_path.display(), entry_name),
+                        });
                     }
 
                     entry_count += 1;
@@ -647,7 +645,7 @@ impl ArchiveExtractor {
         }
 
         // Files without extension in bin/lib directories might be binaries
-        let has_extension = path.rsplit_once('.').map_or(false, |(name, _)| !name.is_empty());
+        let has_extension = path.rsplit_once('.').is_some_and(|(name, _)| !name.is_empty());
         if !has_extension {
             // Extensionless files could be ELF binaries (common on Unix)
             return true;

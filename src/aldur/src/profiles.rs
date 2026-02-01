@@ -158,10 +158,11 @@ impl SecurityProfile {
 
     /// Filter a list of rules to only those matching this profile
     #[allow(dead_code)]
-    pub fn filter_rules<'a>(&self, rules: &'a [Box<dyn Rule>]) -> Vec<&'a Box<dyn Rule>> {
+    pub fn filter_rules<'a>(&self, rules: &'a [Box<dyn Rule>]) -> Vec<&'a dyn Rule> {
         rules
             .iter()
             .filter(|r| self.matches_rule(r.descriptor()))
+            .map(|r| r.as_ref())
             .collect()
     }
 }

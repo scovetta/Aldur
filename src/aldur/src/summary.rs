@@ -75,7 +75,7 @@ impl TargetSummary {
             // Errors count double against the score
             let penalty = (self.error_count * 2 + self.warning_count) as f64;
             let score = ((total as f64 - penalty) / total as f64) * 100.0;
-            self.security_score = score.max(0.0).min(100.0) as u8;
+            self.security_score = score.clamp(0.0, 100.0) as u8;
         }
     }
 }

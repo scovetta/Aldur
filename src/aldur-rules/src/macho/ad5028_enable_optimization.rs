@@ -170,11 +170,11 @@ impl Rule for EnableOptimizationMachO {
         };
 
         match Self::check_optimization(macho) {
-            Some(level) if level >= 2 => {
+            Some(level @ 2..) => {
                 let level_str = format!("-O{}", level);
                 self.log_pass(context, "Pass", &[&file_name, &level_str]);
             }
-            Some(level) if level == 1 => {
+            Some(1) => {
                 self.log_fail(
                     context,
                     FailureLevel::Warning,

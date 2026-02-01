@@ -313,7 +313,7 @@ impl PeBinary {
         let entry_point = pe
             .header
             .optional_header
-            .map(|h| h.standard_fields.address_of_entry_point as u32)
+            .map(|h| h.standard_fields.address_of_entry_point)
             .unwrap_or(0);
         let linker_version_major = pe
             .header

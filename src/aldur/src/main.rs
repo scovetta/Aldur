@@ -37,7 +37,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     /// Analyze binary files for security issues
-    Analyze(AnalyzeArgs),
+    Analyze(Box<AnalyzeArgs>),
 
     /// Export rules metadata
     ExportRules(ExportRulesArgs),
@@ -238,18 +238,16 @@ fn main() -> Result<()> {
     tracing::subscriber::set_global_default(subscriber)
         .context("Failed to set up logging")?;
 
-    let result = match cli.command {
+    match cli.command {
         Commands::Analyze(args) => {
-            let cmd = AnalyzeCommand::new(args);
+            let cmd = AnalyzeCommand::new(*args);
             cmd.run()
         }
         Commands::ExportRules(args) => export_rules(args),
         Commands::ExportConfig(args) => export_config(args),
         Commands::Dump(args) => dump_binary(args),
         Commands::ListProfiles => list_profiles(),
-    };
-
-    result
+    }
 }
 
 fn list_profiles() -> Result<()> {

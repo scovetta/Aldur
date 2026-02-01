@@ -460,7 +460,7 @@ impl ElfBinary {
                 if let Some(name) = elf.dynstrtab.get_at(sym.st_name) {
                     // Strip version suffix (e.g., "foo@GLIBC_2.2.5" -> "foo")
                     let base_name = name.split('@').next().unwrap_or(name);
-                    if symbols.iter().any(|s| base_name == *s) {
+                    if symbols.contains(&base_name) {
                         return true;
                     }
                 }
@@ -469,7 +469,7 @@ impl ElfBinary {
             for sym in elf.syms.iter() {
                 if let Some(name) = elf.strtab.get_at(sym.st_name) {
                     let base_name = name.split('@').next().unwrap_or(name);
-                    if symbols.iter().any(|s| base_name == *s) {
+                    if symbols.contains(&base_name) {
                         return true;
                     }
                 }
@@ -592,13 +592,8 @@ impl ElfBinary {
     pub fn has_exception_handling(&self) -> bool {
         if let Ok(elf) = Elf::parse(&self.data) {
             for section in &elf.section_headers {
-                if let Some(name) = elf.shdr_strtab.get_at(section.sh_name) {
-                    match name {
-                        ".eh_frame" | ".eh_frame_hdr" | ".gcc_except_table" => {
-                            return true;
-                        }
-                        _ => {}
-                    }
+                if let Some(".eh_frame" | ".eh_frame_hdr" | ".gcc_except_table") = elf.shdr_strtab.get_at(section.sh_name) {
+                    return true;
                 }
             }
         }

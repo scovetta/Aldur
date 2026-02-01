@@ -233,7 +233,7 @@ impl<'a> TextFormatter<'a> {
         writeln!(
             writer,
             "    {} {} {}",
-            self.style(icon, |s| rule_style(&s.to_string())),
+            self.style(icon, rule_style),
             self.style(&result.rule_id, rule_style),
             self.style(rule_name, |s| s.dimmed())
         )?;
@@ -308,7 +308,7 @@ impl<'a> TextFormatter<'a> {
                 // Find the end of the sentence
                 let remaining = &text[start..];
                 let end = remaining
-                    .find(|c: char| c == '.' || c == '\n')
+                    .find(['.', '\n'])
                     .unwrap_or(remaining.len())
                     .min(120); // Cap at 120 chars
 
@@ -339,10 +339,10 @@ impl<'a> TextFormatter<'a> {
                 let start = pos + pattern.len();
                 let remaining = &text[start..];
                 // Skip leading punctuation and whitespace
-                let remaining = remaining.trim_start_matches(|c: char| c == ':' || c == ',' || c.is_whitespace());
+                let remaining = remaining.trim_start_matches(|c: char| matches!(c, ':' | ',') || c.is_whitespace());
 
                 let end = remaining
-                    .find(|c: char| c == '.' || c == '\n')
+                    .find(['.', '\n'])
                     .unwrap_or(remaining.len())
                     .min(120);
 

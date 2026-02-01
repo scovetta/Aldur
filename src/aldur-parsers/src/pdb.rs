@@ -14,7 +14,7 @@ use std::fs::File;
 use std::path::{Path, PathBuf};
 
 /// Compiler information from a compiland
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct CompilerInfo {
     /// Compiler name
     pub name: String,
@@ -28,19 +28,6 @@ pub struct CompilerInfo {
     pub security_checks: Option<bool>,
     /// Whether /sdl is enabled
     pub sdl_checks: Option<bool>,
-}
-
-impl Default for CompilerInfo {
-    fn default() -> Self {
-        Self {
-            name: String::new(),
-            frontend_version: (0, 0, 0, 0),
-            backend_version: (0, 0, 0, 0),
-            language: String::new(),
-            security_checks: None,
-            sdl_checks: None,
-        }
-    }
 }
 
 /// Compiland (object module) information
@@ -159,29 +146,26 @@ impl PdbFile {
                     let mut symbol_iter = symbols;
                     while let Ok(Some(symbol)) = symbol_iter.next() {
                         // Parse symbol data
-                        match symbol.parse() {
-                            Ok(pdb::SymbolData::CompileFlags(compile_info)) => {
-                                compiland.compiler.frontend_version = (
-                                    compile_info.frontend_version.major,
-                                    compile_info.frontend_version.minor,
-                                    compile_info.frontend_version.build,
-                                    compile_info.frontend_version.qfe.unwrap_or(0),
-                                );
-                                compiland.compiler.backend_version = (
-                                    compile_info.backend_version.major,
-                                    compile_info.backend_version.minor,
-                                    compile_info.backend_version.build,
-                                    compile_info.backend_version.qfe.unwrap_or(0),
-                                );
-                                compiland.compiler.language = format!("{:?}", compile_info.language);
-                                // Extract compiler name/version string from PDB
-                                compiland.compiler.name = compile_info.version_string.to_string().into_owned();
-                                // Extract security check flags
-                                compiland.compiler.security_checks = Some(compile_info.flags.security_checks);
-                                compiland.compiler.sdl_checks = Some(compile_info.flags.sdl);
-                                compiland.has_security_checks = Some(compile_info.flags.security_checks);
-                            }
-                            _ => {}
+                        if let Ok(pdb::SymbolData::CompileFlags(compile_info)) = symbol.parse() {
+                            compiland.compiler.frontend_version = (
+                                compile_info.frontend_version.major,
+                                compile_info.frontend_version.minor,
+                                compile_info.frontend_version.build,
+                                compile_info.frontend_version.qfe.unwrap_or(0),
+                            );
+                            compiland.compiler.backend_version = (
+                                compile_info.backend_version.major,
+                                compile_info.backend_version.minor,
+                                compile_info.backend_version.build,
+                                compile_info.backend_version.qfe.unwrap_or(0),
+                            );
+                            compiland.compiler.language = format!("{:?}", compile_info.language);
+                            // Extract compiler name/version string from PDB
+                            compiland.compiler.name = compile_info.version_string.to_string().into_owned();
+                            // Extract security check flags
+                            compiland.compiler.security_checks = Some(compile_info.flags.security_checks);
+                            compiland.compiler.sdl_checks = Some(compile_info.flags.sdl);
+                            compiland.has_security_checks = Some(compile_info.flags.security_checks);
                         }
                     }
                 }

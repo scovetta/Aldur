@@ -107,13 +107,11 @@ impl DoNotUseUncheckedOptimization {
             match mach {
                 Mach::Binary(macho) => {
                     // Get symbols from symbol table
-                    for sym in macho.symbols() {
-                        if let Ok((name, _)) = sym {
-                            symbols.push(name.to_string());
-                        }
+                    for (name, _) in macho.symbols().flatten() {
+                        symbols.push(name.to_string());
                     }
                     // Also check imports
-                    if let Some(imports) = macho.imports().ok() {
+                    if let Ok(imports) = macho.imports() {
                         for import in imports {
                             symbols.push(import.name.to_string());
                         }
@@ -122,17 +120,13 @@ impl DoNotUseUncheckedOptimization {
                 Mach::Fat(fat) => {
                     // Check all architectures
                     for i in 0..fat.narches {
-                        if let Ok(single_arch) = fat.get(i) {
-                            if let SingleArch::MachO(ref macho) = single_arch {
-                                for sym in macho.symbols() {
-                                    if let Ok((name, _)) = sym {
-                                        symbols.push(name.to_string());
-                                    }
-                                }
-                                if let Some(imports) = macho.imports().ok() {
-                                    for import in imports {
-                                        symbols.push(import.name.to_string());
-                                    }
+                        if let Ok(SingleArch::MachO(ref macho)) = fat.get(i) {
+                            for (name, _) in macho.symbols().flatten() {
+                                symbols.push(name.to_string());
+                            }
+                            if let Ok(imports) = macho.imports() {
+                                for import in imports {
+                                    symbols.push(import.name.to_string());
                                 }
                             }
                         }

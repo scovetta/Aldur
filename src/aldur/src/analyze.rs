@@ -1,6 +1,6 @@
 //! Analyze command implementation
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 use std::time::Instant;
@@ -508,7 +508,7 @@ impl AnalyzeCommand {
                 }
             } else if path.is_dir() {
                 // Check if it's an .app bundle
-                if self.args.scan_archives && path.extension().map_or(false, |e| e == "app") {
+                if self.args.scan_archives && path.extension().is_some_and(|e| e == "app") {
                     match self.extract_archive(&path) {
                         Ok((extracted, temp_dir)) => {
                             for binary in extracted {
@@ -530,34 +530,32 @@ impl AnalyzeCommand {
                 }
             } else {
                 // Try as glob pattern
-                for entry in glob::glob(target).context("Invalid glob pattern")? {
-                    if let Ok(p) = entry {
-                        if p.is_file() {
-                            if self.args.scan_archives && ArchiveExtractor::is_archive(&p) {
-                                match self.extract_archive(&p) {
-                                    Ok((extracted, temp_dir)) => {
-                                        for binary in extracted {
-                                            files.push(AnalysisTarget {
-                                                path: binary.extracted_path,
-                                                display_name: binary.logical_path,
-                                                archive_source: Some(binary.archive_source),
-                                            });
-                                        }
-                                        update_spinner(files.len());
-                                        temp_dirs.push(temp_dir);
+                for p in glob::glob(target).context("Invalid glob pattern")?.flatten() {
+                    if p.is_file() {
+                        if self.args.scan_archives && ArchiveExtractor::is_archive(&p) {
+                            match self.extract_archive(&p) {
+                                Ok((extracted, temp_dir)) => {
+                                    for binary in extracted {
+                                        files.push(AnalysisTarget {
+                                            path: binary.extracted_path,
+                                            display_name: binary.logical_path,
+                                            archive_source: Some(binary.archive_source),
+                                        });
                                     }
-                                    Err(e) => {
-                                        warn!("Failed to extract archive {}: {}", p.display(), e);
-                                    }
+                                    update_spinner(files.len());
+                                    temp_dirs.push(temp_dir);
                                 }
-                            } else if self.is_valid_binary(&p) {
-                                files.push(AnalysisTarget {
-                                    display_name: p.display().to_string(),
-                                    path: p,
-                                    archive_source: None,
-                                });
-                                update_spinner(files.len());
+                                Err(e) => {
+                                    warn!("Failed to extract archive {}: {}", p.display(), e);
+                                }
                             }
+                        } else if self.is_valid_binary(&p) {
+                            files.push(AnalysisTarget {
+                                display_name: p.display().to_string(),
+                                path: p,
+                                archive_source: None,
+                            });
+                            update_spinner(files.len());
                         }
                     }
                 }
@@ -567,14 +565,14 @@ impl AnalyzeCommand {
         Ok((files, temp_dirs))
     }
 
-    fn extract_archive(&self, path: &PathBuf) -> Result<(Vec<ExtractedBinary>, tempfile::TempDir)> {
+    fn extract_archive(&self, path: &Path) -> Result<(Vec<ExtractedBinary>, tempfile::TempDir)> {
         let extractor = ArchiveExtractor::new(self.archive_config.clone());
         extractor.extract_binaries(path)
     }
 
     fn collect_from_directory(
         &self,
-        dir: &PathBuf,
+        dir: &Path,
         files: &mut Vec<AnalysisTarget>,
         temp_dirs: &mut Vec<tempfile::TempDir>,
         spinner: Option<&ProgressBar>,
@@ -597,7 +595,7 @@ impl AnalyzeCommand {
             if path.is_file() {
                 // Check if it's an archive
                 if self.args.scan_archives && ArchiveExtractor::is_archive(path) {
-                    match self.extract_archive(&path.to_path_buf()) {
+                    match self.extract_archive(path) {
                         Ok((extracted, temp_dir)) => {
                             for binary in extracted {
                                 files.push(AnalysisTarget {
@@ -613,7 +611,7 @@ impl AnalyzeCommand {
                             warn!("Failed to extract archive {}: {}", path.display(), e);
                         }
                     }
-                } else if self.is_valid_binary(&path.to_path_buf()) {
+                } else if self.is_valid_binary(path) {
                     files.push(AnalysisTarget {
                         display_name: path.display().to_string(),
                         path: path.to_path_buf(),
@@ -627,7 +625,7 @@ impl AnalyzeCommand {
         Ok(())
     }
 
-    fn is_valid_binary(&self, path: &PathBuf) -> bool {
+    fn is_valid_binary(&self, path: &Path) -> bool {
         // Check extension first
         if let Some(ext) = path.extension() {
             let ext_lower = ext.to_string_lossy().to_lowercase();
@@ -663,6 +661,7 @@ impl AnalyzeCommand {
                 let result = self.analyze_file(&target.path, &target.display_name, rules, config);
 
                 let count = analyzed.fetch_add(1, Ordering::SeqCst) + 1;
+                #[allow(clippy::manual_is_multiple_of)]
                 if !self.args.quiet && count % 100 == 0 {
                     debug!("Analyzed {}/{} files", count, total_files);
                 }
@@ -693,7 +692,7 @@ impl AnalyzeCommand {
 
     fn analyze_file(
         &self,
-        path: &PathBuf,
+        path: &Path,
         display_name: &str,
         rules: &[Box<dyn Rule>],
         config: &AnalysisConfig,

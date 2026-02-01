@@ -176,12 +176,10 @@ impl Rule for EnableStackClashProtection {
             } else {
                 self.log_pass(context, "Pass", &[&file_name]);
             }
+        } else if is_definitive {
+            self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name]);
         } else {
-            if is_definitive {
-                self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name]);
-            } else {
-                self.log_fail(context, FailureLevel::Warning, "Warning_Heuristic", &[&file_name]);
-            }
+            self.log_fail(context, FailureLevel::Warning, "Warning_Heuristic", &[&file_name]);
         }
     }
 }

@@ -254,17 +254,15 @@ impl MachOBinary {
                 let mut any_code_sig = false;
                 let mut any_encrypted = false;
                 for i in 0..fat.narches {
-                    if let Ok(single_arch) = fat.get(i) {
-                        if let goblin::mach::SingleArch::MachO(ref macho) = single_arch {
-                            archs.push(Self::extract_arch(macho));
-                            let (weak, weak_names, rpath_list, code_sig, encrypted) = Self::extract_load_commands(macho);
-                            any_weak |= weak;
-                            any_code_sig |= code_sig;
-                            any_encrypted |= encrypted;
-                            all_weak_dylibs.extend(weak_names);
-                            all_rpaths.extend(rpath_list);
-                            all_segments.extend(Self::extract_segments(macho));
-                        }
+                    if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
+                        archs.push(Self::extract_arch(macho));
+                        let (weak, weak_names, rpath_list, code_sig, encrypted) = Self::extract_load_commands(macho);
+                        any_weak |= weak;
+                        any_code_sig |= code_sig;
+                        any_encrypted |= encrypted;
+                        all_weak_dylibs.extend(weak_names);
+                        all_rpaths.extend(rpath_list);
+                        all_segments.extend(Self::extract_segments(macho));
                     }
                 }
                 (true, archs, any_weak, all_weak_dylibs, all_rpaths, any_code_sig, any_encrypted, all_segments)
@@ -383,11 +381,9 @@ impl MachOBinary {
             Mach::Fat(fat) => {
                 // Try to get from the first architecture
                 for i in 0..fat.narches {
-                    if let Ok(single_arch) = fat.get(i) {
-                        if let goblin::mach::SingleArch::MachO(ref macho) = single_arch {
-                            if let Some(ver) = Self::extract_min_os_version_from_macho(macho) {
-                                return Some(ver);
-                            }
+                    if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
+                        if let Some(ver) = Self::extract_min_os_version_from_macho(macho) {
+                            return Some(ver);
                         }
                     }
                 }
@@ -482,11 +478,9 @@ impl MachOBinary {
                 Mach::Fat(fat) => {
                     // Check all architectures in fat binary
                     for i in 0..fat.narches {
-                        if let Ok(single_arch) = fat.get(i) {
-                            if let goblin::mach::SingleArch::MachO(ref macho) = single_arch {
-                                if Self::macho_has_symbols(macho, symbols) {
-                                    return true;
-                                }
+                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
+                            if Self::macho_has_symbols(macho, symbols) {
+                                return true;
                             }
                         }
                     }
@@ -498,16 +492,14 @@ impl MachOBinary {
 
     fn macho_has_symbols(macho: &GoblinMachO, symbols: &[&str]) -> bool {
         if let Some(ref syms) = macho.symbols {
-            for sym_result in syms.iter() {
-                if let Ok((name, _)) = sym_result {
-                    // Mach-O symbols often have a leading underscore
-                    let name_trimmed = name.trim_start_matches('_');
-                    if symbols.iter().any(|s| {
-                        let s_trimmed = s.trim_start_matches('_');
-                        name.contains(s) || name_trimmed.contains(s_trimmed)
-                    }) {
-                        return true;
-                    }
+            for (name, _) in syms.iter().flatten() {
+                // Mach-O symbols often have a leading underscore
+                let name_trimmed = name.trim_start_matches('_');
+                if symbols.iter().any(|s| {
+                    let s_trimmed = s.trim_start_matches('_');
+                    name.contains(s) || name_trimmed.contains(s_trimmed)
+                }) {
+                    return true;
                 }
             }
         }
@@ -516,16 +508,14 @@ impl MachOBinary {
 
     fn macho_has_symbols_exact(macho: &GoblinMachO, symbols: &[&str]) -> bool {
         if let Some(ref syms) = macho.symbols {
-            for sym_result in syms.iter() {
-                if let Ok((name, _)) = sym_result {
-                    // Mach-O symbols often have a leading underscore
-                    let name_trimmed = name.trim_start_matches('_');
-                    if symbols.iter().any(|s| {
-                        let s_trimmed = s.trim_start_matches('_');
-                        name == *s || name_trimmed == s_trimmed
-                    }) {
-                        return true;
-                    }
+            for (name, _) in syms.iter().flatten() {
+                // Mach-O symbols often have a leading underscore
+                let name_trimmed = name.trim_start_matches('_');
+                if symbols.iter().any(|s| {
+                    let s_trimmed = s.trim_start_matches('_');
+                    name == *s || name_trimmed == s_trimmed
+                }) {
+                    return true;
                 }
             }
         }
@@ -541,11 +531,9 @@ impl MachOBinary {
                 }
                 Mach::Fat(fat) => {
                     for i in 0..fat.narches {
-                        if let Ok(single_arch) = fat.get(i) {
-                            if let goblin::mach::SingleArch::MachO(ref macho) = single_arch {
-                                if Self::macho_has_symbols_exact(macho, symbols) {
-                                    return true;
-                                }
+                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
+                            if Self::macho_has_symbols_exact(macho, symbols) {
+                                return true;
                             }
                         }
                     }
@@ -575,10 +563,8 @@ impl MachOBinary {
                 }
                 Mach::Fat(fat) => {
                     for i in 0..fat.narches {
-                        if let Ok(single_arch) = fat.get(i) {
-                            if let goblin::mach::SingleArch::MachO(ref macho) = single_arch {
-                                Self::collect_symbol_names(macho, &mut names);
-                            }
+                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
+                            Self::collect_symbol_names(macho, &mut names);
                         }
                     }
                 }
@@ -589,11 +575,9 @@ impl MachOBinary {
 
     fn collect_symbol_names(macho: &GoblinMachO, names: &mut Vec<String>) {
         if let Some(ref syms) = macho.symbols {
-            for sym_result in syms.iter() {
-                if let Ok((name, _)) = sym_result {
-                    if !name.is_empty() {
-                        names.push(name.to_string());
-                    }
+            for (name, _) in syms.iter().flatten() {
+                if !name.is_empty() {
+                    names.push(name.to_string());
                 }
             }
         }
