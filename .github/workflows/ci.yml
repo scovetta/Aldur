@@ -46,7 +46,7 @@ jobs:
 
   # Scan GitHub Actions workflows for security issues
   zizmor:
-    name: Workflow Security Scan
+    name: Scan for Dangerous Workflows (Zizmor)
     runs-on: ubuntu-latest
 
     permissions:
@@ -60,15 +60,8 @@ jobs:
       - name: Run Zizmor
         uses: zizmorcore/zizmor-action@135698455da5c3b3e55f73f4419e481ab68cdd95 # v0.4.1
         with:
-          args: '--format sarif .github/workflows/'
-          output: zizmor-results.sarif
-
-      - name: Upload Zizmor SARIF
-        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
-        with:
-          sarif_file: zizmor-results.sarif
-          category: zizmor
-        if: always()
+          inputs: |
+            .github/workflows/
 
   # Test the action itself
   test-action:
