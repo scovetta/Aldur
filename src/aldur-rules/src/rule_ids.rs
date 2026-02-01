@@ -128,7 +128,7 @@ pub const AD5030: &str = "AD5030"; // EnableExceptionHandlingMachO
 pub const AD5031: &str = "AD5031"; // CheckNotEncrypted
 pub const AD5040: &str = "AD5040"; // DoNotUseUncheckedOptimization
 pub const AD5060: &str = "AD5060"; // DetectPackedBinaryMachO
-// Reporting Rules
+                                   // Reporting Rules
 pub const AD4001: &str = "AD4001"; // ReportPECompilerData
 pub const AD4002: &str = "AD4002"; // ReportElfOrMachoCompilerData
 

@@ -144,7 +144,10 @@ pub fn detect_packer(data: &[u8], section_names: &[&str]) -> PackerInfo {
     // We avoid detecting "UPX!" alone as it can appear in code that references UPX.
 
     // UPX section names are the most reliable indicator
-    if section_names.iter().any(|s| *s == "UPX0" || *s == "UPX1" || *s == "UPX2") {
+    if section_names
+        .iter()
+        .any(|s| *s == "UPX0" || *s == "UPX1" || *s == "UPX2")
+    {
         packers.insert(PackerType::Upx);
         signatures.push("UPX section name".to_string());
         confidence = confidence.max(1.0);
@@ -175,7 +178,10 @@ pub fn detect_packer(data: &[u8], section_names: &[&str]) -> PackerInfo {
     // as regular strings in the binary data.
 
     // ASPack sections
-    if section_names.iter().any(|s| *s == ".aspack" || *s == ".adata") {
+    if section_names
+        .iter()
+        .any(|s| *s == ".aspack" || *s == ".adata")
+    {
         packers.insert(PackerType::ASPack);
         signatures.push("ASPack section name".to_string());
         confidence = confidence.max(0.95);
@@ -189,14 +195,20 @@ pub fn detect_packer(data: &[u8], section_names: &[&str]) -> PackerInfo {
     }
 
     // Themida/WinLicense sections
-    if section_names.iter().any(|s| *s == ".themida" || s.starts_with(".Themida")) {
+    if section_names
+        .iter()
+        .any(|s| *s == ".themida" || s.starts_with(".Themida"))
+    {
         packers.insert(PackerType::Themida);
         signatures.push("Themida section name".to_string());
         confidence = confidence.max(0.95);
     }
 
     // VMProtect sections
-    if section_names.iter().any(|s| s.starts_with(".vmp") || *s == "VMP0" || *s == "VMP1") {
+    if section_names
+        .iter()
+        .any(|s| s.starts_with(".vmp") || *s == "VMP0" || *s == "VMP1")
+    {
         packers.insert(PackerType::VMProtect);
         signatures.push("VMProtect section name".to_string());
         confidence = confidence.max(0.95);
@@ -210,28 +222,34 @@ pub fn detect_packer(data: &[u8], section_names: &[&str]) -> PackerInfo {
     }
 
     // MPRESS sections
-    if section_names.iter().any(|s| *s == ".MPRESS1" || *s == ".MPRESS2") {
+    if section_names
+        .iter()
+        .any(|s| *s == ".MPRESS1" || *s == ".MPRESS2")
+    {
         packers.insert(PackerType::Mpress);
         signatures.push("MPRESS section name".to_string());
         confidence = confidence.max(0.95);
     }
 
     // Petite sections
-    if section_names.iter().any(|s| *s == ".petite") {
+    if section_names.contains(&".petite") {
         packers.insert(PackerType::Petite);
         signatures.push("Petite section name".to_string());
         confidence = confidence.max(0.95);
     }
 
     // FSG sections
-    if section_names.iter().any(|s| *s == "FSG!") {
+    if section_names.contains(&"FSG!") {
         packers.insert(PackerType::Fsg);
         signatures.push("FSG section name".to_string());
         confidence = confidence.max(0.95);
     }
 
     // NSPack sections
-    if section_names.iter().any(|s| *s == ".nsp0" || *s == ".nsp1" || *s == ".nsp2") {
+    if section_names
+        .iter()
+        .any(|s| *s == ".nsp0" || *s == ".nsp1" || *s == ".nsp2")
+    {
         packers.insert(PackerType::NsPack);
         signatures.push("NSPack section name".to_string());
         confidence = confidence.max(0.95);
@@ -320,14 +338,15 @@ mod tests {
         // If "UPX!" appears in the middle of the binary (e.g., in code),
         // it should NOT trigger detection unless accompanied by other indicators
         let mut data = vec![0u8; 50];
-        data.extend_from_slice(b"UPX!");  // In the middle
+        data.extend_from_slice(b"UPX!"); // In the middle
         data.extend_from_slice(&vec![0u8; 50]);
-        let sections = vec![".text", ".data"];  // Normal sections
+        let sections = vec![".text", ".data"]; // Normal sections
         let info = detect_packer(&data, &sections);
         // This should NOT detect as packed because UPX! is not in the trailer
         // and there are no UPX section names
-        assert!(!info.is_packed || !info.packers.contains(&PackerType::Upx)
-            || info.confidence < 0.9);
+        assert!(
+            !info.is_packed || !info.packers.contains(&PackerType::Upx) || info.confidence < 0.9
+        );
     }
 
     #[test]
@@ -342,9 +361,6 @@ mod tests {
     fn test_packer_name() {
         assert_eq!(PackerType::Upx.name(), "UPX");
         assert_eq!(PackerType::VMProtect.name(), "VMProtect");
-        assert_eq!(
-            PackerType::Unknown("custom".to_string()).name(),
-            "custom"
-        );
+        assert_eq!(PackerType::Unknown("custom".to_string()).name(), "custom");
     }
 }

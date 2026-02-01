@@ -354,7 +354,6 @@ impl ElfBinary {
         // Detect if the binary is packed
         let packer_info = crate::packer::detect_packer(&data, &section_name_refs);
 
-
         let binary = ElfBinary {
             path,
             valid: true,
