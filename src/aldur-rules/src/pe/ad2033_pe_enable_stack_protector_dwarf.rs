@@ -33,10 +33,7 @@ impl PeEnableStackProtectorDwarf {
             )
             .with_fix_hint("Compile with -fstack-protector-strong (MinGW/Clang)")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' was compiled with stack protector enabled.",
-            )
+            .with_message("Pass", "'{0}' was compiled with stack protector enabled.")
             .with_message(
                 "Pass_StackChkFail",
                 "'{0}' has stack protector enabled (__stack_chk_fail symbol found).",
@@ -123,10 +120,7 @@ impl Rule for PeEnableStackProtectorDwarf {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

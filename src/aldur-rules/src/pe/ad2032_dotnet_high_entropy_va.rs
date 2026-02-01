@@ -42,10 +42,7 @@ impl DotNetEnableHighEntropyVA {
                  For .NET Core/.NET 5+, add <HighEntropyVA>true</HighEntropyVA> to your \
                  project file.",
             )
-            .with_message(
-                "NotApplicable_NotDotNet",
-                "'{0}' is not a .NET binary.",
-            )
+            .with_message("NotApplicable_NotDotNet", "'{0}' is not a .NET binary.")
             .with_message(
                 "NotApplicable_Not64Bit",
                 "'{0}' is a 32-bit .NET binary. High-entropy VA is only applicable to \

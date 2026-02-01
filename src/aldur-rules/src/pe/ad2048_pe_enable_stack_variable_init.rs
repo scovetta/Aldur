@@ -188,7 +188,10 @@ mod tests {
     fn test_rule_descriptor() {
         let rule = PeEnableStackVariableInitialization::new();
         assert_eq!(rule.descriptor().id, "AD2048");
-        assert_eq!(rule.descriptor().name, "PeEnableStackVariableInitialization");
+        assert_eq!(
+            rule.descriptor().name,
+            "PeEnableStackVariableInitialization"
+        );
         assert_eq!(rule.descriptor().category, RuleCategory::Security);
     }
 }

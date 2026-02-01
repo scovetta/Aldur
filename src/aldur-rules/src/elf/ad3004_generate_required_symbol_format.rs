@@ -33,10 +33,7 @@ impl GenerateRequiredSymbolFormat {
             )
             .with_fix_hint("Compile with -gdwarf-4 or -gdwarf-5 for debug info")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' contains DWARF version {1} debug symbols.",
-            )
+            .with_message("Pass", "'{0}' contains DWARF version {1} debug symbols.")
             .with_message(
                 "Pass_NoDebugInfo",
                 "'{0}' does not contain debug symbols (release build).",

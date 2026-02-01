@@ -98,12 +98,7 @@ impl Rule for EnableReturnFlowGuard {
         if pe.has_rfg() {
             self.log_pass(context, "Pass", &[&file_name]);
         } else {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note_NoRFG",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note_NoRFG", &[&file_name]);
         }
     }
 }

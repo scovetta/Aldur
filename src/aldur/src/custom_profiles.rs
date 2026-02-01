@@ -79,7 +79,9 @@ impl CustomProfile {
 
     /// Get the base SecurityProfile if one is set
     pub fn get_base_profile(&self) -> Option<SecurityProfile> {
-        self.base_profile.as_ref().and_then(|name| get_profile(name))
+        self.base_profile
+            .as_ref()
+            .and_then(|name| get_profile(name))
     }
 }
 
@@ -315,7 +317,10 @@ profile:nonexistent
 "#;
         let result = CustomProfileRegistry::parse(content);
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Unknown base profile"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Unknown base profile"));
     }
 
     #[test]

@@ -33,7 +33,10 @@ impl EnableShadowStack {
             )
             .with_fix_hint("Link with /CETCOMPAT and compile with /guard:ehcont")
             .with_default_level(FailureLevel::Warning)
-            .with_message("Pass", "'{0}' enables CET Shadow Stack for return address protection.")
+            .with_message(
+                "Pass",
+                "'{0}' enables CET Shadow Stack for return address protection.",
+            )
             .with_message(
                 "Warning_NoShadowStack",
                 "'{0}' does not enable CET Shadow Stack. Consider enabling /CETCOMPAT \

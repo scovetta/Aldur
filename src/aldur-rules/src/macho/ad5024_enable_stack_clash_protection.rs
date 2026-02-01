@@ -30,10 +30,7 @@ impl EnableStackClashProtectionMachO {
             )
             .with_fix_hint("Compile with -fstack-clash-protection")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "Stack clash protection is enabled on '{0}'.",
-            )
+            .with_message("Pass", "Stack clash protection is enabled on '{0}'.")
             .with_message(
                 "Pass_DwarfConfirmed",
                 "Stack clash protection is enabled on '{0}' (confirmed via DWARF debug info).",
@@ -93,10 +90,7 @@ impl Rule for EnableStackClashProtectionMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

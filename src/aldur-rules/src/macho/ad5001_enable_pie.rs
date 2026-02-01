@@ -20,9 +20,7 @@ impl EnablePositionIndependentExecutableMachO {
         let descriptor = RuleDescriptor::new(AD5001, "EnablePositionIndependentExecutableMachO")
             .with_category(RuleCategory::Security)
             .with_tags(&["critical", "memory-safety", "macos-only", "openssf"])
-            .with_short_description(
-                "Enable Position Independent Executable (PIE) for ASLR.",
-            )
+            .with_short_description("Enable Position Independent Executable (PIE) for ASLR.")
             .with_full_description(
                 "A Position Independent Executable (PIE) relocates all of its sections at load \
                  time, including the code section, if ASLR is enabled in macOS \
@@ -31,10 +29,7 @@ impl EnablePositionIndependentExecutableMachO {
             )
             .with_fix_hint("Compile with -fPIE (enabled by default in Xcode)")
             .with_default_level(FailureLevel::Error)
-            .with_message(
-                "Pass",
-                "PIE enabled on executable '{0}'.",
-            )
+            .with_message("Pass", "PIE enabled on executable '{0}'.")
             .with_message(
                 "Error",
                 "PIE disabled on executable '{0}'. This means the code section will always be \
@@ -62,10 +57,7 @@ impl Rule for EnablePositionIndependentExecutableMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

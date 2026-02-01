@@ -321,9 +321,7 @@ mod tests {
 
         for _ in 0..10 {
             let b = budget.clone();
-            handles.push(thread::spawn(move || {
-                b.try_reserve(100)
-            }));
+            handles.push(thread::spawn(move || b.try_reserve(100)));
         }
 
         let successes: usize = handles

@@ -59,11 +59,8 @@ impl<'a> TextFormatter<'a> {
         }
 
         // Build rule lookup map for category info
-        let rule_map: HashMap<&str, &dyn Rule> = self
-            .rules
-            .iter()
-            .map(|r| (r.id(), r.as_ref()))
-            .collect();
+        let rule_map: HashMap<&str, &dyn Rule> =
+            self.rules.iter().map(|r| (r.id(), r.as_ref())).collect();
 
         // Group results: file -> category -> results
         let grouped = self.group_results(&results.results, &rule_map);
@@ -132,7 +129,11 @@ impl<'a> TextFormatter<'a> {
         grouped
     }
 
-    fn write_header<W: Write>(&self, writer: &mut W, _results: &AnalysisResult) -> std::io::Result<()> {
+    fn write_header<W: Write>(
+        &self,
+        writer: &mut W,
+        _results: &AnalysisResult,
+    ) -> std::io::Result<()> {
         writeln!(writer)?;
         writeln!(
             writer,
@@ -140,11 +141,7 @@ impl<'a> TextFormatter<'a> {
             self.style("Aldur Analysis Results", |s| s.bold().cyan())
         )?;
         let separator = "═".repeat(60);
-        writeln!(
-            writer,
-            "{}",
-            self.style(&separator, |s| s.dimmed())
-        )?;
+        writeln!(writer, "{}", self.style(&separator, |s| s.dimmed()))?;
         writeln!(writer)?;
         Ok(())
     }
@@ -215,13 +212,14 @@ impl<'a> TextFormatter<'a> {
         result: &RuleResult,
         rule_map: &HashMap<&str, &dyn Rule>,
     ) -> std::io::Result<()> {
-        let (icon, rule_style): (&str, fn(&str) -> ColoredString) = match (&result.kind, &result.level) {
-            (ResultKind::Pass, _) => ("✓", |s| s.green()),
-            (ResultKind::Fail, FailureLevel::Error) => ("✗", |s| s.red().bold()),
-            (ResultKind::Fail, FailureLevel::Warning) => ("⚠", |s| s.yellow()),
-            (ResultKind::Fail, FailureLevel::Note) => ("ℹ", |s| s.blue()),
-            _ => ("•", |s| s.normal()),
-        };
+        let (icon, rule_style): (&str, fn(&str) -> ColoredString) =
+            match (&result.kind, &result.level) {
+                (ResultKind::Pass, _) => ("✓", |s| s.green()),
+                (ResultKind::Fail, FailureLevel::Error) => ("✗", |s| s.red().bold()),
+                (ResultKind::Fail, FailureLevel::Warning) => ("⚠", |s| s.yellow()),
+                (ResultKind::Fail, FailureLevel::Note) => ("ℹ", |s| s.blue()),
+                _ => ("•", |s| s.normal()),
+            };
 
         // Get rule name
         let rule_name = rule_map
@@ -253,7 +251,11 @@ impl<'a> TextFormatter<'a> {
         Ok(())
     }
 
-    fn get_fix_hint(&self, result: &RuleResult, rule_map: &HashMap<&str, &dyn Rule>) -> Option<String> {
+    fn get_fix_hint(
+        &self,
+        result: &RuleResult,
+        rule_map: &HashMap<&str, &dyn Rule>,
+    ) -> Option<String> {
         let rule = rule_map.get(result.rule_id.as_str())?;
         let descriptor = rule.descriptor();
 
@@ -339,7 +341,8 @@ impl<'a> TextFormatter<'a> {
                 let start = pos + pattern.len();
                 let remaining = &text[start..];
                 // Skip leading punctuation and whitespace
-                let remaining = remaining.trim_start_matches(|c: char| matches!(c, ':' | ',') || c.is_whitespace());
+                let remaining = remaining
+                    .trim_start_matches(|c: char| matches!(c, ':' | ',') || c.is_whitespace());
 
                 let end = remaining
                     .find(['.', '\n'])
@@ -356,15 +359,16 @@ impl<'a> TextFormatter<'a> {
         None
     }
 
-    fn write_summary<W: Write>(&self, writer: &mut W, results: &AnalysisResult, has_findings: bool) -> std::io::Result<()> {
+    fn write_summary<W: Write>(
+        &self,
+        writer: &mut W,
+        results: &AnalysisResult,
+        has_findings: bool,
+    ) -> std::io::Result<()> {
         // Only show separator if there were findings displayed above
         if has_findings {
             let separator = "─".repeat(60);
-            writeln!(
-                writer,
-                "{}",
-                self.style(&separator, |s| s.dimmed())
-            )?;
+            writeln!(writer, "{}", self.style(&separator, |s| s.dimmed()))?;
         }
 
         let error_count = results.error_count();
@@ -385,9 +389,7 @@ impl<'a> TextFormatter<'a> {
         writeln!(
             writer,
             "Summary: {} files analyzed, {}, {}",
-            results.files_analyzed,
-            error_str,
-            warning_str
+            results.files_analyzed, error_str, warning_str
         )?;
 
         // Congratulate the user if everything passed
@@ -395,7 +397,9 @@ impl<'a> TextFormatter<'a> {
             writeln!(
                 writer,
                 "{}",
-                self.style("🎉 Congratulations! All security checks passed.", |s| s.green().bold())
+                self.style("🎉 Congratulations! All security checks passed.", |s| s
+                    .green()
+                    .bold())
             )?;
         }
 
@@ -465,8 +469,14 @@ mod tests {
 
     #[test]
     fn test_regex_lite_find_flag() {
-        assert_eq!(regex_lite_find_flag("use -O2 flag"), Some("-O2".to_string()));
-        assert_eq!(regex_lite_find_flag("use /GUARD:CF"), Some("/GUARD:CF".to_string()));
+        assert_eq!(
+            regex_lite_find_flag("use -O2 flag"),
+            Some("-O2".to_string())
+        );
+        assert_eq!(
+            regex_lite_find_flag("use /GUARD:CF"),
+            Some("/GUARD:CF".to_string())
+        );
         assert_eq!(regex_lite_find_flag("no flags here"), None);
     }
 }

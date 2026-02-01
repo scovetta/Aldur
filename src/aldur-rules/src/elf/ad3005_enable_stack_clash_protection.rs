@@ -100,10 +100,7 @@ impl Rule for EnableStackClashProtection {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -130,7 +127,9 @@ impl Rule for EnableStackClashProtection {
 
         // Stack clash protection is a GCC/Clang feature - skip unsupported compilers
         let compiler = detect_compiler(elf);
-        if let Some(reason) = check_compiler_support(&compiler, CompilerFeature::StackClashProtection) {
+        if let Some(reason) =
+            check_compiler_support(&compiler, CompilerFeature::StackClashProtection)
+        {
             return (
                 AnalysisApplicability::NotApplicableToSpecifiedTarget,
                 Some(reason),
@@ -179,7 +178,12 @@ impl Rule for EnableStackClashProtection {
         } else if is_definitive {
             self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name]);
         } else {
-            self.log_fail(context, FailureLevel::Warning, "Warning_Heuristic", &[&file_name]);
+            self.log_fail(
+                context,
+                FailureLevel::Warning,
+                "Warning_Heuristic",
+                &[&file_name],
+            );
         }
     }
 }

@@ -49,10 +49,7 @@ const OPENSSL_UNIQUE_SYMBOLS: &[&str] = &[
 ];
 
 /// Dynamic libraries that indicate OpenSSL is dynamically linked
-const OPENSSL_DYNAMIC_LIBS: &[&str] = &[
-    "libssl",
-    "libcrypto",
-];
+const OPENSSL_DYNAMIC_LIBS: &[&str] = &["libssl", "libcrypto"];
 
 pub struct DoNotStaticallyLinkOpenSSLELF {
     descriptor: RuleDescriptor,
@@ -125,10 +122,7 @@ impl Rule for DoNotStaticallyLinkOpenSSLELF {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

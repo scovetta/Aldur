@@ -7,7 +7,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD2007;
 
@@ -45,10 +45,7 @@ impl EnableCriticalCompilerWarnings {
             )
             .with_fix_hint("Enable /W4 and /WX for warning-as-error")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' has critical compiler warnings enabled.",
-            )
+            .with_message("Pass", "'{0}' has critical compiler warnings enabled.")
             .with_message(
                 "Warning_MissingWarnings",
                 "'{0}' is missing critical compiler warnings. Ensure /W4 or specific \

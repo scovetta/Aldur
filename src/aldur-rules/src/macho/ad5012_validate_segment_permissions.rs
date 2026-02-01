@@ -72,10 +72,7 @@ impl Rule for ValidateSegmentPermissions {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -134,22 +131,38 @@ impl Rule for ValidateSegmentPermissions {
 
         // Check for writable __TEXT
         if macho.has_writable_text_segment() {
-            self.log_fail(context, FailureLevel::Error, "Error_WritableText", &[&file_name]);
+            self.log_fail(
+                context,
+                FailureLevel::Error,
+                "Error_WritableText",
+                &[&file_name],
+            );
             return;
         }
 
         // Check for executable __DATA
         if macho.has_executable_data_segment() {
-            self.log_fail(context, FailureLevel::Error, "Error_ExecutableData", &[&file_name]);
+            self.log_fail(
+                context,
+                FailureLevel::Error,
+                "Error_ExecutableData",
+                &[&file_name],
+            );
             return;
         }
 
         // Check for any W^X violations
         let violating_segments = macho.get_wxorx_violating_segments();
         if !violating_segments.is_empty() {
-            let segment_names: Vec<&str> = violating_segments.iter().map(|s| s.name.as_str()).collect();
+            let segment_names: Vec<&str> =
+                violating_segments.iter().map(|s| s.name.as_str()).collect();
             let names_str = segment_names.join(", ");
-            self.log_fail(context, FailureLevel::Error, "Error_WXViolation", &[&file_name, &names_str]);
+            self.log_fail(
+                context,
+                FailureLevel::Error,
+                "Error_WXViolation",
+                &[&file_name, &names_str],
+            );
             return;
         }
 

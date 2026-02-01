@@ -4,8 +4,8 @@
 //! Using a fixed base address defeats Address Space Layout Randomization (ASLR).
 
 use aldur_core::{
-    AnalysisApplicability, AnalysisContext, BinaryFormat, BinaryType, FailureLevel, Rule, RuleCategory,
-    RuleDescriptor,
+    AnalysisApplicability, AnalysisContext, BinaryFormat, BinaryType, FailureLevel, Rule,
+    RuleCategory, RuleDescriptor,
 };
 use aldur_parsers::PeBinary;
 
@@ -29,9 +29,7 @@ impl DoNotUseCustomBaseAddress {
         let descriptor = RuleDescriptor::new(AD2050, "DoNotUseCustomBaseAddress")
             .with_category(RuleCategory::Security)
             .with_tags(&["recommended", "memory-safety", "windows-only"])
-            .with_short_description(
-                "Do not use a custom base address for binaries.",
-            )
+            .with_short_description("Do not use a custom base address for binaries.")
             .with_full_description(
                 "PE binaries should not be built with a custom base address specified via the \
                  /BASE linker option. Using a fixed base address defeats Address Space Layout \
@@ -84,10 +82,7 @@ impl Rule for DoNotUseCustomBaseAddress {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -152,14 +147,28 @@ mod tests {
     #[test]
     fn test_default_base_addresses() {
         // 64-bit executable
-        assert!(DoNotUseCustomBaseAddress::is_default_base_address(0x0000000140000000, true, false));
+        assert!(DoNotUseCustomBaseAddress::is_default_base_address(
+            0x0000000140000000,
+            true,
+            false
+        ));
         // 64-bit DLL
-        assert!(DoNotUseCustomBaseAddress::is_default_base_address(0x0000000180000000, true, true));
+        assert!(DoNotUseCustomBaseAddress::is_default_base_address(
+            0x0000000180000000,
+            true,
+            true
+        ));
         // 32-bit executable
-        assert!(DoNotUseCustomBaseAddress::is_default_base_address(0x00400000, false, false));
+        assert!(DoNotUseCustomBaseAddress::is_default_base_address(
+            0x00400000, false, false
+        ));
         // 32-bit DLL
-        assert!(DoNotUseCustomBaseAddress::is_default_base_address(0x10000000, false, true));
+        assert!(DoNotUseCustomBaseAddress::is_default_base_address(
+            0x10000000, false, true
+        ));
         // Custom base address
-        assert!(!DoNotUseCustomBaseAddress::is_default_base_address(0x12345678, false, false));
+        assert!(!DoNotUseCustomBaseAddress::is_default_base_address(
+            0x12345678, false, false
+        ));
     }
 }

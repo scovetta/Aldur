@@ -80,64 +80,76 @@ pub fn detect_compiler(elf: &ElfBinary) -> DetectedCompiler {
 /// Check if a feature is supported by the detected compiler
 ///
 /// Returns Some(reason) if the feature is NOT supported, None if it is supported
-pub fn check_compiler_support(compiler: &DetectedCompiler, feature: CompilerFeature) -> Option<String> {
+pub fn check_compiler_support(
+    compiler: &DetectedCompiler,
+    feature: CompilerFeature,
+) -> Option<String> {
     match feature {
         // Clang-only features
         CompilerFeature::SpeculativeLoadHardening => {
             match compiler.compiler_type {
                 CompilerType::Clang => None,
-                CompilerType::Rustc => Some("Speculative Load Hardening is not available in Rust".to_string()),
-                CompilerType::Gcc => Some("Speculative Load Hardening is Clang-only; not available in GCC".to_string()),
-                CompilerType::Go => Some("Speculative Load Hardening is not available in Go".to_string()),
+                CompilerType::Rustc => {
+                    Some("Speculative Load Hardening is not available in Rust".to_string())
+                }
+                CompilerType::Gcc => Some(
+                    "Speculative Load Hardening is Clang-only; not available in GCC".to_string(),
+                ),
+                CompilerType::Go => {
+                    Some("Speculative Load Hardening is not available in Go".to_string())
+                }
                 _ => None, // Unknown compiler, check anyway
             }
         }
-        CompilerFeature::ClangSafeStack => {
-            match compiler.compiler_type {
-                CompilerType::Clang => None,
-                CompilerType::Rustc => Some("SafeStack is a Clang feature; not available in Rust".to_string()),
-                CompilerType::Gcc => Some("SafeStack is Clang-only; not available in GCC".to_string()),
-                _ => None,
+        CompilerFeature::ClangSafeStack => match compiler.compiler_type {
+            CompilerType::Clang => None,
+            CompilerType::Rustc => {
+                Some("SafeStack is a Clang feature; not available in Rust".to_string())
             }
-        }
-        CompilerFeature::ClangCFI => {
-            match compiler.compiler_type {
-                CompilerType::Clang => None,
-                CompilerType::Rustc => Some("Clang CFI is not available in Rust (use -Z sanitizer=cfi on nightly)".to_string()),
-                CompilerType::Gcc => Some("Clang CFI is not available in GCC".to_string()),
-                _ => None,
-            }
-        }
+            CompilerType::Gcc => Some("SafeStack is Clang-only; not available in GCC".to_string()),
+            _ => None,
+        },
+        CompilerFeature::ClangCFI => match compiler.compiler_type {
+            CompilerType::Clang => None,
+            CompilerType::Rustc => Some(
+                "Clang CFI is not available in Rust (use -Z sanitizer=cfi on nightly)".to_string(),
+            ),
+            CompilerType::Gcc => Some("Clang CFI is not available in GCC".to_string()),
+            _ => None,
+        },
         // GCC/Clang features not available in Rust (stable)
-        CompilerFeature::StackClashProtection => {
-            match compiler.compiler_type {
-                CompilerType::Gcc | CompilerType::Clang => None,
-                CompilerType::Rustc => Some("Stack clash protection (-fstack-clash-protection) is not available in Rust".to_string()),
-                CompilerType::Go => Some("Stack clash protection is not available in Go".to_string()),
-                _ => None,
+        CompilerFeature::StackClashProtection => match compiler.compiler_type {
+            CompilerType::Gcc | CompilerType::Clang => None,
+            CompilerType::Rustc => Some(
+                "Stack clash protection (-fstack-clash-protection) is not available in Rust"
+                    .to_string(),
+            ),
+            CompilerType::Go => Some("Stack clash protection is not available in Go".to_string()),
+            _ => None,
+        },
+        CompilerFeature::StackProtector => match compiler.compiler_type {
+            CompilerType::Gcc | CompilerType::Clang => None,
+            CompilerType::Rustc => {
+                Some("GCC/Clang stack protector is not applicable to Rust binaries".to_string())
             }
-        }
-        CompilerFeature::StackProtector => {
-            match compiler.compiler_type {
-                CompilerType::Gcc | CompilerType::Clang => None,
-                CompilerType::Rustc => Some("GCC/Clang stack protector is not applicable to Rust binaries".to_string()),
-                _ => None,
+            _ => None,
+        },
+        CompilerFeature::Fortify => match compiler.compiler_type {
+            CompilerType::Gcc | CompilerType::Clang => None,
+            CompilerType::Rustc => {
+                Some("FORTIFY_SOURCE is a C/C++ feature; not applicable to Rust".to_string())
             }
-        }
-        CompilerFeature::Fortify => {
-            match compiler.compiler_type {
-                CompilerType::Gcc | CompilerType::Clang => None,
-                CompilerType::Rustc => Some("FORTIFY_SOURCE is a C/C++ feature; not applicable to Rust".to_string()),
-                CompilerType::Go => Some("FORTIFY_SOURCE is not applicable to Go".to_string()),
-                _ => None,
-            }
-        }
+            CompilerType::Go => Some("FORTIFY_SOURCE is not applicable to Go".to_string()),
+            _ => None,
+        },
         // CET features (requires nightly for Rust)
         CompilerFeature::IntelCET => {
             match compiler.compiler_type {
                 CompilerType::Gcc | CompilerType::Clang => None,
                 // For Rust, we have a separate rule (AD3033) that handles the nightly case
-                CompilerType::Rustc => Some("Intel CET requires Rust nightly with -Z cf-protection=full".to_string()),
+                CompilerType::Rustc => {
+                    Some("Intel CET requires Rust nightly with -Z cf-protection=full".to_string())
+                }
                 _ => None,
             }
         }
@@ -176,7 +188,10 @@ mod tests {
         };
 
         // SLH should not be supported for Rust
-        assert!(check_compiler_support(&rust_compiler, CompilerFeature::SpeculativeLoadHardening).is_some());
+        assert!(
+            check_compiler_support(&rust_compiler, CompilerFeature::SpeculativeLoadHardening)
+                .is_some()
+        );
 
         let clang_compiler = DetectedCompiler {
             compiler_type: CompilerType::Clang,
@@ -185,6 +200,9 @@ mod tests {
         };
 
         // SLH should be supported for Clang
-        assert!(check_compiler_support(&clang_compiler, CompilerFeature::SpeculativeLoadHardening).is_none());
+        assert!(
+            check_compiler_support(&clang_compiler, CompilerFeature::SpeculativeLoadHardening)
+                .is_none()
+        );
     }
 }

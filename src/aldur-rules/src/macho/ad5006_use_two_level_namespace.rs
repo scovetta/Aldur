@@ -31,10 +31,7 @@ impl UseTwoLevelNamespace {
             )
             .with_fix_hint("Remove -flat_namespace linker flag")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "Two-level namespace is enabled on '{0}'.",
-            )
+            .with_message("Pass", "Two-level namespace is enabled on '{0}'.")
             .with_message(
                 "Warning",
                 "'{0}' uses flat namespace instead of two-level namespace. This allows \
@@ -62,10 +59,7 @@ impl Rule for UseTwoLevelNamespace {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

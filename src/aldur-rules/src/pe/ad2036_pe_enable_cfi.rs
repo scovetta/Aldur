@@ -119,9 +119,7 @@ impl PeEnableControlFlowIntegrity {
 
             // Check for CFI flags in producer or command line
             let producer = &cu.compiler_info.producer;
-            if producer.contains("-fsanitize=cfi")
-                || producer.contains("sanitize=cfi")
-            {
+            if producer.contains("-fsanitize=cfi") || producer.contains("sanitize=cfi") {
                 has_cfi = true;
             }
 
@@ -169,10 +167,7 @@ impl Rule for PeEnableControlFlowIntegrity {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -253,7 +248,12 @@ impl Rule for PeEnableControlFlowIntegrity {
                 );
             }
             CfiCheckResult::NoCfi => {
-                self.log_fail(context, FailureLevel::Warning, "Warning_NoCfi", &[&file_name]);
+                self.log_fail(
+                    context,
+                    FailureLevel::Warning,
+                    "Warning_NoCfi",
+                    &[&file_name],
+                );
             }
             CfiCheckResult::NotClang => {
                 self.log_not_applicable(context, "NotApplicable_NotClang", &[&file_name]);

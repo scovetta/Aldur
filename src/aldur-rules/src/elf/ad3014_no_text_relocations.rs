@@ -20,7 +20,14 @@ impl NoTextRelocations {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3014, "NoTextRelocations")
             .with_category(RuleCategory::Correctness)
-            .with_tags(&["critical", "memory-safety", "linux-only", "android-cdd", "rhel-annocheck", "openssf"])
+            .with_tags(&[
+                "critical",
+                "memory-safety",
+                "linux-only",
+                "android-cdd",
+                "rhel-annocheck",
+                "openssf",
+            ])
             .with_short_description("Do not use text relocations (DT_TEXTREL).")
             .with_full_description(
                 "Text relocations (DT_TEXTREL) require the code section to be writable at \
@@ -31,10 +38,7 @@ impl NoTextRelocations {
             )
             .with_fix_hint("Compile with -fPIC or -fPIE")
             .with_default_level(FailureLevel::Error)
-            .with_message(
-                "Pass",
-                "'{0}' does not have text relocations.",
-            )
+            .with_message("Pass", "'{0}' does not have text relocations.")
             .with_message(
                 "Error",
                 "'{0}' has text relocations (DT_TEXTREL), requiring writable code sections. \
@@ -61,10 +65,7 @@ impl Rule for NoTextRelocations {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

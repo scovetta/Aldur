@@ -19,10 +19,14 @@ impl DoNotMarkStackAsExecutable {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3002, "DoNotMarkStackAsExecutable")
             .with_category(RuleCategory::Security)
-            .with_tags(&["critical", "memory-safety", "android-cdd", "rhel-annocheck", "openssf"])
-            .with_short_description(
-                "Do not mark the stack as executable.",
-            )
+            .with_tags(&[
+                "critical",
+                "memory-safety",
+                "android-cdd",
+                "rhel-annocheck",
+                "openssf",
+            ])
+            .with_short_description("Do not mark the stack as executable.")
             .with_full_description(
                 "This checks if a binary has an executable stack; an executable stack allows \
                  attackers to redirect code flow into stack memory, which is an easy place for \
@@ -68,10 +72,7 @@ impl Rule for DoNotMarkStackAsExecutable {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

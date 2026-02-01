@@ -30,7 +30,9 @@ impl UseAddressSanitizer {
         let descriptor = RuleDescriptor::new(AD5014, "UseAddressSanitizer")
             .with_category(RuleCategory::Security)
             .with_tags(&["debug-only", "memory-safety", "macos-only"])
-            .with_short_description("Use AddressSanitizer for memory error detection (debug builds).")
+            .with_short_description(
+                "Use AddressSanitizer for memory error detection (debug builds).",
+            )
             .with_full_description(
                 "AddressSanitizer (ASAN) is a fast memory error detector that catches buffer \
                  overflows, use-after-free, and other memory errors at runtime. It should be \
@@ -39,10 +41,7 @@ impl UseAddressSanitizer {
             )
             .with_fix_hint("Compile with -fsanitize=address (debug builds only)")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "'{0}' has AddressSanitizer enabled.",
-            )
+            .with_message("Pass", "'{0}' has AddressSanitizer enabled.")
             .with_message(
                 "Note",
                 "'{0}' does not have AddressSanitizer enabled. Consider using ASAN in debug \
@@ -69,10 +68,7 @@ impl Rule for UseAddressSanitizer {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

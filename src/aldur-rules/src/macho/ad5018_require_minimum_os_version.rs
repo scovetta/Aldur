@@ -69,10 +69,7 @@ impl Rule for RequireMinimumOSVersion {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -127,7 +124,12 @@ impl Rule for RequireMinimumOSVersion {
         if is_sufficient {
             self.log_pass(context, "Pass", &[&file_name, &version_str]);
         } else {
-            self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name, &version_str]);
+            self.log_fail(
+                context,
+                FailureLevel::Warning,
+                "Warning",
+                &[&file_name, &version_str],
+            );
         }
     }
 }

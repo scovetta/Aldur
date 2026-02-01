@@ -20,8 +20,8 @@ const BANNED_APIS: &[&str] = &[
     // === String operations without bounds checking ===
     "strcpy",
     "strcat",
-    "strncpy",  // May not null-terminate
-    "strncat",  // Complex size calculations
+    "strncpy", // May not null-terminate
+    "strncat", // Complex size calculations
     "wcscpy",
     "wcscat",
     "wcsncpy",
@@ -45,17 +45,17 @@ const BANNED_APIS: &[&str] = &[
     "vswscanf",
     "vfwscanf",
     // === Input functions (buffer overflow) ===
-    "gets",  // REMOVED from C11 - in CRITICAL list
+    "gets", // REMOVED from C11 - in CRITICAL list
     // === Thread-unsafe functions with static buffers ===
-    "strtok",   // Static internal state, data races - use strtok_r
-    "asctime",  // Returns static buffer - use strftime
-    "ctime",    // Returns static buffer - use strftime
-    "gmtime",   // Returns static struct - use gmtime_r
+    "strtok",    // Static internal state, data races - use strtok_r
+    "asctime",   // Returns static buffer - use strftime
+    "ctime",     // Returns static buffer - use strftime
+    "gmtime",    // Returns static struct - use gmtime_r
     "localtime", // Returns static struct - use localtime_r
-    "strerror", // May return static buffer - use strerror_r
+    "strerror",  // May return static buffer - use strerror_r
     // === Environment/system functions with race conditions ===
-    "getenv",  // Data races, invalidated pointer - use secure_getenv or getenv_s
-    "tmpnam",  // TOCTOU race condition - use mkstemp
+    "getenv", // Data races, invalidated pointer - use secure_getenv or getenv_s
+    "tmpnam", // TOCTOU race condition - use mkstemp
     // === Numeric conversion without error detection ===
     "atoi",  // No error detection, UB on overflow - use strtol
     "atol",  // No error detection, UB on overflow - use strtol
@@ -66,20 +66,20 @@ const BANNED_APIS: &[&str] = &[
     "mbstowcs", // No destination size validation - use mbsrtowcs
     "wcstombs", // No destination size validation - use wcsrtombs
     // === Legacy dangerous functions ===
-    "getwd",    // Use getcwd instead
-    "getpass",  // Obsolete, insecure
+    "getwd",   // Use getcwd instead
+    "getpass", // Obsolete, insecure
 ];
 
 /// Critical banned APIs that are especially dangerous and should never be used.
 /// These will cause an Error (not Warning) level result.
 const CRITICAL_BANNED_APIS: &[&str] = &[
-    "gets",      // REMOVED from C11 - no bounds checking possible
-    "strcpy",    // Buffer overflow risk - use strncpy or strlcpy
-    "wcscpy",    // Wide char strcpy
-    "strcat",    // Buffer overflow risk - use strncat or strlcat
-    "wcscat",    // Wide char strcat
-    "sprintf",   // Buffer overflow + format string - use snprintf
-    "vsprintf",  // Buffer overflow + format string - use vsnprintf
+    "gets",     // REMOVED from C11 - no bounds checking possible
+    "strcpy",   // Buffer overflow risk - use strncpy or strlcpy
+    "wcscpy",   // Wide char strcpy
+    "strcat",   // Buffer overflow risk - use strncat or strlcat
+    "wcscat",   // Wide char strcat
+    "sprintf",  // Buffer overflow + format string - use snprintf
+    "vsprintf", // Buffer overflow + format string - use vsnprintf
 ];
 
 pub struct DoNotUseBannedApisELF {
@@ -134,10 +134,7 @@ impl Rule for DoNotUseBannedApisELF {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -202,7 +199,12 @@ impl Rule for DoNotUseBannedApisELF {
 
         if !critical_found.is_empty() {
             let apis = critical_found.join(", ");
-            self.log_fail(context, FailureLevel::Error, "Error_Critical", &[&file_name, &apis]);
+            self.log_fail(
+                context,
+                FailureLevel::Error,
+                "Error_Critical",
+                &[&file_name, &apis],
+            );
             return;
         }
 
@@ -215,7 +217,12 @@ impl Rule for DoNotUseBannedApisELF {
 
         if !banned_found.is_empty() {
             let apis = banned_found.join(", ");
-            self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name, &apis]);
+            self.log_fail(
+                context,
+                FailureLevel::Warning,
+                "Warning",
+                &[&file_name, &apis],
+            );
         } else {
             self.log_pass(context, "Pass", &[&file_name]);
         }

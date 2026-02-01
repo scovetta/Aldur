@@ -37,9 +37,9 @@ mod ad3042_do_not_statically_link_openssl;
 mod ad3043_enable_kcfi;
 mod ad3044_enable_shadow_call_stack;
 mod ad3045_enable_stack_variable_init;
-mod ad4002_report_elf_macho_compiler_data;
 mod ad3050_enable_gcc_defs;
 mod ad3051_check_fortify_level;
+mod ad4002_report_elf_macho_compiler_data;
 pub mod compiler_utils;
 
 pub use ad3001_enable_pie::EnablePositionIndependentExecutable;
@@ -79,9 +79,9 @@ pub use ad3042_do_not_statically_link_openssl::DoNotStaticallyLinkOpenSSLELF;
 pub use ad3043_enable_kcfi::EnableKernelCFI;
 pub use ad3044_enable_shadow_call_stack::EnableShadowCallStack;
 pub use ad3045_enable_stack_variable_init::EnableStackVariableInitialization;
-pub use ad4002_report_elf_macho_compiler_data::ReportElfOrMachoCompilerData;
 pub use ad3050_enable_gcc_defs::EnableGccDefs;
 pub use ad3051_check_fortify_level::CheckFortifySourceLevel;
+pub use ad4002_report_elf_macho_compiler_data::ReportElfOrMachoCompilerData;
 
 use aldur_core::Rule;
 
@@ -130,4 +130,3 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
         Box::new(CheckFortifySourceLevel::new()),
     ]
 }
-

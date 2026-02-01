@@ -30,10 +30,7 @@ impl RequireAuthenticode {
             )
             .with_fix_hint("Sign binary with Authenticode using signtool.exe")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' has an Authenticode signature.",
-            )
+            .with_message("Pass", "'{0}' has an Authenticode signature.")
             .with_message(
                 "Warning_NoSignature",
                 "'{0}' does not have an Authenticode signature. Consider signing the binary \

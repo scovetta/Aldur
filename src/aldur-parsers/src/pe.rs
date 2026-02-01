@@ -7,7 +7,7 @@
 //! - Load configuration directory (for CFG, CET, etc.)
 //! - Debug directories
 
-use aldur_core::{Binary, BinaryFormat, BinaryType, AldurError, Result};
+use aldur_core::{AldurError, Binary, BinaryFormat, BinaryType, Result};
 use goblin::pe::PE;
 use std::path::{Path, PathBuf};
 
@@ -283,7 +283,9 @@ impl PeBinary {
     /// Load a PE binary from a file with a custom memory budget
     pub fn load_with_budget(path: impl AsRef<Path>, budget: &MemoryBudget) -> Result<Self> {
         let path = path.as_ref();
-        let data = budget.load(path).map_err(|e| AldurError::binary_load(path.display().to_string(), e.to_string()))?;
+        let data = budget
+            .load(path)
+            .map_err(|e| AldurError::binary_load(path.display().to_string(), e.to_string()))?;
         Self::parse(path.to_path_buf(), data)
     }
 
@@ -553,7 +555,8 @@ impl PeBinary {
                             data[file_offset + 77],
                             data[file_offset + 78],
                             data[file_offset + 79],
-                        ]) as u64;
+                        ])
+                            as u64;
 
                         config.guard_cf_function_table = u32::from_le_bytes([
                             data[file_offset + 80],

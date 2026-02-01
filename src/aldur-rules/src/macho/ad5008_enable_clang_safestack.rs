@@ -23,12 +23,7 @@ const SAFESTACK_SYMBOLS: &[&str] = &[
 ];
 
 /// Symbols from ucontext.h that are incompatible with SafeStack
-const UCONTEXT_SYMBOLS: &[&str] = &[
-    "getcontext",
-    "setcontext",
-    "makecontext",
-    "swapcontext",
-];
+const UCONTEXT_SYMBOLS: &[&str] = &["getcontext", "setcontext", "makecontext", "swapcontext"];
 
 pub struct EnableClangSafeStackMachO {
     descriptor: RuleDescriptor,
@@ -176,6 +171,11 @@ impl Rule for EnableClangSafeStackMachO {
         }
 
         // Clang binary without SafeStack
-        self.log_fail(context, FailureLevel::Warning, "Warning_NoSafeStack", &[&file_name]);
+        self.log_fail(
+            context,
+            FailureLevel::Warning,
+            "Warning_NoSafeStack",
+            &[&file_name],
+        );
     }
 }

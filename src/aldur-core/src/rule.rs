@@ -82,8 +82,7 @@ impl RuleDescriptor {
         Self {
             help_uri: format!(
                 "https://github.com/scovetta/Aldur/blob/main/docs/{}.{}.md",
-                id,
-                name
+                id, name
             ),
             id,
             name,
@@ -259,8 +258,8 @@ mod tests {
 
     #[test]
     fn test_rule_descriptor_without_fix_hint() {
-        let desc = RuleDescriptor::new("AD9999", "TestRule")
-            .with_short_description("Test description");
+        let desc =
+            RuleDescriptor::new("AD9999", "TestRule").with_short_description("Test description");
 
         assert_eq!(desc.fix_hint, None);
     }

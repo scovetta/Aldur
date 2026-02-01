@@ -70,10 +70,7 @@ impl Rule for EnableSafeSEH {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -117,11 +114,7 @@ impl Rule for EnableSafeSEH {
 
         // Double-check this is a 32-bit x86 binary
         if binary.is_64_bit() || pe.machine != IMAGE_FILE_MACHINE_I386 {
-            self.log_not_applicable(
-                context,
-                "NotApplicable_64Bit",
-                &[&file_name],
-            );
+            self.log_not_applicable(context, "NotApplicable_64Bit", &[&file_name]);
             return;
         }
 

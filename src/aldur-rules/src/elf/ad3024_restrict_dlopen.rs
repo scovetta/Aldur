@@ -24,7 +24,9 @@ impl RestrictDlopen {
         let descriptor = RuleDescriptor::new(AD3024, "RestrictDlopen")
             .with_category(RuleCategory::Security)
             .with_tags(&["hardening", "openssf"])
-            .with_short_description("Shared objects should restrict dlopen() access where possible.")
+            .with_short_description(
+                "Shared objects should restrict dlopen() access where possible.",
+            )
             .with_full_description(
                 "The -Wl,-z,nodlopen linker option marks shared objects as not available to \
                  dlopen(3) calls. This can help reduce an attacker's ability to load and \
@@ -65,10 +67,7 @@ impl Rule for RestrictDlopen {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -134,12 +133,7 @@ impl Rule for RestrictDlopen {
             self.log_pass(context, "Pass", &[&file_name]);
         } else {
             // This is a Note level - informational, not a hard requirement
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note", &[&file_name]);
         }
     }
 }

@@ -94,10 +94,7 @@ impl Rule for EnableMicrosoftCompilerSdlSwitch {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -177,12 +174,16 @@ impl Rule for EnableMicrosoftCompilerSdlSwitch {
         };
 
         // Check if all compilands have /sdl enabled
-        let all_sdl_enabled = pdb.compilands.iter().all(|c| {
-            c.compiler.sdl_checks == Some(true)
-        });
+        let all_sdl_enabled = pdb
+            .compilands
+            .iter()
+            .all(|c| c.compiler.sdl_checks == Some(true));
 
         // If there are no compilands with SDL info, we can't determine
-        let has_sdl_info = pdb.compilands.iter().any(|c| c.compiler.sdl_checks.is_some());
+        let has_sdl_info = pdb
+            .compilands
+            .iter()
+            .any(|c| c.compiler.sdl_checks.is_some());
 
         if !has_sdl_info {
             // No SDL information available in PDB

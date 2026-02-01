@@ -29,10 +29,7 @@ impl EnableLTOMachO {
             )
             .with_fix_hint("Compile with -flto")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "'{0}' was compiled with Link-Time Optimization.",
-            )
+            .with_message("Pass", "'{0}' was compiled with Link-Time Optimization.")
             .with_message(
                 "Note",
                 "'{0}' was not compiled with LTO. Consider using '-flto' for additional \
@@ -63,10 +60,7 @@ impl Rule for EnableLTOMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

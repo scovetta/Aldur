@@ -21,7 +21,9 @@ impl EnableArmBTIMachO {
         let descriptor = RuleDescriptor::new(AD5026, "EnableArmBTIMachO")
             .with_category(RuleCategory::Security)
             .with_tags(&["recommended", "control-flow", "macos-only", "arm-only"])
-            .with_short_description("Enable ARM Branch Target Identification (BTI) for Apple Silicon.")
+            .with_short_description(
+                "Enable ARM Branch Target Identification (BTI) for Apple Silicon.",
+            )
             .with_full_description(
                 "ARM Branch Target Identification (BTI) provides hardware-based protection \
                  against Jump-Oriented Programming (JOP) attacks on Apple Silicon (ARM64). \
@@ -95,10 +97,7 @@ impl Rule for EnableArmBTIMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

@@ -7,7 +7,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD6002;
 
@@ -68,13 +68,18 @@ impl EliminateDuplicateStrings {
                 // /GF enables string pooling, /GF- disables it
                 // By default in release builds with /O1 or /O2, /GF is enabled
                 let has_gf = cmd.contains("/GF") && !cmd.contains("/GF-");
-                let has_optimization = cmd.contains("/O1") || cmd.contains("/O2") || cmd.contains("/Ox");
+                let has_optimization =
+                    cmd.contains("/O1") || cmd.contains("/O2") || cmd.contains("/Ox");
 
                 // /GF is implied by /O1, /O2, /Ox
                 if !has_gf && !has_optimization {
                     all_compliant = false;
-                    let module_name = compiland.name.rsplit(['\\', '/']).next()
-                        .unwrap_or(&compiland.name).to_string();
+                    let module_name = compiland
+                        .name
+                        .rsplit(['\\', '/'])
+                        .next()
+                        .unwrap_or(&compiland.name)
+                        .to_string();
                     if !non_compliant.contains(&module_name) {
                         non_compliant.push(module_name);
                     }

@@ -20,7 +20,9 @@ impl EnableKernelCFI {
         let descriptor = RuleDescriptor::new(AD3043, "EnableKernelCFI")
             .with_category(RuleCategory::Security)
             .with_tags(&["hardening", "control-flow", "linux-only"])
-            .with_short_description("Enable Kernel Control Flow Integrity (KCFI) for kernel and embedded binaries.")
+            .with_short_description(
+                "Enable Kernel Control Flow Integrity (KCFI) for kernel and embedded binaries.",
+            )
             .with_full_description(
                 "Kernel Control Flow Integrity (KCFI) is a lightweight CFI implementation \
                  designed for kernel and embedded environments. Unlike regular CFI, KCFI does \
@@ -129,8 +131,7 @@ impl EnableKernelCFI {
             let compiler_type = &cu.parsed_info.compiler_type;
             if matches!(
                 compiler_type,
-                aldur_parsers::dwarf::CompilerType::Clang
-                    | aldur_parsers::dwarf::CompilerType::Gcc
+                aldur_parsers::dwarf::CompilerType::Clang | aldur_parsers::dwarf::CompilerType::Gcc
             ) {
                 is_clang_or_gcc = true;
             }
@@ -249,12 +250,7 @@ impl Rule for EnableKernelCFI {
 
         // Check if this is a kernel binary that should have KCFI
         if Self::is_kernel_binary(elf) {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note_NoKcfi",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note_NoKcfi", &[&file_name]);
         } else {
             // Not a kernel binary, KCFI not applicable
             self.log_not_applicable(context, "NotApplicable_NotKernel", &[&file_name]);

@@ -78,10 +78,7 @@ impl RustEnableSanitizers {
                  builds, consider using '-Zsanitizer=address' or other sanitizers to detect \
                  memory safety issues.",
             )
-            .with_message(
-                "NotApplicable_NotRust",
-                "'{0}' is not a Rust binary.",
-            )
+            .with_message("NotApplicable_NotRust", "'{0}' is not a Rust binary.")
             .with_message(
                 "NotApplicable_InvalidMetadata",
                 "'{0}' was not evaluated for check '{1}' as the analysis is not relevant \
@@ -159,7 +156,7 @@ impl RustEnableSanitizers {
         "__cfi_slowpath",
         "__cfi_slowpath_diag",
         "__cfi_check_fail",
-        ".cfi",  // CFI-related section marker
+        ".cfi", // CFI-related section marker
     ];
 
     /// Memory Tagging Extension (MTE) symbols
@@ -223,10 +220,7 @@ impl Rule for RustEnableSanitizers {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

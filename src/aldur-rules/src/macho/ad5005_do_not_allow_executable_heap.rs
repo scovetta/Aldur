@@ -29,10 +29,7 @@ impl DoNotAllowExecutableHeap {
             )
             .with_fix_hint("Remove -allow_heap_execute linker flag")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "Heap execution is disabled on '{0}'.",
-            )
+            .with_message("Pass", "Heap execution is disabled on '{0}'.")
             .with_message(
                 "Warning",
                 "Heap execution is allowed on '{0}'. This means an attacker could store \
@@ -64,10 +61,7 @@ impl Rule for DoNotAllowExecutableHeap {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

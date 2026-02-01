@@ -33,10 +33,7 @@ impl DoNotUseWeakDylib {
             )
             .with_fix_hint("Remove weak_import or bundle required libraries")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' does not use weak dylib loading.",
-            )
+            .with_message("Pass", "'{0}' does not use weak dylib loading.")
             .with_message(
                 "Warning",
                 "'{0}' uses weak dylib loading: {1}. Weak dylibs can be hijacked by \
@@ -63,10 +60,7 @@ impl Rule for DoNotUseWeakDylib {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -127,7 +121,12 @@ impl Rule for DoNotUseWeakDylib {
             self.log_pass(context, "Pass", &[&file_name]);
         } else {
             let dylibs = macho.weak_dylibs.join(", ");
-            self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name, &dylibs]);
+            self.log_fail(
+                context,
+                FailureLevel::Warning,
+                "Warning",
+                &[&file_name, &dylibs],
+            );
         }
     }
 }

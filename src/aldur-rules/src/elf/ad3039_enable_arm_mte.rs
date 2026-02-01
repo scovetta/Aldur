@@ -47,7 +47,9 @@ impl EnableArmMTE {
         let descriptor = RuleDescriptor::new(AD3039, "EnableArmMTE")
             .with_category(RuleCategory::Security)
             .with_tags(&["hardening", "memory-safety", "linux-only", "arm-only"])
-            .with_short_description("Enable ARM Memory Tagging Extension (MTE) for hardware-assisted memory safety.")
+            .with_short_description(
+                "Enable ARM Memory Tagging Extension (MTE) for hardware-assisted memory safety.",
+            )
             .with_full_description(
                 "ARM Memory Tagging Extension (MTE) is a hardware feature in ARMv8.5-A and \
                  later that provides memory tagging to detect spatial and temporal memory \
@@ -116,10 +118,7 @@ impl Rule for EnableArmMTE {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

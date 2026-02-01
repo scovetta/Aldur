@@ -7,8 +7,8 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::ElfBinary;
 use aldur_parsers::elf::ph_type;
+use aldur_parsers::ElfBinary;
 
 use crate::rule_ids::AD3023;
 
@@ -52,9 +52,7 @@ impl ProperLoadSegments {
         elf.segments
             .iter()
             .filter(|seg| {
-                seg.p_type == ph_type::PT_LOAD
-                    && seg.is_writable()
-                    && seg.is_executable()
+                seg.p_type == ph_type::PT_LOAD && seg.is_writable() && seg.is_executable()
             })
             .map(|seg| seg.p_vaddr)
             .collect()
@@ -72,10 +70,7 @@ impl Rule for ProperLoadSegments {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

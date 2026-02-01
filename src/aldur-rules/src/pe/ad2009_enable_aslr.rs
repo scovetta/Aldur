@@ -20,9 +20,7 @@ impl EnableAddressSpaceLayoutRandomization {
         let descriptor = RuleDescriptor::new(AD2009, "EnableAddressSpaceLayoutRandomization")
             .with_category(RuleCategory::Security)
             .with_tags(&["critical", "memory-safety", "windows-only", "openssf"])
-            .with_short_description(
-                "Binaries should be linked as DYNAMICBASE for ASLR.",
-            )
+            .with_short_description("Binaries should be linked as DYNAMICBASE for ASLR.")
             .with_full_description(
                 "Binaries should be linked as DYNAMICBASE to be eligible for relocation by \
                  Address Space Layout Randomization (ASLR). ASLR is an important mitigation \
@@ -70,10 +68,7 @@ impl Rule for EnableAddressSpaceLayoutRandomization {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

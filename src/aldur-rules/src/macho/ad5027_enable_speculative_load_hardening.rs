@@ -31,10 +31,7 @@ impl EnableSpeculativeLoadHardeningMachO {
             )
             .with_fix_hint("Compile with -mspeculative-load-hardening (Clang only)")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "Speculative load hardening is enabled on '{0}'.",
-            )
+            .with_message("Pass", "Speculative load hardening is enabled on '{0}'.")
             .with_message(
                 "Pass_DwarfConfirmed",
                 "Speculative load hardening is enabled on '{0}' (confirmed via DWARF debug info).",
@@ -72,8 +69,7 @@ impl EnableSpeculativeLoadHardeningMachO {
                 // Check if -mspeculative-load-hardening flag is present
                 let has_slh = dwarf_info.has_flag("-mspeculative-load-hardening")
                     || dwarf_info.has_flag("speculative-load-hardening");
-                let explicitly_disabled =
-                    dwarf_info.has_flag("-mno-speculative-load-hardening");
+                let explicitly_disabled = dwarf_info.has_flag("-mno-speculative-load-hardening");
 
                 if has_slh && !explicitly_disabled {
                     return (true, true); // (has_slh, is_definitive)
@@ -84,11 +80,7 @@ impl EnableSpeculativeLoadHardeningMachO {
         }
 
         // Heuristic: SLH adds specific patterns that are hard to detect without disassembly
-        let slh_symbols = &[
-            "__llvm_slh_",
-            "__x86_indirect_thunk",
-            "__x86_return_thunk",
-        ];
+        let slh_symbols = &["__llvm_slh_", "__x86_indirect_thunk", "__x86_return_thunk"];
         let has_symbol = macho.has_any_symbol(slh_symbols);
 
         (has_symbol, false) // (has_slh, is_definitive=false for heuristic)
@@ -106,10 +98,7 @@ impl Rule for EnableSpeculativeLoadHardeningMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -135,10 +124,13 @@ impl Rule for EnableSpeculativeLoadHardeningMachO {
         };
 
         // SLH is only supported on x86/x86_64 - check primary architecture
-        let is_x86 = macho.primary_arch().map(|a| {
-            use aldur_parsers::macho::cpu_type;
-            a.cpu_type == cpu_type::CPU_TYPE_X86_64 || a.cpu_type == cpu_type::CPU_TYPE_I386
-        }).unwrap_or(false);
+        let is_x86 = macho
+            .primary_arch()
+            .map(|a| {
+                use aldur_parsers::macho::cpu_type;
+                a.cpu_type == cpu_type::CPU_TYPE_X86_64 || a.cpu_type == cpu_type::CPU_TYPE_I386
+            })
+            .unwrap_or(false);
 
         if !is_x86 {
             return (
@@ -179,10 +171,13 @@ impl Rule for EnableSpeculativeLoadHardeningMachO {
         };
 
         // Only applicable to x86/x86_64
-        let is_x86 = macho.primary_arch().map(|a| {
-            use aldur_parsers::macho::cpu_type;
-            a.cpu_type == cpu_type::CPU_TYPE_X86_64 || a.cpu_type == cpu_type::CPU_TYPE_I386
-        }).unwrap_or(false);
+        let is_x86 = macho
+            .primary_arch()
+            .map(|a| {
+                use aldur_parsers::macho::cpu_type;
+                a.cpu_type == cpu_type::CPU_TYPE_X86_64 || a.cpu_type == cpu_type::CPU_TYPE_I386
+            })
+            .unwrap_or(false);
 
         if !is_x86 {
             self.log_not_applicable(context, "NotApplicable_NotX86", &[&file_name]);
@@ -198,19 +193,9 @@ impl Rule for EnableSpeculativeLoadHardeningMachO {
                 self.log_pass(context, "Pass", &[&file_name]);
             }
         } else if is_definitive {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note_NoSLH",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note_NoSLH", &[&file_name]);
         } else {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note_Heuristic",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note_Heuristic", &[&file_name]);
         }
     }
 }

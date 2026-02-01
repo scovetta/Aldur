@@ -2,7 +2,9 @@
 //!
 //! This module provides helper functions and utilities for testing Aldur rules.
 
-use aldur_core::{AnalysisApplicability, AnalysisConfig, AnalysisContext, Binary, Rule, RuleResult};
+use aldur_core::{
+    AnalysisApplicability, AnalysisConfig, AnalysisContext, Binary, Rule, RuleResult,
+};
 use aldur_parsers::ElfBinary;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -50,7 +52,10 @@ pub fn run_rule(rule: &dyn Rule, binary_name: &str) -> (AnalysisApplicability, V
 }
 
 /// Run a rule on a specific file path
-pub fn run_rule_on_path(rule: &dyn Rule, path: impl AsRef<Path>) -> Option<(AnalysisApplicability, Vec<RuleResult>)> {
+pub fn run_rule_on_path(
+    rule: &dyn Rule,
+    path: impl AsRef<Path>,
+) -> Option<(AnalysisApplicability, Vec<RuleResult>)> {
     let mut context = create_context_from_path(path)?;
     let (applicability, _) = rule.can_analyze(&context);
     if applicability == AnalysisApplicability::ApplicableToSpecifiedTarget {
@@ -62,7 +67,9 @@ pub fn run_rule_on_path(rule: &dyn Rule, path: impl AsRef<Path>) -> Option<(Anal
 /// Assertion helper: check if any result is a Pass
 pub fn assert_any_pass(results: &[RuleResult]) {
     assert!(
-        results.iter().any(|r| r.kind == aldur_core::ResultKind::Pass),
+        results
+            .iter()
+            .any(|r| r.kind == aldur_core::ResultKind::Pass),
         "Expected at least one Pass result, got: {:?}",
         results.iter().map(|r| &r.kind).collect::<Vec<_>>()
     );
@@ -71,7 +78,9 @@ pub fn assert_any_pass(results: &[RuleResult]) {
 /// Assertion helper: check if any result is a Fail
 pub fn assert_any_fail(results: &[RuleResult]) {
     assert!(
-        results.iter().any(|r| r.kind == aldur_core::ResultKind::Fail),
+        results
+            .iter()
+            .any(|r| r.kind == aldur_core::ResultKind::Fail),
         "Expected at least one Fail result, got: {:?}",
         results.iter().map(|r| &r.kind).collect::<Vec<_>>()
     );
@@ -80,7 +89,9 @@ pub fn assert_any_fail(results: &[RuleResult]) {
 /// Assertion helper: check if all results are Pass
 pub fn assert_all_pass(results: &[RuleResult]) {
     assert!(
-        results.iter().all(|r| r.kind == aldur_core::ResultKind::Pass),
+        results
+            .iter()
+            .all(|r| r.kind == aldur_core::ResultKind::Pass),
         "Expected all results to be Pass, got: {:?}",
         results.iter().map(|r| &r.kind).collect::<Vec<_>>()
     );
@@ -89,7 +100,9 @@ pub fn assert_all_pass(results: &[RuleResult]) {
 /// Assertion helper: check if no results are Fail
 pub fn assert_no_fail(results: &[RuleResult]) {
     assert!(
-        !results.iter().any(|r| r.kind == aldur_core::ResultKind::Fail),
+        !results
+            .iter()
+            .any(|r| r.kind == aldur_core::ResultKind::Fail),
         "Expected no Fail results, got: {:?}",
         results.iter().map(|r| &r.kind).collect::<Vec<_>>()
     );

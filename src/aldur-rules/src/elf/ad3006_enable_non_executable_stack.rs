@@ -18,10 +18,14 @@ impl EnableNonExecutableStack {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3006, "EnableNonExecutableStack")
             .with_category(RuleCategory::Security)
-            .with_tags(&["critical", "memory-safety", "android-cdd", "rhel-annocheck", "openssf"])
-            .with_short_description(
-                "Enable non-executable stack.",
-            )
+            .with_tags(&[
+                "critical",
+                "memory-safety",
+                "android-cdd",
+                "rhel-annocheck",
+                "openssf",
+            ])
+            .with_short_description("Enable non-executable stack.")
             .with_full_description(
                 "This check ensures that non-executable stack is enabled. A common type of \
                  exploit is the stack buffer overflow. An application receives, from an attacker, \
@@ -65,10 +69,7 @@ impl Rule for EnableNonExecutableStack {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

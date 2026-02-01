@@ -18,7 +18,13 @@ impl EnableArmBTI {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3017, "EnableArmBTI")
             .with_category(RuleCategory::Security)
-            .with_tags(&["recommended", "control-flow", "arm-only", "android-cdd", "openssf"])
+            .with_tags(&[
+                "recommended",
+                "control-flow",
+                "arm-only",
+                "android-cdd",
+                "openssf",
+            ])
             .with_short_description("Enable ARM Branch Target Identification (BTI).")
             .with_full_description(
                 "ARM Branch Target Identification (BTI) provides hardware-based protection \
@@ -28,10 +34,7 @@ impl EnableArmBTI {
             )
             .with_fix_hint("Compile with -mbranch-protection=standard")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' has ARM BTI enabled.",
-            )
+            .with_message("Pass", "'{0}' has ARM BTI enabled.")
             .with_message(
                 "Warning",
                 "'{0}' does not have ARM BTI enabled. Compile with \
@@ -62,10 +65,7 @@ impl Rule for EnableArmBTI {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

@@ -20,7 +20,9 @@ impl EnableOptimizationMachO {
         let descriptor = RuleDescriptor::new(AD5028, "EnableOptimizationMachO")
             .with_category(RuleCategory::Performance)
             .with_tags(&["recommended", "macos-only"])
-            .with_short_description("Enable compiler optimization (-O2 or higher) for Mach-O binaries.")
+            .with_short_description(
+                "Enable compiler optimization (-O2 or higher) for Mach-O binaries.",
+            )
             .with_full_description(
                 "Production binaries should be compiled with optimization level -O2 or higher. \
                  Unoptimized (-O0) or minimally optimized (-O1) code may have security issues \
@@ -30,10 +32,7 @@ impl EnableOptimizationMachO {
             )
             .with_fix_hint("Compile with -O2 or -O3")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' was compiled with optimization level {1}.",
-            )
+            .with_message("Pass", "'{0}' was compiled with optimization level {1}.")
             .with_message(
                 "Warning_LowOptimization",
                 "'{0}' was compiled with low optimization level {1}. Production builds \
@@ -110,10 +109,7 @@ impl Rule for EnableOptimizationMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -191,11 +187,7 @@ impl Rule for EnableOptimizationMachO {
                 );
             }
             None => {
-                self.log_not_applicable(
-                    context,
-                    "NotApplicable_NoDebugInfo",
-                    &[&file_name],
-                );
+                self.log_not_applicable(context, "NotApplicable_NoDebugInfo", &[&file_name]);
             }
         }
     }

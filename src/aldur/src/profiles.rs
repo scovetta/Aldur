@@ -95,14 +95,16 @@ impl SecurityProfile {
 
     /// Elevate matching rules to Error level
     pub fn elevate_to_error_tagged(mut self, tags: &[&str]) -> Self {
-        self.elevate_to_error.extend(tags.iter().map(|s| s.to_string()));
+        self.elevate_to_error
+            .extend(tags.iter().map(|s| s.to_string()));
         self
     }
 
     /// Elevate matching rules to Warning level
     #[allow(dead_code)]
     pub fn elevate_to_warning_tagged(mut self, tags: &[&str]) -> Self {
-        self.elevate_to_warning.extend(tags.iter().map(|s| s.to_string()));
+        self.elevate_to_warning
+            .extend(tags.iter().map(|s| s.to_string()));
         self
     }
 
@@ -139,7 +141,10 @@ impl SecurityProfile {
     pub fn get_rule_level(&self, descriptor: &RuleDescriptor) -> Option<FailureLevel> {
         // Check error elevation first (highest priority)
         if !self.elevate_to_error.is_empty() {
-            let should_elevate = self.elevate_to_error.iter().any(|tag| descriptor.has_tag(tag));
+            let should_elevate = self
+                .elevate_to_error
+                .iter()
+                .any(|tag| descriptor.has_tag(tag));
             if should_elevate {
                 return Some(FailureLevel::Error);
             }
@@ -147,7 +152,10 @@ impl SecurityProfile {
 
         // Check warning elevation
         if !self.elevate_to_warning.is_empty() {
-            let should_elevate = self.elevate_to_warning.iter().any(|tag| descriptor.has_tag(tag));
+            let should_elevate = self
+                .elevate_to_warning
+                .iter()
+                .any(|tag| descriptor.has_tag(tag));
             if should_elevate {
                 return Some(FailureLevel::Warning);
             }
@@ -174,20 +182,20 @@ impl SecurityProfile {
 /// Default profile: all rules at their default levels, excluding nightly-only rules
 /// Also excludes hardening (use strict), debug-only (for test builds), and optimization (use optimization profile)
 pub fn default_profile() -> SecurityProfile {
-    SecurityProfile::new(
-        "default",
-        "Standard security checks at recommended levels",
-    )
-    .exclude_tagged(&["nightly", "hardening", "debug-only", "optimization"])
+    SecurityProfile::new("default", "Standard security checks at recommended levels")
+        .exclude_tagged(&["nightly", "hardening", "debug-only", "optimization"])
 }
 
 /// Strict profile: all security rules elevated to error, include hardening
 pub fn strict_profile() -> SecurityProfile {
-    SecurityProfile::new(
-        "strict",
-        "Maximum security: all checks at error level",
-    )
-    .elevate_to_error_tagged(&["critical", "recommended", "hardening", "memory-safety", "control-flow"])
+    SecurityProfile::new("strict", "Maximum security: all checks at error level")
+        .elevate_to_error_tagged(&[
+            "critical",
+            "recommended",
+            "hardening",
+            "memory-safety",
+            "control-flow",
+        ])
 }
 
 /// Relaxed profile: only critical security checks
@@ -213,24 +221,23 @@ pub fn android_profile() -> SecurityProfile {
 
 /// RHEL profile: Red Hat Enterprise Linux hardening (annocheck-compatible)
 pub fn rhel_profile() -> SecurityProfile {
-    SecurityProfile::new(
-        "rhel",
-        "Red Hat Enterprise Linux hardening requirements",
-    )
-    .require_any_tagged(&["critical", "rhel-annocheck", "memory-safety", "control-flow"])
-    .exclude_tagged(&["arm-only", "windows-only", "macos-only", "debug-only"])
-    .elevate_to_error_tagged(&["critical", "rhel-annocheck"])
+    SecurityProfile::new("rhel", "Red Hat Enterprise Linux hardening requirements")
+        .require_any_tagged(&[
+            "critical",
+            "rhel-annocheck",
+            "memory-safety",
+            "control-flow",
+        ])
+        .exclude_tagged(&["arm-only", "windows-only", "macos-only", "debug-only"])
+        .elevate_to_error_tagged(&["critical", "rhel-annocheck"])
 }
 
 /// FIPS profile: FIPS 140-2/3 compliance focus
 pub fn fips_profile() -> SecurityProfile {
-    SecurityProfile::new(
-        "fips",
-        "FIPS 140-2/3 compliance-focused checks",
-    )
-    .require_any_tagged(&["critical", "fips", "crypto", "memory-safety"])
-    .exclude_tagged(&["debug-only"])
-    .elevate_to_error_tagged(&["critical", "fips", "crypto"])
+    SecurityProfile::new("fips", "FIPS 140-2/3 compliance-focused checks")
+        .require_any_tagged(&["critical", "fips", "crypto", "memory-safety"])
+        .exclude_tagged(&["debug-only"])
+        .elevate_to_error_tagged(&["critical", "fips", "crypto"])
 }
 
 /// OpenSSF profile: OpenSSF Compiler Hardening Guide compliance
@@ -249,13 +256,10 @@ pub fn fips_profile() -> SecurityProfile {
 ///
 /// See: https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++.html
 pub fn openssf_profile() -> SecurityProfile {
-    SecurityProfile::new(
-        "openssf",
-        "OpenSSF Compiler Hardening Guide compliance",
-    )
-    .require_any_tagged(&["openssf"])
-    .exclude_tagged(&["debug-only"])
-    .elevate_to_error_tagged(&["critical", "openssf"])
+    SecurityProfile::new("openssf", "OpenSSF Compiler Hardening Guide compliance")
+        .require_any_tagged(&["openssf"])
+        .exclude_tagged(&["debug-only"])
+        .elevate_to_error_tagged(&["critical", "openssf"])
 }
 
 /// Nightly profile: includes rules that require Rust nightly compiler features
@@ -277,7 +281,17 @@ pub fn optimization_profile() -> SecurityProfile {
 }
 
 /// Available profile names
-pub const PROFILE_NAMES: &[&str] = &["default", "strict", "relaxed", "android", "rhel", "fips", "openssf", "nightly", "optimization"];
+pub const PROFILE_NAMES: &[&str] = &[
+    "default",
+    "strict",
+    "relaxed",
+    "android",
+    "rhel",
+    "fips",
+    "openssf",
+    "nightly",
+    "optimization",
+];
 
 /// Get a profile by name
 pub fn get_profile(name: &str) -> Option<SecurityProfile> {
@@ -300,13 +314,25 @@ pub fn list_profiles() -> Vec<(&'static str, &'static str)> {
     vec![
         ("default", "Standard security checks at recommended levels"),
         ("strict", "Maximum security: all checks at error level"),
-        ("relaxed", "Only critical security checks (for legacy/compatibility)"),
-        ("android", "Android security requirements (based on Android CDD)"),
+        (
+            "relaxed",
+            "Only critical security checks (for legacy/compatibility)",
+        ),
+        (
+            "android",
+            "Android security requirements (based on Android CDD)",
+        ),
         ("rhel", "Red Hat Enterprise Linux hardening requirements"),
         ("fips", "FIPS 140-2/3 compliance-focused checks"),
         ("openssf", "OpenSSF Compiler Hardening Guide compliance"),
-        ("nightly", "All checks including those requiring Rust nightly compiler"),
-        ("optimization", "Performance and binary size optimization checks"),
+        (
+            "nightly",
+            "All checks including those requiring Rust nightly compiler",
+        ),
+        (
+            "optimization",
+            "Performance and binary size optimization checks",
+        ),
     ]
 }
 
@@ -315,11 +341,20 @@ pub fn list_profiles() -> Vec<(&'static str, &'static str)> {
 pub fn standard_tags() -> Vec<(&'static str, &'static str)> {
     vec![
         // Severity
-        ("critical", "Must-have security features (PIE, NX, stack protection)"),
+        (
+            "critical",
+            "Must-have security features (PIE, NX, stack protection)",
+        ),
         ("recommended", "Strongly recommended security features"),
-        ("hardening", "Extra hardening for high-security environments"),
+        (
+            "hardening",
+            "Extra hardening for high-security environments",
+        ),
         ("debug-only", "Only for debug/test builds (sanitizers)"),
-        ("nightly", "Requires Rust nightly compiler (unstable features)"),
+        (
+            "nightly",
+            "Requires Rust nightly compiler (unstable features)",
+        ),
         ("optimization", "Performance and binary size optimizations"),
         // Features
         ("memory-safety", "Memory corruption mitigations"),

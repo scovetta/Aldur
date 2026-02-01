@@ -29,10 +29,7 @@ impl DoNotUseRpath {
             )
             .with_fix_hint("Link with -Wl,--enable-new-dtags or remove -rpath")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' does not use DT_RPATH.",
-            )
+            .with_message("Pass", "'{0}' does not use DT_RPATH.")
             .with_message(
                 "Warning",
                 "'{0}' uses deprecated DT_RPATH: '{1}'. Consider using RUNPATH instead \
@@ -59,10 +56,7 @@ impl Rule for DoNotUseRpath {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

@@ -7,7 +7,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD6006;
 

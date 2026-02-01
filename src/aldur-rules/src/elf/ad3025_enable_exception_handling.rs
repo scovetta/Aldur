@@ -21,7 +21,9 @@ impl EnableExceptionHandling {
         let descriptor = RuleDescriptor::new(AD3025, "EnableExceptionHandling")
             .with_category(RuleCategory::Security)
             .with_tags(&["recommended", "memory-safety", "openssf"])
-            .with_short_description("Binaries should include exception handling frames for thread safety.")
+            .with_short_description(
+                "Binaries should include exception handling frames for thread safety.",
+            )
             .with_full_description(
                 "The -fexceptions compiler option generates frame unwind information for \
                  all functions. This allows glibc's implementation of POSIX thread \
@@ -64,10 +66,7 @@ impl Rule for EnableExceptionHandling {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -127,12 +126,7 @@ impl Rule for EnableExceptionHandling {
             self.log_pass(context, "Pass", &[&file_name]);
         } else {
             // Note level - important for multi-threaded code but not a hard requirement
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note", &[&file_name]);
         }
     }
 }

@@ -30,10 +30,7 @@ impl RustEnableCET {
             )
             .with_fix_hint("Use RUSTFLAGS='-Z cf-protection=full' (nightly only)")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "'{0}' is a Rust binary with Intel CET enabled.",
-            )
+            .with_message("Pass", "'{0}' is a Rust binary with Intel CET enabled.")
             .with_message(
                 "Pass_IBT",
                 "'{0}' is a Rust binary with Intel CET IBT (Indirect Branch Tracking) enabled.",
@@ -53,10 +50,7 @@ impl RustEnableCET {
                 "'{0}' is a Rust binary with only partial CET protection. Consider \
                  enabling both IBT and Shadow Stack with '-Z cf-protection=full'.",
             )
-            .with_message(
-                "NotApplicable_NotRust",
-                "'{0}' is not a Rust binary.",
-            )
+            .with_message("NotApplicable_NotRust", "'{0}' is not a Rust binary.")
             .with_message(
                 "NotApplicable_NotX86",
                 "'{0}' is not an x86_64 binary. Intel CET is only available on x86_64.",
@@ -82,10 +76,7 @@ impl Rule for RustEnableCET {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -182,12 +173,7 @@ impl Rule for RustEnableCET {
                 &[&file_name],
             );
         } else {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note_NoCET",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note_NoCET", &[&file_name]);
         }
     }
 }

@@ -20,9 +20,7 @@ impl EnableHighEntropyVirtualAddresses {
         let descriptor = RuleDescriptor::new(AD2015, "EnableHighEntropyVirtualAddresses")
             .with_category(RuleCategory::Security)
             .with_tags(&["critical", "memory-safety", "windows-only", "openssf"])
-            .with_short_description(
-                "Binaries should be marked as high entropy ASLR compatible.",
-            )
+            .with_short_description("Binaries should be marked as high entropy ASLR compatible.")
             .with_full_description(
                 "Binaries should be marked as high entropy Address Space Layout Randomization \
                  (ASLR) compatible. High entropy allows ASLR to be more effective in mitigating \
@@ -74,10 +72,7 @@ impl Rule for EnableHighEntropyVirtualAddresses {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -139,12 +134,7 @@ impl Rule for EnableHighEntropyVirtualAddresses {
                 &[&file_name],
             );
         } else {
-            self.log_fail(
-                context,
-                FailureLevel::Error,
-                "Error_Neither",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Error, "Error_Neither", &[&file_name]);
         }
     }
 }

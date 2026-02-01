@@ -7,8 +7,8 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, Binary, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{DwarfInfo, PeBinary};
 use aldur_parsers::dwarf::DwarfLanguage;
+use aldur_parsers::{DwarfInfo, PeBinary};
 
 use crate::rule_ids::AD2035;
 
@@ -21,9 +21,7 @@ impl PeReportCompilerDataDwarf {
         let descriptor = RuleDescriptor::new(AD2035, "PeReportCompilerDataDwarf")
             .with_category(RuleCategory::Reporting)
             .with_tags(&["windows-only"])
-            .with_short_description(
-                "Report compiler data from DWARF debug info in PE binaries.",
-            )
+            .with_short_description("Report compiler data from DWARF debug info in PE binaries.")
             .with_full_description(
                 "This rule reports compiler information extracted from DWARF debug information \
                  in PE binaries. This is useful for understanding the toolchain used to build \
@@ -32,10 +30,7 @@ impl PeReportCompilerDataDwarf {
             )
             .with_fix_hint("Informational only - no fix required")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "CompilerData",
-                "DWARF compiler data for '{0}':\n{1}",
-            )
+            .with_message("CompilerData", "DWARF compiler data for '{0}':\n{1}")
             .with_message(
                 "NotApplicable_NoDwarf",
                 "'{0}' does not contain DWARF debug information.",

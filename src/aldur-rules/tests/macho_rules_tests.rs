@@ -10,8 +10,14 @@ fn verify_rule_descriptor(rule: &dyn Rule, expected_id: &str, expected_name: &st
     let desc = rule.descriptor();
     assert_eq!(desc.id, expected_id, "Rule ID mismatch");
     assert_eq!(desc.name, expected_name, "Rule name mismatch");
-    assert!(!desc.short_description.is_empty(), "Short description should not be empty");
-    assert!(!desc.full_description.is_empty(), "Full description should not be empty");
+    assert!(
+        !desc.short_description.is_empty(),
+        "Short description should not be empty"
+    );
+    assert!(
+        !desc.full_description.is_empty(),
+        "Full description should not be empty"
+    );
 }
 
 mod ad5001_pie_tests {
@@ -68,8 +74,14 @@ mod ad5003_stack_protector_tests {
     fn test_has_messages() {
         let rule = EnableStackProtectorMachO::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Error"), "Should have Error message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Error"),
+            "Should have Error message"
+        );
     }
 }
 
@@ -229,10 +241,22 @@ mod ad5012_segment_permissions_tests {
     fn test_has_messages() {
         let rule = ValidateSegmentPermissions::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Error_WritableText"), "Should have Error_WritableText message");
-        assert!(desc.messages.contains_key("Error_ExecutableData"), "Should have Error_ExecutableData message");
-        assert!(desc.messages.contains_key("Error_WXViolation"), "Should have Error_WXViolation message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Error_WritableText"),
+            "Should have Error_WritableText message"
+        );
+        assert!(
+            desc.messages.contains_key("Error_ExecutableData"),
+            "Should have Error_ExecutableData message"
+        );
+        assert!(
+            desc.messages.contains_key("Error_WXViolation"),
+            "Should have Error_WXViolation message"
+        );
     }
 }
 
@@ -256,9 +280,18 @@ mod ad5013_banned_apis_tests {
     fn test_has_messages() {
         let rule = DoNotUseBannedApisMachO::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Warning"), "Should have Warning message");
-        assert!(desc.messages.contains_key("Error_Critical"), "Should have Error_Critical message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Warning"),
+            "Should have Warning message"
+        );
+        assert!(
+            desc.messages.contains_key("Error_Critical"),
+            "Should have Error_Critical message"
+        );
     }
 }
 
@@ -586,8 +619,8 @@ mod ad5040_unchecked_optimization_tests {
 }
 
 mod all_rules_tests {
-    use aldur_rules::macho::all_rules;
     use aldur_rules::macho;
+    use aldur_rules::macho::all_rules;
 
     #[test]
     fn test_all_rules_count() {
@@ -609,7 +642,11 @@ mod all_rules_tests {
         let rules = all_rules();
         for rule in &rules {
             let id = &rule.descriptor().id;
-            assert!(id.starts_with("AD50"), "Mach-O rules should have AD50xx IDs, got {}", id);
+            assert!(
+                id.starts_with("AD50"),
+                "Mach-O rules should have AD50xx IDs, got {}",
+                id
+            );
         }
     }
 

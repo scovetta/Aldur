@@ -102,8 +102,7 @@ impl EnableShadowCallStack {
             let compiler_type = &cu.parsed_info.compiler_type;
             if matches!(
                 compiler_type,
-                aldur_parsers::dwarf::CompilerType::Clang
-                    | aldur_parsers::dwarf::CompilerType::Gcc
+                aldur_parsers::dwarf::CompilerType::Clang | aldur_parsers::dwarf::CompilerType::Gcc
             ) {
                 is_clang_or_gcc = true;
             }

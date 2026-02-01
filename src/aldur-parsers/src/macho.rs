@@ -7,7 +7,7 @@
 //! - Security flags
 //! - Symbol table access
 
-use aldur_core::{Binary, BinaryFormat, BinaryType, AldurError, Result};
+use aldur_core::{AldurError, Binary, BinaryFormat, BinaryType, Result};
 use goblin::mach::{Mach, MachO as GoblinMachO};
 use std::path::{Path, PathBuf};
 
@@ -226,7 +226,9 @@ impl MachOBinary {
     /// Load a Mach-O binary from a file with a custom memory budget
     pub fn load_with_budget(path: impl AsRef<Path>, budget: &MemoryBudget) -> Result<Self> {
         let path = path.as_ref();
-        let data = budget.load(path).map_err(|e| AldurError::binary_load(path.display().to_string(), e.to_string()))?;
+        let data = budget
+            .load(path)
+            .map_err(|e| AldurError::binary_load(path.display().to_string(), e.to_string()))?;
         Self::parse(path.to_path_buf(), data)
     }
 
@@ -239,11 +241,30 @@ impl MachOBinary {
         let mach = Mach::parse(&data).map_err(|e| AldurError::MachOParseError(e.to_string()))?;
 
         // Extract architecture info and load command info
-        let (is_fat, architectures, has_weak_dylib, weak_dylibs, rpaths, has_code_signature, is_encrypted, segments) = match &mach {
+        let (
+            is_fat,
+            architectures,
+            has_weak_dylib,
+            weak_dylibs,
+            rpaths,
+            has_code_signature,
+            is_encrypted,
+            segments,
+        ) = match &mach {
             Mach::Binary(macho) => {
-                let (weak, weak_names, rpath_list, code_sig, encrypted) = Self::extract_load_commands(macho);
+                let (weak, weak_names, rpath_list, code_sig, encrypted) =
+                    Self::extract_load_commands(macho);
                 let segs = Self::extract_segments(macho);
-                (false, vec![Self::extract_arch(macho)], weak, weak_names, rpath_list, code_sig, encrypted, segs)
+                (
+                    false,
+                    vec![Self::extract_arch(macho)],
+                    weak,
+                    weak_names,
+                    rpath_list,
+                    code_sig,
+                    encrypted,
+                    segs,
+                )
             }
             Mach::Fat(fat) => {
                 let mut archs = Vec::new();
@@ -256,7 +277,8 @@ impl MachOBinary {
                 for i in 0..fat.narches {
                     if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
                         archs.push(Self::extract_arch(macho));
-                        let (weak, weak_names, rpath_list, code_sig, encrypted) = Self::extract_load_commands(macho);
+                        let (weak, weak_names, rpath_list, code_sig, encrypted) =
+                            Self::extract_load_commands(macho);
                         any_weak |= weak;
                         any_code_sig |= code_sig;
                         any_encrypted |= encrypted;
@@ -265,7 +287,16 @@ impl MachOBinary {
                         all_segments.extend(Self::extract_segments(macho));
                     }
                 }
-                (true, archs, any_weak, all_weak_dylibs, all_rpaths, any_code_sig, any_encrypted, all_segments)
+                (
+                    true,
+                    archs,
+                    any_weak,
+                    all_weak_dylibs,
+                    all_rpaths,
+                    any_code_sig,
+                    any_encrypted,
+                    all_segments,
+                )
             }
         };
 
@@ -361,7 +392,13 @@ impl MachOBinary {
             rpaths.push(rpath.to_string());
         }
 
-        (has_weak_dylib, weak_dylibs, rpaths, has_code_signature, is_encrypted)
+        (
+            has_weak_dylib,
+            weak_dylibs,
+            rpaths,
+            has_code_signature,
+            is_encrypted,
+        )
     }
 
     fn extract_arch(macho: &GoblinMachO) -> MachOArch {
@@ -459,7 +496,9 @@ impl MachOBinary {
 
     /// Check if any architecture allows stack execution
     pub fn allows_stack_execution(&self) -> bool {
-        self.architectures.iter().any(|a| a.allows_stack_execution())
+        self.architectures
+            .iter()
+            .any(|a| a.allows_stack_execution())
     }
 
     /// Get the file type of the primary architecture
@@ -588,7 +627,9 @@ impl MachOBinary {
         // For executables, check if MH_NO_HEAP_EXECUTION is set
         // Note: This flag may not be set on all binaries, so we check
         // if it's set on any architecture
-        self.architectures.iter().all(|a| a.disallows_heap_execution())
+        self.architectures
+            .iter()
+            .all(|a| a.disallows_heap_execution())
     }
 
     /// Check if any architecture is ARM64 (Apple Silicon)
@@ -598,7 +639,9 @@ impl MachOBinary {
 
     /// Check if all architectures use two-level namespace
     pub fn has_two_level_namespace(&self) -> bool {
-        self.architectures.iter().all(|a| a.has_two_level_namespace())
+        self.architectures
+            .iter()
+            .all(|a| a.has_two_level_namespace())
     }
 
     /// Check if this is a shared library (dylib or bundle)
@@ -634,9 +677,9 @@ impl MachOBinary {
 
     /// Check if __TEXT segment is writable (should not be)
     pub fn has_writable_text_segment(&self) -> bool {
-        self.segments.iter().any(|s| {
-            s.name == "__TEXT" && (s.initprot & segment_flags::VM_PROT_WRITE != 0)
-        })
+        self.segments
+            .iter()
+            .any(|s| s.name == "__TEXT" && (s.initprot & segment_flags::VM_PROT_WRITE != 0))
     }
 
     /// Get segments with both write and execute permissions (W^X violation)
@@ -866,4 +909,3 @@ mod tests {
         assert!(segment.initprot & segment_flags::VM_PROT_WRITE == 0);
     }
 }
-

@@ -12,14 +12,7 @@ use aldur_parsers::ElfBinary;
 use crate::rule_ids::AD3013;
 
 /// Paths that are considered insecure in RUNPATH
-const INSECURE_PATH_PATTERNS: &[&str] = &[
-    "/tmp",
-    "/var/tmp",
-    "/home",
-    "/users",
-    ".",
-    "..",
-];
+const INSECURE_PATH_PATTERNS: &[&str] = &["/tmp", "/var/tmp", "/home", "/users", ".", ".."];
 
 pub struct ValidateRunpath {
     descriptor: RuleDescriptor,
@@ -39,10 +32,7 @@ impl ValidateRunpath {
             )
             .with_fix_hint("Use absolute paths to non-writable directories in RUNPATH")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' has no RUNPATH or uses only secure paths.",
-            )
+            .with_message("Pass", "'{0}' has no RUNPATH or uses only secure paths.")
             .with_message(
                 "Warning_InsecurePath",
                 "'{0}' has RUNPATH containing potentially insecure path: '{1}'. \
@@ -96,10 +86,7 @@ impl Rule for ValidateRunpath {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

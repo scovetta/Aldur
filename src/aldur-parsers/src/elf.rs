@@ -6,7 +6,7 @@
 //! - Dynamic section for security flags
 //! - GNU segments (RELRO, stack)
 
-use aldur_core::{Binary, BinaryFormat, BinaryType, AldurError, Result};
+use aldur_core::{AldurError, Binary, BinaryFormat, BinaryType, Result};
 use goblin::elf::{Elf, ProgramHeader};
 use std::path::{Path, PathBuf};
 
@@ -91,7 +91,7 @@ pub mod gnu_property {
     pub const GNU_PROPERTY_AARCH64_FEATURE_1_AND: u32 = 0xc0000000;
 
     // x86 feature bits (CET)
-    pub const GNU_PROPERTY_X86_FEATURE_1_IBT: u32 = 1 << 0;   // Indirect Branch Tracking
+    pub const GNU_PROPERTY_X86_FEATURE_1_IBT: u32 = 1 << 0; // Indirect Branch Tracking
     pub const GNU_PROPERTY_X86_FEATURE_1_SHSTK: u32 = 1 << 1; // Shadow Stack
 
     // AArch64 feature bits
@@ -227,7 +227,9 @@ impl ElfBinary {
     /// Load an ELF binary from a file with a custom memory budget
     pub fn load_with_budget(path: impl AsRef<Path>, budget: &MemoryBudget) -> Result<Self> {
         let path = path.as_ref();
-        let data = budget.load(path).map_err(|e| AldurError::binary_load(path.display().to_string(), e.to_string()))?;
+        let data = budget
+            .load(path)
+            .map_err(|e| AldurError::binary_load(path.display().to_string(), e.to_string()))?;
         Self::parse(path.to_path_buf(), data)
     }
 
@@ -291,12 +293,14 @@ impl ElfBinary {
                         }
                     }
                     d if d == dyn_tag::DT_RPATH => {
-                        if let Some(ref dynstrtab) = elf.dynstrtab.get_at(dyn_entry.d_val as usize) {
+                        if let Some(ref dynstrtab) = elf.dynstrtab.get_at(dyn_entry.d_val as usize)
+                        {
                             rpath = Some(dynstrtab.to_string());
                         }
                     }
                     d if d == dyn_tag::DT_RUNPATH => {
-                        if let Some(ref dynstrtab) = elf.dynstrtab.get_at(dyn_entry.d_val as usize) {
+                        if let Some(ref dynstrtab) = elf.dynstrtab.get_at(dyn_entry.d_val as usize)
+                        {
                             runpath = Some(dynstrtab.to_string());
                         }
                     }
@@ -310,13 +314,17 @@ impl ElfBinary {
 
         // Parse .note.gnu.property for CET and ARM features
         if let Some(note_section) = elf.section_headers.iter().find(|sh| {
-            elf.shdr_strtab.get_at(sh.sh_name).map(|n| n == ".note.gnu.property").unwrap_or(false)
+            elf.shdr_strtab
+                .get_at(sh.sh_name)
+                .map(|n| n == ".note.gnu.property")
+                .unwrap_or(false)
         }) {
             let offset = note_section.sh_offset as usize;
             let size = note_section.sh_size as usize;
             if offset + size <= data.len() {
                 let note_data = &data[offset..offset + size];
-                let (x86_features, aarch64_features) = parse_gnu_property_notes(note_data, is_64_bit);
+                let (x86_features, aarch64_features) =
+                    parse_gnu_property_notes(note_data, is_64_bit);
                 gnu_property_x86_features = x86_features;
                 gnu_property_aarch64_features = aarch64_features;
             }
@@ -324,9 +332,10 @@ impl ElfBinary {
 
         // Check for exception handling sections (.eh_frame, .eh_frame_hdr, .gcc_except_table)
         let has_exception_handling = elf.section_headers.iter().any(|sh| {
-            elf.shdr_strtab.get_at(sh.sh_name).map(|name| {
-                matches!(name, ".eh_frame" | ".eh_frame_hdr" | ".gcc_except_table")
-            }).unwrap_or(false)
+            elf.shdr_strtab
+                .get_at(sh.sh_name)
+                .map(|name| matches!(name, ".eh_frame" | ".eh_frame_hdr" | ".gcc_except_table"))
+                .unwrap_or(false)
         });
 
         // Detect if this is a Rust binary by looking for Rust-specific symbols
@@ -415,12 +424,16 @@ impl ElfBinary {
 
     /// Get the GNU_STACK segment if present
     pub fn gnu_stack_segment(&self) -> Option<&SegmentInfo> {
-        self.segments.iter().find(|s| s.p_type == ph_type::PT_GNU_STACK)
+        self.segments
+            .iter()
+            .find(|s| s.p_type == ph_type::PT_GNU_STACK)
     }
 
     /// Get the GNU_RELRO segment if present
     pub fn gnu_relro_segment(&self) -> Option<&SegmentInfo> {
-        self.segments.iter().find(|s| s.p_type == ph_type::PT_GNU_RELRO)
+        self.segments
+            .iter()
+            .find(|s| s.p_type == ph_type::PT_GNU_RELRO)
     }
 
     /// Check if the binary has any of the specified symbols
@@ -592,7 +605,9 @@ impl ElfBinary {
     pub fn has_exception_handling(&self) -> bool {
         if let Ok(elf) = Elf::parse(&self.data) {
             for section in &elf.section_headers {
-                if let Some(".eh_frame" | ".eh_frame_hdr" | ".gcc_except_table") = elf.shdr_strtab.get_at(section.sh_name) {
+                if let Some(".eh_frame" | ".eh_frame_hdr" | ".gcc_except_table") =
+                    elf.shdr_strtab.get_at(section.sh_name)
+                {
                     return true;
                 }
             }
@@ -634,9 +649,8 @@ fn detect_rust_binary(elf: &Elf) -> bool {
     ];
 
     // Check both dynamic and regular symbols
-    let check_symbol = |name: &str| -> bool {
-        rust_indicators.iter().any(|pattern| name.contains(pattern))
-    };
+    let check_symbol =
+        |name: &str| -> bool { rust_indicators.iter().any(|pattern| name.contains(pattern)) };
 
     // Check dynamic symbols
     for sym in elf.dynsyms.iter() {
@@ -669,9 +683,24 @@ fn parse_gnu_property_notes(data: &[u8], is_64_bit: bool) -> (Option<u32>, Optio
     let mut offset = 0;
 
     while offset + 12 <= data.len() {
-        let namesz = u32::from_le_bytes([data[offset], data[offset + 1], data[offset + 2], data[offset + 3]]) as usize;
-        let descsz = u32::from_le_bytes([data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7]]) as usize;
-        let note_type = u32::from_le_bytes([data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11]]);
+        let namesz = u32::from_le_bytes([
+            data[offset],
+            data[offset + 1],
+            data[offset + 2],
+            data[offset + 3],
+        ]) as usize;
+        let descsz = u32::from_le_bytes([
+            data[offset + 4],
+            data[offset + 5],
+            data[offset + 6],
+            data[offset + 7],
+        ]) as usize;
+        let note_type = u32::from_le_bytes([
+            data[offset + 8],
+            data[offset + 9],
+            data[offset + 10],
+            data[offset + 11],
+        ]);
 
         offset += 12;
 
@@ -701,12 +730,16 @@ fn parse_gnu_property_notes(data: &[u8], is_64_bit: bool) -> (Option<u32>, Optio
 
             while prop_offset + 8 <= desc_end {
                 let prop_type = u32::from_le_bytes([
-                    data[prop_offset], data[prop_offset + 1],
-                    data[prop_offset + 2], data[prop_offset + 3]
+                    data[prop_offset],
+                    data[prop_offset + 1],
+                    data[prop_offset + 2],
+                    data[prop_offset + 3],
                 ]);
                 let prop_size = u32::from_le_bytes([
-                    data[prop_offset + 4], data[prop_offset + 5],
-                    data[prop_offset + 6], data[prop_offset + 7]
+                    data[prop_offset + 4],
+                    data[prop_offset + 5],
+                    data[prop_offset + 6],
+                    data[prop_offset + 7],
                 ]) as usize;
 
                 prop_offset += 8;
@@ -717,8 +750,10 @@ fn parse_gnu_property_notes(data: &[u8], is_64_bit: bool) -> (Option<u32>, Optio
 
                 if prop_size >= 4 {
                     let value = u32::from_le_bytes([
-                        data[prop_offset], data[prop_offset + 1],
-                        data[prop_offset + 2], data[prop_offset + 3]
+                        data[prop_offset],
+                        data[prop_offset + 1],
+                        data[prop_offset + 2],
+                        data[prop_offset + 3],
                     ]);
 
                     match prop_type {

@@ -8,7 +8,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD2030;
 
@@ -154,11 +154,7 @@ impl Rule for EnableCastGuard {
 
         // Skip .NET binaries - CastGuard is for native C++ only
         if pe.is_dotnet() {
-            self.log_not_applicable(
-                context,
-                "NotApplicable_NotCpp",
-                &[&file_name],
-            );
+            self.log_not_applicable(context, "NotApplicable_NotCpp", &[&file_name]);
             return;
         }
 

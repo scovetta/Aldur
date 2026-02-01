@@ -82,8 +82,7 @@ impl RustEnableSecureSourceHashMachO {
         if let Ok(dwarf) = DwarfInfo::parse(macho.data()) {
             for cu in &dwarf.compilation_units {
                 if cu.compiler_info.producer.contains("rustc")
-                    || cu.compiler_info.language
-                        == aldur_parsers::dwarf::DwarfLanguage::Rust
+                    || cu.compiler_info.language == aldur_parsers::dwarf::DwarfLanguage::Rust
                 {
                     return true;
                 }
@@ -154,10 +153,7 @@ impl Rule for RustEnableSecureSourceHashMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

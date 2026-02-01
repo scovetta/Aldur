@@ -83,13 +83,15 @@ impl PdbFile {
     /// Load a PDB file
     pub fn load(path: impl AsRef<Path>) -> Result<Self> {
         let path = path.as_ref().to_path_buf();
-        let file = File::open(&path).map_err(|e| AldurError::pdb_load(path.display().to_string(), e.to_string()))?;
+        let file = File::open(&path)
+            .map_err(|e| AldurError::pdb_load(path.display().to_string(), e.to_string()))?;
 
         Self::parse(path, file)
     }
 
     fn parse(path: PathBuf, file: File) -> Result<Self> {
-        let mut pdb = PDB::open(file).map_err(|e| AldurError::pdb_load(path.display().to_string(), e.to_string()))?;
+        let mut pdb = PDB::open(file)
+            .map_err(|e| AldurError::pdb_load(path.display().to_string(), e.to_string()))?;
 
         let mut result = PdbFile {
             path,
@@ -161,11 +163,14 @@ impl PdbFile {
                             );
                             compiland.compiler.language = format!("{:?}", compile_info.language);
                             // Extract compiler name/version string from PDB
-                            compiland.compiler.name = compile_info.version_string.to_string().into_owned();
+                            compiland.compiler.name =
+                                compile_info.version_string.to_string().into_owned();
                             // Extract security check flags
-                            compiland.compiler.security_checks = Some(compile_info.flags.security_checks);
+                            compiland.compiler.security_checks =
+                                Some(compile_info.flags.security_checks);
                             compiland.compiler.sdl_checks = Some(compile_info.flags.sdl);
-                            compiland.has_security_checks = Some(compile_info.flags.security_checks);
+                            compiland.has_security_checks =
+                                Some(compile_info.flags.security_checks);
                         }
                     }
                 }
@@ -183,8 +188,12 @@ impl PdbFile {
                                 let (algo, checksum_bytes) = match &file_info.checksum {
                                     pdb::FileChecksum::None => (None, Vec::new()),
                                     pdb::FileChecksum::Md5(bytes) => (Some("MD5"), bytes.to_vec()),
-                                    pdb::FileChecksum::Sha1(bytes) => (Some("SHA-1"), bytes.to_vec()),
-                                    pdb::FileChecksum::Sha256(bytes) => (Some("SHA-256"), bytes.to_vec()),
+                                    pdb::FileChecksum::Sha1(bytes) => {
+                                        (Some("SHA-1"), bytes.to_vec())
+                                    }
+                                    pdb::FileChecksum::Sha256(bytes) => {
+                                        (Some("SHA-256"), bytes.to_vec())
+                                    }
                                 };
 
                                 result.source_files.push(SourceFileInfo {
@@ -206,24 +215,16 @@ impl PdbFile {
 
     /// Check if any compiland uses an insecure checksum algorithm (MD5 or SHA-1)
     pub fn has_insecure_source_hashing(&self) -> bool {
-        self.source_files.iter().any(|f| {
-            matches!(
-                f.checksum_algorithm.as_deref(),
-                Some("MD5") | Some("SHA-1")
-            )
-        })
+        self.source_files
+            .iter()
+            .any(|f| matches!(f.checksum_algorithm.as_deref(), Some("MD5") | Some("SHA-1")))
     }
 
     /// Get compilands with insecure source hashing
     pub fn insecure_hash_compilands(&self) -> Vec<&SourceFileInfo> {
         self.source_files
             .iter()
-            .filter(|f| {
-                matches!(
-                    f.checksum_algorithm.as_deref(),
-                    Some("MD5") | Some("SHA-1")
-                )
-            })
+            .filter(|f| matches!(f.checksum_algorithm.as_deref(), Some("MD5") | Some("SHA-1")))
             .collect()
     }
 
@@ -264,7 +265,9 @@ impl PdbFile {
     pub fn meets_minimum_version(&self, major: u16, minor: u16, build: u16) -> bool {
         self.compilands.iter().all(|c| {
             let v = c.compiler.backend_version;
-            v.0 > major || (v.0 == major && v.1 > minor) || (v.0 == major && v.1 == minor && v.2 >= build)
+            v.0 > major
+                || (v.0 == major && v.1 > minor)
+                || (v.0 == major && v.1 == minor && v.2 >= build)
         })
     }
 }

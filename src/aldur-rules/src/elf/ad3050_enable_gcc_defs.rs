@@ -106,10 +106,7 @@ impl Rule for EnableGccDefs {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -175,7 +172,11 @@ impl Rule for EnableGccDefs {
                 context,
                 FailureLevel::Warning,
                 "Warning_UndefinedSymbols",
-                &[&file_name, &undefined_symbols.len().to_string(), &symbol_list],
+                &[
+                    &file_name,
+                    &undefined_symbols.len().to_string(),
+                    &symbol_list,
+                ],
             );
         }
     }

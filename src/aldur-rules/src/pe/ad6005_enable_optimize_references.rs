@@ -50,9 +50,10 @@ impl EnableOptimizeReferences {
     fn check_optimize_references(pe: &PeBinary) -> Option<bool> {
         // /OPT:REF is incompatible with incremental linking
         // If we see .textbss section, incremental linking is enabled and /OPT:REF is disabled
-        let has_incremental = pe.sections.iter().any(|section| {
-            section.name.trim_end_matches('\0') == ".textbss"
-        });
+        let has_incremental = pe
+            .sections
+            .iter()
+            .any(|section| section.name.trim_end_matches('\0') == ".textbss");
 
         if has_incremental {
             // Incremental linking means /OPT:REF is disabled
@@ -127,12 +128,7 @@ impl Rule for EnableOptimizeReferences {
             }
             Some(false) => {
                 // Incremental linking detected, /OPT:REF is disabled
-                self.log_fail(
-                    context,
-                    FailureLevel::Warning,
-                    "Warning",
-                    &[&file_name],
-                );
+                self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name]);
             }
             None => {
                 // Can't determine definitively, but no signs of it being disabled

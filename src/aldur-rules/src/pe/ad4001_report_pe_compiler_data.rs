@@ -8,7 +8,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD4001;
 
@@ -30,10 +30,7 @@ impl ReportPECompilerData {
             )
             .with_fix_hint("Informational only - no fix required")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "CompilerData",
-                "Compiler data for '{0}': {1}",
-            )
+            .with_message("CompilerData", "Compiler data for '{0}': {1}")
             .with_message(
                 "NotApplicable_PdbNotFound",
                 "'{0}' does not have an associated PDB file.",
@@ -50,7 +47,10 @@ impl ReportPECompilerData {
         let mut lines = Vec::new();
 
         // Header
-        lines.push("Module,Compiler,Language,FrontendVersion,BackendVersion,SecurityChecks,SdlChecks".to_string());
+        lines.push(
+            "Module,Compiler,Language,FrontendVersion,BackendVersion,SecurityChecks,SdlChecks"
+                .to_string(),
+        );
 
         for compiland in &pdb.compilands {
             let compiler = &compiland.compiler;
@@ -74,9 +74,19 @@ impl ReportPECompilerData {
                 continue;
             }
 
-            let module_name = compiland.name.rsplit(['\\', '/']).next().unwrap_or(&compiland.name);
-            let security = compiler.security_checks.map(|b| if b { "Yes" } else { "No" }).unwrap_or("Unknown");
-            let sdl = compiler.sdl_checks.map(|b| if b { "Yes" } else { "No" }).unwrap_or("Unknown");
+            let module_name = compiland
+                .name
+                .rsplit(['\\', '/'])
+                .next()
+                .unwrap_or(&compiland.name);
+            let security = compiler
+                .security_checks
+                .map(|b| if b { "Yes" } else { "No" })
+                .unwrap_or("Unknown");
+            let sdl = compiler
+                .sdl_checks
+                .map(|b| if b { "Yes" } else { "No" })
+                .unwrap_or("Unknown");
 
             // Use actual compiler name from PDB if available, otherwise infer from version
             let compiler_name = if !compiler.name.is_empty() {
@@ -234,7 +244,11 @@ impl Rule for ReportPECompilerData {
             self.log_not_applicable(
                 context,
                 "NotApplicable_InvalidMetadata",
-                &[&file_name, self.name(), "No compiler information found in PDB"],
+                &[
+                    &file_name,
+                    self.name(),
+                    "No compiler information found in PDB",
+                ],
             );
             return;
         }

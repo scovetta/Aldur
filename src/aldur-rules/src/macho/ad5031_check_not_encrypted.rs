@@ -31,10 +31,7 @@ impl CheckNotEncrypted {
             )
             .with_fix_hint("Informational - decryption required for analysis")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "'{0}' is not encrypted and can be fully analyzed.",
-            )
+            .with_message("Pass", "'{0}' is not encrypted and can be fully analyzed.")
             .with_message(
                 "Note_Encrypted",
                 "'{0}' is encrypted (FairPlay DRM). Some security analysis may be limited. \
@@ -61,10 +58,7 @@ impl Rule for CheckNotEncrypted {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -124,12 +118,7 @@ impl Rule for CheckNotEncrypted {
         if !macho.is_encrypted {
             self.log_pass(context, "Pass", &[&file_name]);
         } else {
-            self.log_fail(
-                context,
-                FailureLevel::Note,
-                "Note_Encrypted",
-                &[&file_name],
-            );
+            self.log_fail(context, FailureLevel::Note, "Note_Encrypted", &[&file_name]);
         }
     }
 }

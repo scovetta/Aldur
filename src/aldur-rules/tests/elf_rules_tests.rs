@@ -3,7 +3,9 @@
 //! These tests verify that each ELF rule correctly detects security issues
 //! in test binaries compiled with various security configurations.
 
-use aldur_core::{AnalysisApplicability, AnalysisConfig, AnalysisContext, Binary, ResultKind, Rule};
+use aldur_core::{
+    AnalysisApplicability, AnalysisConfig, AnalysisContext, Binary, ResultKind, Rule,
+};
 use aldur_parsers::ElfBinary;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -26,7 +28,10 @@ fn create_context(binary_name: &str) -> AnalysisContext {
 }
 
 /// Helper to run a rule and return results
-fn run_rule(rule: &dyn Rule, binary_name: &str) -> (AnalysisApplicability, Vec<aldur_core::RuleResult>) {
+fn run_rule(
+    rule: &dyn Rule,
+    binary_name: &str,
+) -> (AnalysisApplicability, Vec<aldur_core::RuleResult>) {
     let mut context = create_context(binary_name);
     let (applicability, _) = rule.can_analyze(&context);
     if applicability == AnalysisApplicability::ApplicableToSpecifiedTarget {
@@ -44,7 +49,10 @@ mod ad3001_pie_tests {
         let rule = EnablePositionIndependentExecutable::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -54,7 +62,10 @@ mod ad3001_pie_tests {
         let rule = EnablePositionIndependentExecutable::new();
         let (applicability, results) = run_rule(&rule, "no_pie");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
     }
@@ -69,7 +80,10 @@ mod ad3002_stack_executable_tests {
         let rule = DoNotMarkStackAsExecutable::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -79,7 +93,10 @@ mod ad3002_stack_executable_tests {
         let rule = DoNotMarkStackAsExecutable::new();
         let (applicability, results) = run_rule(&rule, "exec_stack");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
     }
@@ -94,10 +111,15 @@ mod ad3003_stack_protector_tests {
         let rule = EnableStackProtector::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // May pass or be not applicable depending on symbol visibility
-        assert!(results.iter().any(|r| r.kind == ResultKind::Pass || r.kind == ResultKind::NotApplicable));
+        assert!(results
+            .iter()
+            .any(|r| r.kind == ResultKind::Pass || r.kind == ResultKind::NotApplicable));
     }
 
     #[test]
@@ -105,7 +127,10 @@ mod ad3003_stack_protector_tests {
         let rule = EnableStackProtector::new();
         let (applicability, results) = run_rule(&rule, "no_stack_protector");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Should fail since stack protector is disabled
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
@@ -121,7 +146,10 @@ mod ad3006_nx_stack_tests {
         let rule = EnableNonExecutableStack::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -131,7 +159,10 @@ mod ad3006_nx_stack_tests {
         let rule = EnableNonExecutableStack::new();
         let (applicability, results) = run_rule(&rule, "exec_stack");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
     }
@@ -146,7 +177,10 @@ mod ad3010_relro_tests {
         let rule = EnableReadOnlyRelocations::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -156,7 +190,10 @@ mod ad3010_relro_tests {
         let rule = EnableReadOnlyRelocations::new();
         let (applicability, results) = run_rule(&rule, "partial_relro");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Partial RELRO should still pass the RELRO check
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
@@ -167,7 +204,10 @@ mod ad3010_relro_tests {
         let rule = EnableReadOnlyRelocations::new();
         let (applicability, results) = run_rule(&rule, "no_relro");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
     }
@@ -182,7 +222,10 @@ mod ad3011_bind_now_tests {
         let rule = EnableBindNow::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -192,7 +235,10 @@ mod ad3011_bind_now_tests {
         let rule = EnableBindNow::new();
         let (applicability, results) = run_rule(&rule, "partial_relro");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Partial RELRO lacks BIND_NOW
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
@@ -208,7 +254,10 @@ mod ad3012_rpath_tests {
         let rule = DoNotUseRpath::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -218,7 +267,10 @@ mod ad3012_rpath_tests {
         let rule = DoNotUseRpath::new();
         let (applicability, results) = run_rule(&rule, "with_rpath");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
     }
@@ -233,7 +285,10 @@ mod ad3013_runpath_tests {
         let rule = ValidateRunpath::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -243,7 +298,10 @@ mod ad3013_runpath_tests {
         let rule = ValidateRunpath::new();
         let (applicability, results) = run_rule(&rule, "with_runpath");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Should fail if runpath contains insecure paths
     }
@@ -258,7 +316,10 @@ mod ad3021_unicode_symbols_tests {
         let rule = NoUnicodeSymbols::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Normal binaries shouldn't have unicode symbols
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
@@ -274,7 +335,10 @@ mod ad3022_got_protection_tests {
         let rule = WritableGotProtection::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Full RELRO protects the GOT
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
@@ -285,7 +349,10 @@ mod ad3022_got_protection_tests {
         let rule = WritableGotProtection::new();
         let (applicability, results) = run_rule(&rule, "partial_relro");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Partial RELRO leaves GOT writable
         assert!(results.iter().any(|r| r.kind == ResultKind::Fail));
@@ -301,7 +368,10 @@ mod ad3023_load_segments_tests {
         let rule = ProperLoadSegments::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         // Properly compiled binary should pass
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
@@ -317,7 +387,10 @@ mod ad3024_restrict_dlopen_tests {
         let rule = RestrictDlopen::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -331,7 +404,10 @@ mod ad3025_exception_handling_tests {
         let rule = EnableExceptionHandling::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -345,7 +421,10 @@ mod ad3014_no_text_relocations_tests {
         let rule = NoTextRelocations::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
         assert!(results.iter().any(|r| r.kind == ResultKind::Pass));
     }
@@ -360,7 +439,10 @@ mod ad3019_lto_tests {
         let rule = EnableLTO::new();
         let (applicability, results) = run_rule(&rule, "with_lto");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 
@@ -369,7 +451,10 @@ mod ad3019_lto_tests {
         let rule = EnableLTO::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         // LTO may or may not be in the hardened binary
         assert!(!results.is_empty());
     }
@@ -384,7 +469,10 @@ mod ad3020_optimization_tests {
         let rule = EnableOptimization::new();
         let (applicability, results) = run_rule(&rule, "high_optimization");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 
@@ -393,7 +481,10 @@ mod ad3020_optimization_tests {
         let rule = EnableOptimization::new();
         let (applicability, results) = run_rule(&rule, "no_optimization");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -407,7 +498,10 @@ mod ad3005_stack_clash_protection_tests {
         let rule = EnableStackClashProtection::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -421,7 +515,10 @@ mod ad3004_symbol_format_tests {
         let rule = GenerateRequiredSymbolFormat::new();
         let (applicability, results) = run_rule(&rule, "hardened");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -435,7 +532,10 @@ mod ad3015_intel_cet_tests {
         let rule = EnableIntelCET::new();
         let (applicability, results) = run_rule(&rule, "with_cet");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -449,7 +549,10 @@ mod ad3016_intel_shadow_stack_tests {
         let rule = EnableIntelShadowStack::new();
         let (applicability, results) = run_rule(&rule, "with_cet");
 
-        assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+        assert_eq!(
+            applicability,
+            AnalysisApplicability::ApplicableToSpecifiedTarget
+        );
         assert!(!results.is_empty());
     }
 }
@@ -464,8 +567,14 @@ mod rule_loading_tests {
         let desc = rule.descriptor();
         assert_eq!(desc.id, expected_id, "Rule ID mismatch");
         assert_eq!(desc.name, expected_name, "Rule name mismatch");
-        assert!(!desc.short_description.is_empty(), "Short description should not be empty");
-        assert!(!desc.full_description.is_empty(), "Full description should not be empty");
+        assert!(
+            !desc.short_description.is_empty(),
+            "Short description should not be empty"
+        );
+        assert!(
+            !desc.full_description.is_empty(),
+            "Full description should not be empty"
+        );
     }
 
     #[test]
@@ -515,7 +624,11 @@ mod rule_loading_tests {
     fn test_all_rules_returns_expected_count() {
         let rules = elf::all_rules();
         // 39 ELF rules total
-        assert!(rules.len() >= 38, "Expected at least 38 ELF rules, got {}", rules.len());
+        assert!(
+            rules.len() >= 38,
+            "Expected at least 38 ELF rules, got {}",
+            rules.len()
+        );
     }
 
     #[test]
@@ -532,7 +645,11 @@ mod rule_loading_tests {
         let rules = elf::all_rules();
         for rule in &rules {
             let id = &rule.descriptor().id;
-            assert!(id.starts_with("AD"), "ELF rules should have AD IDs, got {}", id);
+            assert!(
+                id.starts_with("AD"),
+                "ELF rules should have AD IDs, got {}",
+                id
+            );
         }
     }
 

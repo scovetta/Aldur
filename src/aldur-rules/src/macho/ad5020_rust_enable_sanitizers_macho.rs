@@ -78,10 +78,7 @@ impl RustEnableSanitizersMachO {
                  builds, consider using '-Zsanitizer=address' or other sanitizers to detect \
                  memory safety issues.",
             )
-            .with_message(
-                "NotApplicable_NotRust",
-                "'{0}' is not a Rust binary.",
-            )
+            .with_message("NotApplicable_NotRust", "'{0}' is not a Rust binary.")
             .with_message(
                 "NotApplicable_InvalidMetadata",
                 "'{0}' was not evaluated for check '{1}' as the analysis is not relevant \
@@ -190,8 +187,7 @@ impl RustEnableSanitizersMachO {
         if let Ok(dwarf) = DwarfInfo::parse(macho.data()) {
             for cu in &dwarf.compilation_units {
                 if cu.compiler_info.producer.contains("rustc")
-                    || cu.compiler_info.language
-                        == aldur_parsers::dwarf::DwarfLanguage::Rust
+                    || cu.compiler_info.language == aldur_parsers::dwarf::DwarfLanguage::Rust
                 {
                     return true;
                 }
@@ -252,10 +248,7 @@ impl Rule for RustEnableSanitizersMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

@@ -18,7 +18,14 @@ impl WritableGotProtection {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3022, "WritableGotProtection")
             .with_category(RuleCategory::Security)
-            .with_tags(&["critical", "memory-safety", "linux-only", "android-cdd", "rhel-annocheck", "openssf"])
+            .with_tags(&[
+                "critical",
+                "memory-safety",
+                "linux-only",
+                "android-cdd",
+                "rhel-annocheck",
+                "openssf",
+            ])
             .with_short_description("Protect the Global Offset Table (GOT) from writes.")
             .with_full_description(
                 "The Global Offset Table (GOT) contains addresses of global variables and \
@@ -68,9 +75,10 @@ impl WritableGotProtection {
 
         // Check if there's even a dynamic section (static binaries don't have GOT)
         // We can infer this from the presence of certain segments
-        let has_dynamic = elf.segments.iter().any(|s| {
-            s.p_type == aldur_parsers::elf::ph_type::PT_DYNAMIC
-        });
+        let has_dynamic = elf
+            .segments
+            .iter()
+            .any(|s| s.p_type == aldur_parsers::elf::ph_type::PT_DYNAMIC);
 
         if !has_dynamic {
             return GotProtectionLevel::StaticBinary;
@@ -99,10 +107,7 @@ impl Rule for WritableGotProtection {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -171,19 +176,10 @@ impl Rule for WritableGotProtection {
                 );
             }
             GotProtectionLevel::NoRelro => {
-                self.log_fail(
-                    context,
-                    FailureLevel::Error,
-                    "Error_NoRelro",
-                    &[&file_name],
-                );
+                self.log_fail(context, FailureLevel::Error, "Error_NoRelro", &[&file_name]);
             }
             GotProtectionLevel::StaticBinary => {
-                self.log_not_applicable(
-                    context,
-                    "NotApplicable_StaticBinary",
-                    &[&file_name],
-                );
+                self.log_not_applicable(context, "NotApplicable_StaticBinary", &[&file_name]);
             }
         }
     }

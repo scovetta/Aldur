@@ -30,7 +30,9 @@ impl EnableArmPACMachO {
         let descriptor = RuleDescriptor::new(AD5007, "EnableArmPACMachO")
             .with_category(RuleCategory::Security)
             .with_tags(&["recommended", "control-flow", "macos-only", "arm-only"])
-            .with_short_description("Enable ARM Pointer Authentication Code (PAC) for Apple Silicon.")
+            .with_short_description(
+                "Enable ARM Pointer Authentication Code (PAC) for Apple Silicon.",
+            )
             .with_full_description(
                 "ARM Pointer Authentication Code (PAC) provides hardware-based protection \
                  against Return-Oriented Programming (ROP) attacks on Apple Silicon (ARM64). \
@@ -88,10 +90,7 @@ impl Rule for EnableArmPACMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

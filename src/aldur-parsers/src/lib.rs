@@ -14,12 +14,14 @@ pub mod memory;
 pub mod pdb;
 pub mod pe;
 
+pub use dwarf::DwarfInfo;
 pub use elf::ElfBinary;
 pub use macho::MachOBinary;
-pub use memory::{BinaryData, MemoryBudget, MemoryBudgetExceeded, DEFAULT_HEAP_BUDGET, DEFAULT_MMAP_THRESHOLD};
+pub use memory::{
+    BinaryData, MemoryBudget, MemoryBudgetExceeded, DEFAULT_HEAP_BUDGET, DEFAULT_MMAP_THRESHOLD,
+};
 pub use pdb::PdbFile;
 pub use pe::PeBinary;
-pub use dwarf::DwarfInfo;
 
 use aldur_core::{Binary, BinaryFormat};
 use std::path::Path;

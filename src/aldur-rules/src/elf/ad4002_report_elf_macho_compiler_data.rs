@@ -28,10 +28,7 @@ impl ReportElfOrMachoCompilerData {
             )
             .with_fix_hint("Informational only - no fix required")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "CompilerData",
-                "Compiler data for '{0}': {1}",
-            )
+            .with_message("CompilerData", "Compiler data for '{0}': {1}")
             .with_message(
                 "NotApplicable_NoCompilerInfo",
                 "'{0}' does not contain compiler information.",
@@ -48,9 +45,14 @@ impl ReportElfOrMachoCompilerData {
         let mut lines = Vec::new();
 
         // Header
-        lines.push("Binary,Format,Architecture,Type,PIE,RELRO,BindNow,StackProtector,Fortified".to_string());
+        lines.push(
+            "Binary,Format,Architecture,Type,PIE,RELRO,BindNow,StackProtector,Fortified"
+                .to_string(),
+        );
 
-        let binary_name = elf.path().file_name()
+        let binary_name = elf
+            .path()
+            .file_name()
             .map(|s| s.to_string_lossy().to_string())
             .unwrap_or_else(|| "unknown".to_string());
 
@@ -71,28 +73,34 @@ impl ReportElfOrMachoCompilerData {
         };
 
         let pie = if elf.is_pie() { "Yes" } else { "No" };
-        let relro = if elf.has_full_relro() { "Full" } else if elf.has_read_only_relocations() { "Partial" } else { "No" };
+        let relro = if elf.has_full_relro() {
+            "Full"
+        } else if elf.has_read_only_relocations() {
+            "Partial"
+        } else {
+            "No"
+        };
         let bind_now = if elf.has_bind_now { "Yes" } else { "No" };
 
         // Check for stack protector by looking for symbols
         let stack_chk_symbols = &["__stack_chk_fail", "__stack_chk_guard"];
-        let stack_prot = if elf.has_any_symbol(stack_chk_symbols) { "Yes" } else { "No" };
+        let stack_prot = if elf.has_any_symbol(stack_chk_symbols) {
+            "Yes"
+        } else {
+            "No"
+        };
 
         // Check for fortified functions by looking for *_chk symbols
         let fortify_symbols = &["__memcpy_chk", "__strcpy_chk", "__sprintf_chk"];
-        let fortified = if elf.has_any_symbol(fortify_symbols) { "Yes" } else { "No" };
+        let fortified = if elf.has_any_symbol(fortify_symbols) {
+            "Yes"
+        } else {
+            "No"
+        };
 
         lines.push(format!(
             "{},{},{},{},{},{},{},{},{}",
-            binary_name,
-            "ELF",
-            arch,
-            elf_type,
-            pie,
-            relro,
-            bind_now,
-            stack_prot,
-            fortified
+            binary_name, "ELF", arch, elf_type, pie, relro, bind_now, stack_prot, fortified
         ));
 
         lines.join("\n")

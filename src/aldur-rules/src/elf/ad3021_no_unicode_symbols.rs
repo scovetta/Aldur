@@ -30,10 +30,7 @@ impl NoUnicodeSymbols {
             )
             .with_fix_hint("Remove Unicode characters from symbol names; use ASCII only")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' does not contain Unicode symbol names.",
-            )
+            .with_message("Pass", "'{0}' does not contain Unicode symbol names.")
             .with_message(
                 "Warning",
                 "'{0}' contains {1} symbol(s) with non-ASCII characters: {2}. \
@@ -59,10 +56,7 @@ impl Rule for NoUnicodeSymbols {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

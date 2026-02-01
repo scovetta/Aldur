@@ -55,9 +55,9 @@ impl DisableIncrementalLinkingInReleaseBuilds {
 
     fn has_incremental_linking(pe: &PeBinary) -> bool {
         // Check for .textbss section which is created by incremental linking
-        pe.sections.iter().any(|section| {
-            section.name.trim_end_matches('\0') == TEXTBSS_SECTION
-        })
+        pe.sections
+            .iter()
+            .any(|section| section.name.trim_end_matches('\0') == TEXTBSS_SECTION)
     }
 }
 
@@ -136,6 +136,9 @@ mod tests {
     fn test_rule_descriptor() {
         let rule = DisableIncrementalLinkingInReleaseBuilds::new();
         assert_eq!(rule.descriptor().id, "AD6001");
-        assert_eq!(rule.descriptor().name, "DisableIncrementalLinkingInReleaseBuilds");
+        assert_eq!(
+            rule.descriptor().name,
+            "DisableIncrementalLinkingInReleaseBuilds"
+        );
     }
 }

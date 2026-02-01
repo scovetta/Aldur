@@ -43,11 +43,7 @@ const OBJC_SYMBOLS: &[&str] = &[
 ];
 
 /// Xamarin-related symbols (ARC check doesn't apply to Xamarin)
-const XAMARIN_SYMBOLS: &[&str] = &[
-    "xamarin",
-    "monotouch",
-    "mono_",
-];
+const XAMARIN_SYMBOLS: &[&str] = &["xamarin", "monotouch", "mono_"];
 
 pub struct EnableAutomaticReferenceCounting {
     descriptor: RuleDescriptor,
@@ -68,10 +64,7 @@ impl EnableAutomaticReferenceCounting {
             )
             .with_fix_hint("Compile Objective-C code with -fobjc-arc")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' uses Automatic Reference Counting (ARC).",
-            )
+            .with_message("Pass", "'{0}' uses Automatic Reference Counting (ARC).")
             .with_message(
                 "Warning",
                 "'{0}' appears to use Objective-C without Automatic Reference Counting (ARC). \
@@ -107,10 +100,7 @@ impl Rule for EnableAutomaticReferenceCounting {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

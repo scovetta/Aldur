@@ -34,7 +34,9 @@ impl std::fmt::Display for ResultKind {
 }
 
 /// The severity level of a failure
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord, Default,
+)]
 #[serde(rename_all = "camelCase")]
 pub enum FailureLevel {
     /// No failure
@@ -202,9 +204,9 @@ impl AnalysisResult {
 
     /// Check if there are any errors
     pub fn has_errors(&self) -> bool {
-        self.results.iter().any(|r| {
-            r.kind == ResultKind::Fail && r.level == FailureLevel::Error
-        })
+        self.results
+            .iter()
+            .any(|r| r.kind == ResultKind::Fail && r.level == FailureLevel::Error)
     }
 }
 

@@ -19,10 +19,15 @@ impl EnablePositionIndependentExecutable {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3001, "EnablePositionIndependentExecutable")
             .with_category(RuleCategory::Security)
-            .with_tags(&["critical", "memory-safety", "android-cdd", "rhel-annocheck", "fips", "openssf"])
-            .with_short_description(
-                "Enable Position Independent Executable (PIE) for ASLR.",
-            )
+            .with_tags(&[
+                "critical",
+                "memory-safety",
+                "android-cdd",
+                "rhel-annocheck",
+                "fips",
+                "openssf",
+            ])
+            .with_short_description("Enable Position Independent Executable (PIE) for ASLR.")
             .with_full_description(
                 "A Position Independent Executable (PIE) relocates all of its sections at load \
                  time, including the code section, if ASLR is enabled in the Linux kernel \
@@ -31,10 +36,7 @@ impl EnablePositionIndependentExecutable {
             )
             .with_fix_hint("Compile with -fpie and link with -pie")
             .with_default_level(FailureLevel::Error)
-            .with_message(
-                "Pass_Executable",
-                "PIE enabled on executable '{0}'.",
-            )
+            .with_message("Pass_Executable", "PIE enabled on executable '{0}'.")
             .with_message(
                 "Pass_Library",
                 "'{0}' is a shared object library rather than an executable, and is \
@@ -67,10 +69,7 @@ impl Rule for EnablePositionIndependentExecutable {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

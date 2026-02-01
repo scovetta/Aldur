@@ -20,7 +20,9 @@ impl EnableExceptionHandlingMachO {
         let descriptor = RuleDescriptor::new(AD5030, "EnableExceptionHandlingMachO")
             .with_category(RuleCategory::Security)
             .with_tags(&["recommended", "macos-only"])
-            .with_short_description("Binaries should include exception handling frames for proper stack unwinding.")
+            .with_short_description(
+                "Binaries should include exception handling frames for proper stack unwinding.",
+            )
             .with_full_description(
                 "The -fexceptions compiler option generates frame unwind information for \
                  all functions. This allows proper exception handling and stack unwinding, \
@@ -84,10 +86,7 @@ impl Rule for EnableExceptionHandlingMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

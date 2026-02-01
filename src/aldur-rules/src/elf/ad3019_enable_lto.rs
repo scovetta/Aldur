@@ -77,10 +77,7 @@ impl Rule for EnableLTO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -122,11 +119,7 @@ impl Rule for EnableLTO {
                 self.log_fail(context, FailureLevel::Note, "Note", &[&file_name]);
             }
             None => {
-                self.log_not_applicable(
-                    context,
-                    "NotApplicable_NoDebugInfo",
-                    &[&file_name],
-                );
+                self.log_not_applicable(context, "NotApplicable_NoDebugInfo", &[&file_name]);
             }
         }
     }

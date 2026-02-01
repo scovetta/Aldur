@@ -44,11 +44,8 @@ impl<'a> GitHubActionsFormatter<'a> {
     /// Write formatted results to a writer
     pub fn write<W: Write>(&self, writer: &mut W, results: &AnalysisResult) -> std::io::Result<()> {
         // Build rule lookup map
-        let rule_map: HashMap<&str, &dyn Rule> = self
-            .rules
-            .iter()
-            .map(|r| (r.id(), r.as_ref()))
-            .collect();
+        let rule_map: HashMap<&str, &dyn Rule> =
+            self.rules.iter().map(|r| (r.id(), r.as_ref())).collect();
 
         // Group results by file
         let grouped = self.group_results(&results.results);
@@ -172,7 +169,11 @@ impl<'a> GitHubActionsFormatter<'a> {
             }
             (ResultKind::Pass, _) => {
                 // For passes, just print a regular message (no annotation)
-                writeln!(writer, "✓ {} {}: {}", result.rule_id, rule_name, result.message)?;
+                writeln!(
+                    writer,
+                    "✓ {} {}: {}",
+                    result.rule_id, rule_name, result.message
+                )?;
             }
             _ => {
                 // Other result kinds (informational, review, etc.)
@@ -187,7 +188,11 @@ impl<'a> GitHubActionsFormatter<'a> {
         Ok(())
     }
 
-    fn write_summary<W: Write>(&self, writer: &mut W, results: &AnalysisResult) -> std::io::Result<()> {
+    fn write_summary<W: Write>(
+        &self,
+        writer: &mut W,
+        results: &AnalysisResult,
+    ) -> std::io::Result<()> {
         let errors = results.error_count();
         let warnings = results.warning_count();
         let passed = results

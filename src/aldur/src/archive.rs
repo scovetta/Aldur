@@ -58,7 +58,10 @@ impl ArchiveType {
         if path_str.ends_with(".tar.gz") || path_str.ends_with(".tgz") {
             return Some(Self::TarGz);
         }
-        if path_str.ends_with(".tar.bz2") || path_str.ends_with(".tbz2") || path_str.ends_with(".tbz") {
+        if path_str.ends_with(".tar.bz2")
+            || path_str.ends_with(".tbz2")
+            || path_str.ends_with(".tbz")
+        {
             return Some(Self::TarBz2);
         }
         if path_str.ends_with(".tar.xz") || path_str.ends_with(".txz") {
@@ -75,9 +78,8 @@ impl ArchiveType {
 
         match ext.as_str() {
             // ZIP-based
-            "zip" | "jar" | "war" | "ear" | "apk" | "ipa" | "msix" | "msixbundle" | "appx" | "appxbundle" | "nupkg" | "xpi" | "crx" => {
-                Some(Self::Zip)
-            }
+            "zip" | "jar" | "war" | "ear" | "apk" | "ipa" | "msix" | "msixbundle" | "appx"
+            | "appxbundle" | "nupkg" | "xpi" | "crx" => Some(Self::Zip),
             // Plain tar
             "tar" => Some(Self::Tar),
             // 7-Zip
@@ -189,8 +191,8 @@ impl ArchiveExtractor {
         let archive_type = ArchiveType::detect(archive_path)
             .ok_or_else(|| anyhow::anyhow!("Unknown archive type: {}", archive_path.display()))?;
 
-        let temp_dir = TempDir::new()
-            .context("Failed to create temp directory for archive extraction")?;
+        let temp_dir =
+            TempDir::new().context("Failed to create temp directory for archive extraction")?;
 
         let mut binaries = Vec::new();
 
@@ -239,12 +241,15 @@ impl ArchiveExtractor {
     }
 
     /// Extract ZIP archive
-    fn extract_zip(&self, archive_path: &Path, dest_dir: &Path, binaries: &mut Vec<ExtractedBinary>) -> Result<()> {
-        let file = File::open(archive_path)
-            .context("Failed to open ZIP archive")?;
+    fn extract_zip(
+        &self,
+        archive_path: &Path,
+        dest_dir: &Path,
+        binaries: &mut Vec<ExtractedBinary>,
+    ) -> Result<()> {
+        let file = File::open(archive_path).context("Failed to open ZIP archive")?;
         let reader = BufReader::new(file);
-        let mut archive = zip::ZipArchive::new(reader)
-            .context("Failed to read ZIP archive")?;
+        let mut archive = zip::ZipArchive::new(reader).context("Failed to read ZIP archive")?;
 
         let mut entry_count = 0;
         let mut total_size = 0u64;
@@ -267,7 +272,10 @@ impl ArchiveExtractor {
             if self.config.max_uncompressed_size > 0 {
                 total_size += entry.size();
                 if total_size > self.config.max_uncompressed_size {
-                    warn!("Archive size limit reached ({} bytes)", self.config.max_uncompressed_size);
+                    warn!(
+                        "Archive size limit reached ({} bytes)",
+                        self.config.max_uncompressed_size
+                    );
                     break;
                 }
             }
@@ -304,14 +312,24 @@ impl ArchiveExtractor {
     }
 
     /// Extract plain TAR archive
-    fn extract_tar(&self, archive_path: &Path, dest_dir: &Path, binaries: &mut Vec<ExtractedBinary>) -> Result<()> {
+    fn extract_tar(
+        &self,
+        archive_path: &Path,
+        dest_dir: &Path,
+        binaries: &mut Vec<ExtractedBinary>,
+    ) -> Result<()> {
         let file = File::open(archive_path)?;
         let reader = BufReader::new(file);
         self.extract_tar_inner(reader, archive_path, dest_dir, binaries)
     }
 
     /// Extract gzipped TAR archive
-    fn extract_tar_gz(&self, archive_path: &Path, dest_dir: &Path, binaries: &mut Vec<ExtractedBinary>) -> Result<()> {
+    fn extract_tar_gz(
+        &self,
+        archive_path: &Path,
+        dest_dir: &Path,
+        binaries: &mut Vec<ExtractedBinary>,
+    ) -> Result<()> {
         let file = File::open(archive_path)?;
         let reader = BufReader::new(file);
         let decoder = flate2::read::GzDecoder::new(reader);
@@ -319,7 +337,12 @@ impl ArchiveExtractor {
     }
 
     /// Extract bzip2 TAR archive
-    fn extract_tar_bz2(&self, archive_path: &Path, dest_dir: &Path, binaries: &mut Vec<ExtractedBinary>) -> Result<()> {
+    fn extract_tar_bz2(
+        &self,
+        archive_path: &Path,
+        dest_dir: &Path,
+        binaries: &mut Vec<ExtractedBinary>,
+    ) -> Result<()> {
         let file = File::open(archive_path)?;
         let reader = BufReader::new(file);
         let decoder = bzip2::read::BzDecoder::new(reader);
@@ -327,7 +350,12 @@ impl ArchiveExtractor {
     }
 
     /// Extract xz TAR archive
-    fn extract_tar_xz(&self, archive_path: &Path, dest_dir: &Path, binaries: &mut Vec<ExtractedBinary>) -> Result<()> {
+    fn extract_tar_xz(
+        &self,
+        archive_path: &Path,
+        dest_dir: &Path,
+        binaries: &mut Vec<ExtractedBinary>,
+    ) -> Result<()> {
         let file = File::open(archive_path)?;
         let reader = BufReader::new(file);
         let decoder = xz2::read::XzDecoder::new(reader);
@@ -366,7 +394,10 @@ impl ArchiveExtractor {
             if self.config.max_uncompressed_size > 0 {
                 total_size += entry_size;
                 if total_size > self.config.max_uncompressed_size {
-                    warn!("Archive size limit reached ({} bytes)", self.config.max_uncompressed_size);
+                    warn!(
+                        "Archive size limit reached ({} bytes)",
+                        self.config.max_uncompressed_size
+                    );
                     break;
                 }
             }
@@ -403,12 +434,17 @@ impl ArchiveExtractor {
     }
 
     /// Extract 7z archive
-    fn extract_7z(&self, archive_path: &Path, dest_dir: &Path, binaries: &mut Vec<ExtractedBinary>) -> Result<()> {
+    fn extract_7z(
+        &self,
+        archive_path: &Path,
+        dest_dir: &Path,
+        binaries: &mut Vec<ExtractedBinary>,
+    ) -> Result<()> {
         use sevenz_rust2::{ArchiveEntry, ArchiveReader, Password};
 
         let file = File::open(archive_path)?;
-        let mut reader = ArchiveReader::new(file, Password::empty())
-            .context("Failed to read 7z archive")?;
+        let mut reader =
+            ArchiveReader::new(file, Password::empty()).context("Failed to read 7z archive")?;
 
         let mut entry_count = 0;
 
@@ -471,12 +507,12 @@ impl ArchiveExtractor {
 
         let mut entry_count = 0;
 
-        for entry in WalkDir::new(bundle_path)
-            .into_iter()
-            .filter_map(|e| e.ok())
-        {
+        for entry in WalkDir::new(bundle_path).into_iter().filter_map(|e| e.ok()) {
             if self.config.max_entries > 0 && entry_count >= self.config.max_entries {
-                warn!("App bundle entry limit reached ({})", self.config.max_entries);
+                warn!(
+                    "App bundle entry limit reached ({})",
+                    self.config.max_entries
+                );
                 break;
             }
 
@@ -486,7 +522,8 @@ impl ArchiveExtractor {
             }
 
             // Check if this looks like a binary
-            let rel_path = path.strip_prefix(bundle_path)
+            let rel_path = path
+                .strip_prefix(bundle_path)
                 .unwrap_or(path)
                 .to_string_lossy()
                 .to_string();
@@ -516,7 +553,10 @@ impl ArchiveExtractor {
         depth: usize,
     ) -> Result<()> {
         if depth >= self.config.max_depth {
-            debug!("Maximum nested archive depth reached ({})", self.config.max_depth);
+            debug!(
+                "Maximum nested archive depth reached ({})",
+                self.config.max_depth
+            );
             return Ok(());
         }
 
@@ -537,11 +577,8 @@ impl ArchiveExtractor {
             if let Ok((mut nested_binaries, _nested_temp)) = self.extract_binaries(&nested_path) {
                 // Update logical paths to include parent archive
                 for binary in &mut nested_binaries {
-                    binary.logical_path = format!(
-                        "{}!/{}",
-                        parent_archive.display(),
-                        binary.logical_path
-                    );
+                    binary.logical_path =
+                        format!("{}!/{}", parent_archive.display(), binary.logical_path);
                 }
                 binaries.extend(nested_binaries);
             }
@@ -590,27 +627,120 @@ impl ArchiveExtractor {
 
         // Skip common non-binary extensions
         let skip_extensions = [
-            ".txt", ".md", ".rst", ".json", ".xml", ".yml", ".yaml",
-            ".sh", ".bash", ".zsh", ".ps1", ".bat", ".cmd",
-            ".py", ".pyc", ".pyo", ".rb", ".js", ".ts", ".tsx", ".jsx",
-            ".java", ".kt", ".scala", ".go", ".rs", ".c", ".cpp", ".h", ".hpp",
-            ".cs", ".fs", ".vb",
-            ".html", ".htm", ".css", ".scss", ".less", ".sass",
-            ".svg", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".bmp", ".webp",
-            ".mp3", ".mp4", ".wav", ".avi", ".mov", ".mkv", ".webm",
-            ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx",
-            ".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".rar",
-            ".pdb", ".idb", ".map", ".dSYM",
-            ".plist", ".strings", ".nib", ".xib", ".storyboard",
-            ".aar", ".apk", ".ipa",
-            ".jar", ".war", ".ear",
-            ".nuspec", ".nupkg", ".csproj", ".fsproj", ".vbproj", ".sln",
-            ".toml", ".ini", ".cfg", ".conf", ".config", ".properties",
-            ".lock", ".sum", ".mod",
-            ".log", ".tmp", ".temp", ".cache",
-            ".gitignore", ".gitattributes", ".editorconfig",
-            ".license", ".licence", ".notice",
-            ".md5", ".sha1", ".sha256", ".sha512", ".sig", ".asc",
+            ".txt",
+            ".md",
+            ".rst",
+            ".json",
+            ".xml",
+            ".yml",
+            ".yaml",
+            ".sh",
+            ".bash",
+            ".zsh",
+            ".ps1",
+            ".bat",
+            ".cmd",
+            ".py",
+            ".pyc",
+            ".pyo",
+            ".rb",
+            ".js",
+            ".ts",
+            ".tsx",
+            ".jsx",
+            ".java",
+            ".kt",
+            ".scala",
+            ".go",
+            ".rs",
+            ".c",
+            ".cpp",
+            ".h",
+            ".hpp",
+            ".cs",
+            ".fs",
+            ".vb",
+            ".html",
+            ".htm",
+            ".css",
+            ".scss",
+            ".less",
+            ".sass",
+            ".svg",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+            ".ico",
+            ".bmp",
+            ".webp",
+            ".mp3",
+            ".mp4",
+            ".wav",
+            ".avi",
+            ".mov",
+            ".mkv",
+            ".webm",
+            ".pdf",
+            ".doc",
+            ".docx",
+            ".xls",
+            ".xlsx",
+            ".ppt",
+            ".pptx",
+            ".zip",
+            ".tar",
+            ".gz",
+            ".bz2",
+            ".xz",
+            ".7z",
+            ".rar",
+            ".pdb",
+            ".idb",
+            ".map",
+            ".dSYM",
+            ".plist",
+            ".strings",
+            ".nib",
+            ".xib",
+            ".storyboard",
+            ".aar",
+            ".apk",
+            ".ipa",
+            ".jar",
+            ".war",
+            ".ear",
+            ".nuspec",
+            ".nupkg",
+            ".csproj",
+            ".fsproj",
+            ".vbproj",
+            ".sln",
+            ".toml",
+            ".ini",
+            ".cfg",
+            ".conf",
+            ".config",
+            ".properties",
+            ".lock",
+            ".sum",
+            ".mod",
+            ".log",
+            ".tmp",
+            ".temp",
+            ".cache",
+            ".gitignore",
+            ".gitattributes",
+            ".editorconfig",
+            ".license",
+            ".licence",
+            ".notice",
+            ".md5",
+            ".sha1",
+            ".sha256",
+            ".sha512",
+            ".sig",
+            ".asc",
         ];
 
         // Skip files with known non-binary extensions
@@ -622,10 +752,10 @@ impl ArchiveExtractor {
 
         // Common binary extensions (definite yes)
         let binary_extensions = [
-            ".exe", ".dll", ".sys", ".ocx", ".scr", ".cpl", ".drv",  // Windows PE
-            ".so", ".o", ".a",                                        // Linux ELF
-            ".dylib", ".bundle",                                       // macOS
-            ".ko",                                                     // Linux kernel module
+            ".exe", ".dll", ".sys", ".ocx", ".scr", ".cpl", ".drv", // Windows PE
+            ".so", ".o", ".a", // Linux ELF
+            ".dylib", ".bundle", // macOS
+            ".ko",     // Linux kernel module
         ];
 
         for ext in &binary_extensions {
@@ -645,7 +775,9 @@ impl ArchiveExtractor {
         }
 
         // Files without extension in bin/lib directories might be binaries
-        let has_extension = path.rsplit_once('.').is_some_and(|(name, _)| !name.is_empty());
+        let has_extension = path
+            .rsplit_once('.')
+            .is_some_and(|(name, _)| !name.is_empty());
         if !has_extension {
             // Extensionless files could be ELF binaries (common on Unix)
             return true;
@@ -712,8 +844,12 @@ mod tests {
     fn test_is_potential_binary() {
         assert!(ArchiveExtractor::is_potential_binary("test.exe"));
         assert!(ArchiveExtractor::is_potential_binary("lib/native.dll"));
-        assert!(ArchiveExtractor::is_potential_binary("Contents/MacOS/MyApp"));
-        assert!(ArchiveExtractor::is_potential_binary("lib/armeabi-v7a/libnative.so"));
+        assert!(ArchiveExtractor::is_potential_binary(
+            "Contents/MacOS/MyApp"
+        ));
+        assert!(ArchiveExtractor::is_potential_binary(
+            "lib/armeabi-v7a/libnative.so"
+        ));
         assert!(!ArchiveExtractor::is_potential_binary("readme.txt"));
         assert!(!ArchiveExtractor::is_potential_binary("config.json"));
     }

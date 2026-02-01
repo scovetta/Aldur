@@ -132,9 +132,7 @@ impl SarifLogger {
             driver: ToolComponent {
                 name: self.tool_name.clone(),
                 version: Some(self.tool_version.clone()),
-                information_uri: Some(
-                    "https://github.com/scovetta/Aldur".to_string(),
-                ),
+                information_uri: Some("https://github.com/scovetta/Aldur".to_string()),
                 rules: if rules.is_empty() { None } else { Some(rules) },
                 notifications: None,
             },

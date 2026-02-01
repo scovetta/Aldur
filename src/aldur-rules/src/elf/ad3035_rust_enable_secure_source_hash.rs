@@ -48,10 +48,7 @@ impl RustEnableSecureSourceHash {
                 "'{0}' is a Rust binary but the source hash algorithm could not be determined. \
                  Consider compiling with '-Z src-hash-algorithm=sha256' for secure hashing.",
             )
-            .with_message(
-                "NotApplicable_NotRust",
-                "'{0}' is not a Rust binary.",
-            )
+            .with_message("NotApplicable_NotRust", "'{0}' is not a Rust binary.")
             .with_message(
                 "NotApplicable_InvalidMetadata",
                 "'{0}' was not evaluated for check '{1}' as the analysis is not relevant \
@@ -123,10 +120,7 @@ impl Rule for RustEnableSecureSourceHash {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

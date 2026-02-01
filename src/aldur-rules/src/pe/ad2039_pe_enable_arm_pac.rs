@@ -33,10 +33,7 @@ impl PeEnableArmPAC {
             )
             .with_fix_hint("Compile with -mbranch-protection=standard (ARM64 only)")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' was compiled with ARM PAC enabled.",
-            )
+            .with_message("Pass", "'{0}' was compiled with ARM PAC enabled.")
             .with_message(
                 "Warning",
                 "'{0}' was not compiled with ARM PAC. Consider using \
@@ -103,10 +100,7 @@ impl Rule for PeEnableArmPAC {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

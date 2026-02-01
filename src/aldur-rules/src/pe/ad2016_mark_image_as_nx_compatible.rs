@@ -20,9 +20,7 @@ impl MarkImageAsNXCompatible {
         let descriptor = RuleDescriptor::new(AD2016, "MarkImageAsNXCompatible")
             .with_category(RuleCategory::Security)
             .with_tags(&["critical", "memory-safety", "windows-only", "openssf"])
-            .with_short_description(
-                "Binaries should be marked as NX compatible (DEP enabled).",
-            )
+            .with_short_description("Binaries should be marked as NX compatible (DEP enabled).")
             .with_full_description(
                 "Binaries should be marked as NX compatible to help prevent execution of \
                  untrusted data as code. The NXCompat bit, also known as \"Data Execution \
@@ -66,10 +64,7 @@ impl Rule for MarkImageAsNXCompatible {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

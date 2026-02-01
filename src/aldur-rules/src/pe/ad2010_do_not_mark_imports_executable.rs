@@ -20,9 +20,7 @@ impl DoNotMarkImportsSectionAsExecutable {
         let descriptor = RuleDescriptor::new(AD2010, "DoNotMarkImportsSectionAsExecutable")
             .with_category(RuleCategory::Security)
             .with_tags(&["critical", "memory-safety", "windows-only"])
-            .with_short_description(
-                "The imports section should not be marked as executable.",
-            )
+            .with_short_description("The imports section should not be marked as executable.")
             .with_full_description(
                 "PE sections should not be marked as both writable and executable. This \
                  condition makes it easier for an attacker to exploit memory corruption \
@@ -64,10 +62,7 @@ impl Rule for DoNotMarkImportsSectionAsExecutable {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

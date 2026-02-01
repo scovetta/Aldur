@@ -38,7 +38,9 @@ impl EnableAddressSanitizerELF {
         let descriptor = RuleDescriptor::new(AD3040, "EnableAddressSanitizerELF")
             .with_category(RuleCategory::Security)
             .with_tags(&["debug-only", "memory-safety"])
-            .with_short_description("Use AddressSanitizer for memory error detection (debug builds).")
+            .with_short_description(
+                "Use AddressSanitizer for memory error detection (debug builds).",
+            )
             .with_full_description(
                 "AddressSanitizer (ASAN) is a fast memory error detector that catches buffer \
                  overflows, use-after-free, and other memory errors at runtime. It should be \
@@ -47,10 +49,7 @@ impl EnableAddressSanitizerELF {
             )
             .with_fix_hint("Compile with -fsanitize=address (debug builds only)")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "'{0}' has AddressSanitizer enabled.",
-            )
+            .with_message("Pass", "'{0}' has AddressSanitizer enabled.")
             .with_message(
                 "Pass_DwarfConfirmed",
                 "'{0}' has AddressSanitizer enabled (confirmed via DWARF debug info).",
@@ -103,10 +102,7 @@ impl Rule for EnableAddressSanitizerELF {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

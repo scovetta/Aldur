@@ -29,10 +29,7 @@ impl NoUnicodeSymbolsMachO {
             )
             .with_fix_hint("Remove Unicode characters from symbol names; use ASCII only")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' does not contain non-ASCII symbol names.",
-            )
+            .with_message("Pass", "'{0}' does not contain non-ASCII symbol names.")
             .with_message(
                 "Warning",
                 "'{0}' contains {1} symbol(s) with non-ASCII characters. This could indicate \
@@ -59,10 +56,7 @@ impl Rule for NoUnicodeSymbolsMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -98,10 +92,7 @@ impl Rule for NoUnicodeSymbolsMachO {
 
         // Get all symbol names and filter for non-ASCII
         let all_symbols = macho.get_all_symbol_names();
-        let unicode_symbols: Vec<&String> = all_symbols
-            .iter()
-            .filter(|s| !s.is_ascii())
-            .collect();
+        let unicode_symbols: Vec<&String> = all_symbols.iter().filter(|s| !s.is_ascii()).collect();
 
         if unicode_symbols.is_empty() {
             self.log_pass(context, "Pass", &[&file_name]);
@@ -118,7 +109,12 @@ impl Rule for NoUnicodeSymbolsMachO {
             } else {
                 sample
             };
-            self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name, &count, &sample_str]);
+            self.log_fail(
+                context,
+                FailureLevel::Warning,
+                "Warning",
+                &[&file_name, &count, &sample_str],
+            );
         }
     }
 }

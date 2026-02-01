@@ -27,12 +27,7 @@ const SAFESTACK_SYMBOLS: &[&str] = &[
 ];
 
 /// Symbols from ucontext.h that are incompatible with SafeStack
-const UCONTEXT_SYMBOLS: &[&str] = &[
-    "getcontext",
-    "setcontext",
-    "makecontext",
-    "swapcontext",
-];
+const UCONTEXT_SYMBOLS: &[&str] = &["getcontext", "setcontext", "makecontext", "swapcontext"];
 
 pub struct EnableClangSafeStack {
     descriptor: RuleDescriptor,
@@ -175,21 +170,13 @@ impl Rule for EnableClangSafeStack {
             Ok(info) => info,
             Err(_) => {
                 // No DWARF info - can't determine compiler, mark as not applicable
-                self.log_not_applicable(
-                    context,
-                    "NotApplicable_NoDebugInfo",
-                    &[&file_name],
-                );
+                self.log_not_applicable(context, "NotApplicable_NoDebugInfo", &[&file_name]);
                 return;
             }
         };
 
         if dwarf_info.compilation_units.is_empty() {
-            self.log_not_applicable(
-                context,
-                "NotApplicable_NoDebugInfo",
-                &[&file_name],
-            );
+            self.log_not_applicable(context, "NotApplicable_NoDebugInfo", &[&file_name]);
             return;
         }
 
@@ -206,7 +193,8 @@ impl Rule for EnableClangSafeStack {
                     || name_lower.contains("gnu c")
                     || name_lower.contains("rustc")
                     || name_lower.contains("icc")
-                    || name_lower.contains("intel") {
+                    || name_lower.contains("intel")
+                {
                     has_other_compiler = true;
                 }
             }

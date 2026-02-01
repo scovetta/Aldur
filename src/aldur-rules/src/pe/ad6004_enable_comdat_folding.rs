@@ -61,9 +61,10 @@ impl EnableComdatFolding {
         // 1. No .textbss section (no incremental linking)
         // 2. Binary appears to be release (no debug sections with full info)
 
-        let has_incremental = pe.sections.iter().any(|section| {
-            section.name.trim_end_matches('\0') == ".textbss"
-        });
+        let has_incremental = pe
+            .sections
+            .iter()
+            .any(|section| section.name.trim_end_matches('\0') == ".textbss");
 
         if has_incremental {
             // Incremental linking disables COMDAT folding

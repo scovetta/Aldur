@@ -29,7 +29,9 @@ impl EnableStackProtectorMachO {
         let descriptor = RuleDescriptor::new(AD5003, "EnableStackProtectorMachO")
             .with_category(RuleCategory::Security)
             .with_tags(&["critical", "memory-safety", "macos-only", "openssf"])
-            .with_short_description("Enable stack protector (stack canary) for buffer overflow protection.")
+            .with_short_description(
+                "Enable stack protector (stack canary) for buffer overflow protection.",
+            )
             .with_full_description(
                 "Stack protector adds a 'canary' value between local variables and the return \
                  address on the stack. If a buffer overflow overwrites the canary, the program \
@@ -39,10 +41,7 @@ impl EnableStackProtectorMachO {
             )
             .with_fix_hint("Compile with -fstack-protector-strong")
             .with_default_level(FailureLevel::Error)
-            .with_message(
-                "Pass",
-                "Stack protector is enabled on '{0}'.",
-            )
+            .with_message("Pass", "Stack protector is enabled on '{0}'.")
             .with_message(
                 "Error",
                 "Stack protector is not enabled on '{0}'. Compile with '-fstack-protector-strong' \
@@ -69,10 +68,7 @@ impl Rule for EnableStackProtectorMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

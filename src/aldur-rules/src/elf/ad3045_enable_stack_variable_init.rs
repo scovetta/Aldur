@@ -196,12 +196,7 @@ impl Rule for EnableStackVariableInitialization {
                     return;
                 }
                 StackInitResult::NotEnabled => {
-                    self.log_fail(
-                        context,
-                        FailureLevel::Note,
-                        "Note_NoInit",
-                        &[&file_name],
-                    );
+                    self.log_fail(context, FailureLevel::Note, "Note_NoInit", &[&file_name]);
                     return;
                 }
                 StackInitResult::Unknown => {

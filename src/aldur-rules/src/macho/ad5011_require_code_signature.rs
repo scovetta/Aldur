@@ -30,10 +30,7 @@ impl RequireCodeSignature {
             )
             .with_fix_hint("Sign binary with codesign or Xcode")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' has a code signature.",
-            )
+            .with_message("Pass", "'{0}' has a code signature.")
             .with_message(
                 "Warning",
                 "'{0}' does not have a code signature. Code signing is required on iOS and \
@@ -60,10 +57,7 @@ impl Rule for RequireCodeSignature {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

@@ -7,8 +7,8 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PdbFile, PeBinary};
 use aldur_parsers::pe::guard_flags;
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD2011;
 
@@ -83,10 +83,7 @@ impl Rule for EnableStackProtection {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

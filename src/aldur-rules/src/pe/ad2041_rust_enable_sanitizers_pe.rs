@@ -69,10 +69,7 @@ impl RustEnableSanitizersPE {
                  builds, consider using '-Zsanitizer=address' or other sanitizers to detect \
                  memory safety issues.",
             )
-            .with_message(
-                "NotApplicable_NotRust",
-                "'{0}' is not a Rust binary.",
-            )
+            .with_message("NotApplicable_NotRust", "'{0}' is not a Rust binary.")
             .with_message(
                 "NotApplicable_InvalidMetadata",
                 "'{0}' was not evaluated for check '{1}' as the analysis is not relevant \
@@ -92,8 +89,7 @@ impl RustEnableSanitizersPE {
             if let Ok(dwarf) = DwarfInfo::load(pe.path()) {
                 for cu in &dwarf.compilation_units {
                     if cu.compiler_info.producer.contains("rustc")
-                        || cu.compiler_info.language
-                            == aldur_parsers::dwarf::DwarfLanguage::Rust
+                        || cu.compiler_info.language == aldur_parsers::dwarf::DwarfLanguage::Rust
                     {
                         return true;
                     }
@@ -174,10 +170,7 @@ impl Rule for RustEnableSanitizersPE {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -283,7 +276,10 @@ mod tests {
     fn test_sanitizer_type_display() {
         assert_eq!(format!("{}", SanitizerType::Address), "AddressSanitizer");
         assert_eq!(format!("{}", SanitizerType::Thread), "ThreadSanitizer");
-        assert_eq!(format!("{}", SanitizerType::UndefinedBehavior), "UndefinedBehaviorSanitizer");
+        assert_eq!(
+            format!("{}", SanitizerType::UndefinedBehavior),
+            "UndefinedBehaviorSanitizer"
+        );
         assert_eq!(format!("{}", SanitizerType::Leak), "LeakSanitizer");
         assert_eq!(format!("{}", SanitizerType::Cfi), "ControlFlowIntegrity");
     }

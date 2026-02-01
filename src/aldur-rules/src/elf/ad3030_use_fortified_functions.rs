@@ -48,7 +48,13 @@ impl UseGccCheckedFunctions {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3030, "UseGccCheckedFunctions")
             .with_category(RuleCategory::Security)
-            .with_tags(&["recommended", "memory-safety", "android-cdd", "rhel-annocheck", "openssf"])
+            .with_tags(&[
+                "recommended",
+                "memory-safety",
+                "android-cdd",
+                "rhel-annocheck",
+                "openssf",
+            ])
             .with_short_description("Use GCC/glibc fortified functions (FORTIFY_SOURCE).")
             .with_full_description(
                 "FORTIFY_SOURCE replaces dangerous libc functions like strcpy, sprintf, memcpy \
@@ -59,10 +65,7 @@ impl UseGccCheckedFunctions {
             )
             .with_fix_hint("Compile with -D_FORTIFY_SOURCE=3 -O2 (or =2 for older compilers)")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "Fortified functions are used in '{0}'.",
-            )
+            .with_message("Pass", "Fortified functions are used in '{0}'.")
             .with_message(
                 "Warning",
                 "No fortified functions found in '{0}'. Consider compiling with \
@@ -99,10 +102,7 @@ impl Rule for UseGccCheckedFunctions {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

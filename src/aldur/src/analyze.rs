@@ -45,7 +45,10 @@ impl AnalyzeCommand {
             max_depth: args.max_archive_depth,
             scan_nested: args.scan_nested_archives,
         };
-        Self { args, archive_config }
+        Self {
+            args,
+            archive_config,
+        }
     }
 
     pub fn run(&self) -> Result<()> {
@@ -71,11 +74,16 @@ impl AnalyzeCommand {
             // First check custom profiles
             if let Some(ref registry) = custom_registry {
                 if let Some(custom) = registry.get(&self.args.profile) {
-                    (custom.name.clone(), Some(custom.clone()), custom.get_base_profile())
+                    (
+                        custom.name.clone(),
+                        Some(custom.clone()),
+                        custom.get_base_profile(),
+                    )
                 } else if let Some(builtin) = profiles::get_profile(&self.args.profile) {
                     (builtin.name.clone(), None, Some(builtin))
                 } else {
-                    let available: Vec<_> = profiles::PROFILE_NAMES.iter()
+                    let available: Vec<_> = profiles::PROFILE_NAMES
+                        .iter()
                         .map(|s| s.to_string())
                         .chain(registry.names().iter().map(|s| s.to_string()))
                         .collect();
@@ -98,12 +106,17 @@ impl AnalyzeCommand {
 
         if !self.args.quiet && self.args.profile != "default" {
             if let Some(ref custom) = custom_profile {
-                let base_info = custom.base_profile.as_ref()
+                let base_info = custom
+                    .base_profile
+                    .as_ref()
                     .map(|b| format!(" (based on {})", b))
                     .unwrap_or_default();
                 info!("Using custom profile: {}{}", profile_name, base_info);
             } else if let Some(ref builtin) = builtin_profile {
-                info!("Using security profile: {} - {}", builtin.name, builtin.description);
+                info!(
+                    "Using security profile: {} - {}",
+                    builtin.name, builtin.description
+                );
             }
         }
 
@@ -135,7 +148,7 @@ impl AnalyzeCommand {
             sp.set_style(
                 ProgressStyle::default_spinner()
                     .template("{spinner:.cyan} {msg}")
-                    .unwrap()
+                    .unwrap(),
             );
             sp.set_message("Discovering files...");
             sp.enable_steady_tick(std::time::Duration::from_millis(100));
@@ -183,12 +196,10 @@ impl AnalyzeCommand {
         let all_rules = aldur_rules::all_rules();
 
         // Convert include/exclude lists to sets for efficient lookup
-        let include_set: std::collections::HashSet<_> = self.args.include.iter()
-            .map(|s| s.to_uppercase())
-            .collect();
-        let exclude_set: std::collections::HashSet<_> = self.args.exclude.iter()
-            .map(|s| s.to_uppercase())
-            .collect();
+        let include_set: std::collections::HashSet<_> =
+            self.args.include.iter().map(|s| s.to_uppercase()).collect();
+        let exclude_set: std::collections::HashSet<_> =
+            self.args.exclude.iter().map(|s| s.to_uppercase()).collect();
 
         // Create a rule matcher closure that handles both custom and builtin profiles
         let matches_profile = |descriptor: &RuleDescriptor| -> bool {
@@ -253,7 +264,9 @@ impl AnalyzeCommand {
         }
 
         // Handle baseline comparison
-        let comparison = baseline.as_ref().map(|b| BaselineComparison::compare(&results, b));
+        let comparison = baseline
+            .as_ref()
+            .map(|b| BaselineComparison::compare(&results, b));
 
         // If new_only flag is set, filter results to only show new issues
         if self.args.new_only {
@@ -268,12 +281,20 @@ impl AnalyzeCommand {
             let new_baseline = Baseline::from_results(&results);
             new_baseline.save(save_path)?;
             if !self.args.quiet {
-                info!("Baseline saved to {} ({} issues)", save_path.display(), new_baseline.known_issues.len());
+                info!(
+                    "Baseline saved to {} ({} issues)",
+                    save_path.display(),
+                    new_baseline.known_issues.len()
+                );
             }
         }
 
         // Parse output format
-        let output_format: OutputFormat = self.args.format.parse().map_err(|e| anyhow::anyhow!("{}", e))?;
+        let output_format: OutputFormat = self
+            .args
+            .format
+            .parse()
+            .map_err(|e| anyhow::anyhow!("{}", e))?;
 
         // Generate output based on format
         match output_format {
@@ -305,14 +326,23 @@ impl AnalyzeCommand {
                 for rule in &rules {
                     let desc = rule.descriptor();
                     // Build help text from fix_hint if available
-                    let help = desc.fix_hint.as_ref().map(|hint| {
-                        aldur_sarif::schema::MultiformatMessageString::text(hint)
-                    });
+                    let help = desc
+                        .fix_hint
+                        .as_ref()
+                        .map(|hint| aldur_sarif::schema::MultiformatMessageString::text(hint));
                     sarif_logger.add_rule(aldur_sarif::ReportingDescriptor {
                         id: desc.id.clone(),
                         name: Some(desc.name.clone()),
-                        short_description: Some(aldur_sarif::schema::MultiformatMessageString::text(&desc.short_description)),
-                        full_description: Some(aldur_sarif::schema::MultiformatMessageString::text(&desc.full_description)),
+                        short_description: Some(
+                            aldur_sarif::schema::MultiformatMessageString::text(
+                                &desc.short_description,
+                            ),
+                        ),
+                        full_description: Some(
+                            aldur_sarif::schema::MultiformatMessageString::text(
+                                &desc.full_description,
+                            ),
+                        ),
                         help_uri: Some(desc.help_uri.clone()),
                         help,
                         default_configuration: Some(aldur_sarif::schema::ReportingConfiguration {
@@ -343,8 +373,8 @@ impl AnalyzeCommand {
             }
             OutputFormat::GitHubActions => {
                 // GitHub Actions output format
-                let formatter = GitHubActionsFormatter::new(&rules)
-                    .with_show_passed(self.args.show_passed);
+                let formatter =
+                    GitHubActionsFormatter::new(&rules).with_show_passed(self.args.show_passed);
 
                 if let Some(ref output_path) = self.args.output {
                     // Write to file
@@ -411,7 +441,10 @@ impl AnalyzeCommand {
             println!("  Errors: {}", results.error_count());
             println!("  Warnings: {}", results.warning_count());
             println!("  Time: {:.2}s", elapsed.as_secs_f64());
-            println!("  Files/sec: {:.2}", results.files_analyzed as f64 / elapsed.as_secs_f64());
+            println!(
+                "  Files/sec: {:.2}",
+                results.files_analyzed as f64 / elapsed.as_secs_f64()
+            );
         }
 
         // Determine exit code based on baseline comparison if available
@@ -448,10 +481,11 @@ impl AnalyzeCommand {
         rules: &[Box<dyn Rule>],
     ) {
         // Build a lookup map from rule_id to descriptor
-        let rule_descriptors: std::collections::HashMap<String, &aldur_core::RuleDescriptor> = rules
-            .iter()
-            .map(|r| (r.descriptor().id.clone(), r.descriptor()))
-            .collect();
+        let rule_descriptors: std::collections::HashMap<String, &aldur_core::RuleDescriptor> =
+            rules
+                .iter()
+                .map(|r| (r.descriptor().id.clone(), r.descriptor()))
+                .collect();
 
         for result in &mut results.results {
             if let Some(descriptor) = rule_descriptors.get(&result.rule_id) {
@@ -465,7 +499,10 @@ impl AnalyzeCommand {
         }
     }
 
-    fn collect_files(&self, spinner: Option<&ProgressBar>) -> Result<(Vec<AnalysisTarget>, Vec<tempfile::TempDir>)> {
+    fn collect_files(
+        &self,
+        spinner: Option<&ProgressBar>,
+    ) -> Result<(Vec<AnalysisTarget>, Vec<tempfile::TempDir>)> {
         let mut files = Vec::new();
         let mut temp_dirs = Vec::new();
 
@@ -530,7 +567,10 @@ impl AnalyzeCommand {
                 }
             } else {
                 // Try as glob pattern
-                for p in glob::glob(target).context("Invalid glob pattern")?.flatten() {
+                for p in glob::glob(target)
+                    .context("Invalid glob pattern")?
+                    .flatten()
+                {
                     if p.is_file() {
                         if self.args.scan_archives && ArchiveExtractor::is_archive(&p) {
                             match self.extract_archive(&p) {
@@ -637,7 +677,10 @@ impl AnalyzeCommand {
                 return false;
             }
 
-            if matches!(ext_lower.as_str(), "dll" | "exe" | "sys" | "so" | "dylib" | "o" | "") {
+            if matches!(
+                ext_lower.as_str(),
+                "dll" | "exe" | "sys" | "so" | "dylib" | "o" | ""
+            ) {
                 return aldur_parsers::can_load(path);
             }
         }

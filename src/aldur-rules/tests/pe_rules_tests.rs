@@ -3,7 +3,9 @@
 //! These tests verify that PE rules correctly detect security issues
 //! in test binaries cross-compiled with MinGW.
 
-use aldur_core::{AnalysisApplicability, AnalysisConfig, AnalysisContext, Binary, FailureLevel, ResultKind, Rule};
+use aldur_core::{
+    AnalysisApplicability, AnalysisConfig, AnalysisContext, Binary, FailureLevel, ResultKind, Rule,
+};
 use aldur_parsers::PeBinary;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -30,7 +32,10 @@ fn create_pe_context(binary_name: &str) -> Option<AnalysisContext> {
 }
 
 /// Helper to run a PE rule and return results
-fn run_pe_rule(rule: &dyn Rule, binary_name: &str) -> Option<(AnalysisApplicability, Vec<aldur_core::RuleResult>)> {
+fn run_pe_rule(
+    rule: &dyn Rule,
+    binary_name: &str,
+) -> Option<(AnalysisApplicability, Vec<aldur_core::RuleResult>)> {
     let mut context = create_pe_context(binary_name)?;
     let (applicability, _) = rule.can_analyze(&context);
     if applicability == AnalysisApplicability::ApplicableToSpecifiedTarget {
@@ -44,8 +49,14 @@ fn verify_rule_descriptor(rule: &dyn Rule, expected_id: &str, expected_name: &st
     let desc = rule.descriptor();
     assert_eq!(desc.id, expected_id, "Rule ID mismatch");
     assert_eq!(desc.name, expected_name, "Rule name mismatch");
-    assert!(!desc.short_description.is_empty(), "Short description should not be empty");
-    assert!(!desc.full_description.is_empty(), "Full description should not be empty");
+    assert!(
+        !desc.short_description.is_empty(),
+        "Short description should not be empty"
+    );
+    assert!(
+        !desc.full_description.is_empty(),
+        "Full description should not be empty"
+    );
 }
 
 mod ad2001_load_images_above_4gb_tests {
@@ -68,8 +79,14 @@ mod ad2001_load_images_above_4gb_tests {
     fn test_has_messages() {
         let rule = LoadImagesAboveFourGigabyteAddress::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Error"), "Should have Error message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Error"),
+            "Should have Error message"
+        );
     }
 }
 
@@ -103,9 +120,18 @@ mod ad2004_secure_source_hashing_tests {
     fn test_has_required_messages() {
         let rule = EnableSecureSourceCodeHashing::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Warning"), "Should have Warning message");
-        assert!(desc.messages.contains_key("Error_NoPdb"), "Should have Error_NoPdb message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Warning"),
+            "Should have Warning message"
+        );
+        assert!(
+            desc.messages.contains_key("Error_NoPdb"),
+            "Should have Error_NoPdb message"
+        );
     }
 }
 
@@ -129,7 +155,10 @@ mod ad2006_build_with_secure_tools_tests {
     fn test_has_messages() {
         let rule = BuildWithSecureTools::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
     }
 }
 
@@ -170,8 +199,14 @@ mod ad2008_control_flow_guard_tests {
     fn test_has_messages() {
         let rule = EnableControlFlowGuard::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Error"), "Should have Error message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Error"),
+            "Should have Error message"
+        );
     }
 }
 
@@ -195,8 +230,14 @@ mod ad2009_aslr_tests {
     fn test_has_messages() {
         let rule = EnableAddressSpaceLayoutRandomization::new();
         let desc = rule.descriptor();
-        assert!(desc.messages.contains_key("Pass"), "Should have Pass message");
-        assert!(desc.messages.contains_key("Error_NotDynamicBase"), "Should have Error_NotDynamicBase message");
+        assert!(
+            desc.messages.contains_key("Pass"),
+            "Should have Pass message"
+        );
+        assert!(
+            desc.messages.contains_key("Error_NotDynamicBase"),
+            "Should have Error_NotDynamicBase message"
+        );
     }
 }
 
@@ -995,7 +1036,11 @@ mod rule_loading_tests {
     fn test_all_rules_returns_expected_count() {
         let rules = pe::all_rules();
         // 50 PE rules total
-        assert!(rules.len() >= 48, "Expected at least 48 PE rules, got {}", rules.len());
+        assert!(
+            rules.len() >= 48,
+            "Expected at least 48 PE rules, got {}",
+            rules.len()
+        );
     }
 
     #[test]
@@ -1012,7 +1057,11 @@ mod rule_loading_tests {
         let rules = pe::all_rules();
         for rule in &rules {
             let id = &rule.descriptor().id;
-            assert!(id.starts_with("AD"), "PE rules should have AD IDs, got {}", id);
+            assert!(
+                id.starts_with("AD"),
+                "PE rules should have AD IDs, got {}",
+                id
+            );
         }
     }
 }
@@ -1042,10 +1091,15 @@ mod pe_integration_tests {
 
             let rule = pe::EnableAddressSpaceLayoutRandomization::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "hardened.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from ASLR check");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Pass),
-                    "Hardened binary should pass ASLR check");
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Pass),
+                    "Hardened binary should pass ASLR check"
+                );
             }
         }
 
@@ -1058,10 +1112,15 @@ mod pe_integration_tests {
 
             let rule = pe::EnableAddressSpaceLayoutRandomization::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "no_aslr.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from ASLR check");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Fail),
-                    "No-ASLR binary should fail ASLR check");
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Fail),
+                    "No-ASLR binary should fail ASLR check"
+                );
             }
         }
     }
@@ -1078,10 +1137,18 @@ mod pe_integration_tests {
 
             let rule = pe::EnableHighEntropyVirtualAddresses::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "hardened.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
-                assert!(!results.is_empty(), "Expected results from high entropy VA check");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Pass),
-                    "Hardened binary should pass high entropy VA check");
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
+                assert!(
+                    !results.is_empty(),
+                    "Expected results from high entropy VA check"
+                );
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Pass),
+                    "Hardened binary should pass high entropy VA check"
+                );
             }
         }
 
@@ -1094,10 +1161,18 @@ mod pe_integration_tests {
 
             let rule = pe::EnableHighEntropyVirtualAddresses::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "no_high_entropy.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
-                assert!(!results.is_empty(), "Expected results from high entropy VA check");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Fail),
-                    "No-high-entropy binary should fail the check");
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
+                assert!(
+                    !results.is_empty(),
+                    "Expected results from high entropy VA check"
+                );
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Fail),
+                    "No-high-entropy binary should fail the check"
+                );
             }
         }
     }
@@ -1114,10 +1189,15 @@ mod pe_integration_tests {
 
             let rule = pe::MarkImageAsNXCompatible::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "hardened.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from NX check");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Pass),
-                    "Hardened binary should pass NX compatibility check");
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Pass),
+                    "Hardened binary should pass NX compatibility check"
+                );
             }
         }
 
@@ -1130,10 +1210,15 @@ mod pe_integration_tests {
 
             let rule = pe::MarkImageAsNXCompatible::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "no_nx.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from NX check");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Fail),
-                    "No-NX binary should fail NX compatibility check");
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Fail),
+                    "No-NX binary should fail NX compatibility check"
+                );
             }
         }
     }
@@ -1150,10 +1235,15 @@ mod pe_integration_tests {
 
             let rule = pe::EnableAddressSpaceLayoutRandomization::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "test_lib.dll") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from DLL analysis");
-                assert!(results.iter().any(|r| r.kind == ResultKind::Pass),
-                    "DLL should pass ASLR check");
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Pass),
+                    "DLL should pass ASLR check"
+                );
             }
         }
 
@@ -1166,7 +1256,10 @@ mod pe_integration_tests {
 
             let rule = pe::EnableHighEntropyVirtualAddresses::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "test_lib.dll") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from DLL analysis");
             }
         }
@@ -1184,11 +1277,16 @@ mod pe_integration_tests {
 
             let rule = pe::DoNotMarkWritableSectionsAsExecutable::new();
             if let Some((applicability, results)) = run_pe_rule(&rule, "hardened.exe") {
-                assert_eq!(applicability, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    applicability,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
                 assert!(!results.is_empty(), "Expected results from section check");
                 // Hardened binary should not have writable+executable sections
-                assert!(results.iter().any(|r| r.kind == ResultKind::Pass),
-                    "Hardened binary should pass WX section check");
+                assert!(
+                    results.iter().any(|r| r.kind == ResultKind::Pass),
+                    "Hardened binary should pass WX section check"
+                );
             }
         }
     }
@@ -1215,8 +1313,11 @@ mod pe_integration_tests {
             }
 
             // At least some rules should be applicable to a PE binary
-            assert!(applicable_count > 5,
-                "Expected at least 5 rules to be applicable, got {}", applicable_count);
+            assert!(
+                applicable_count > 5,
+                "Expected at least 5 rules to be applicable, got {}",
+                applicable_count
+            );
         }
 
         #[test]
@@ -1230,7 +1331,10 @@ mod pe_integration_tests {
             let rule = pe::EnableAddressSpaceLayoutRandomization::new();
 
             if let Some((app_console, _)) = run_pe_rule(&rule, "console_app.exe") {
-                assert_eq!(app_console, AnalysisApplicability::ApplicableToSpecifiedTarget);
+                assert_eq!(
+                    app_console,
+                    AnalysisApplicability::ApplicableToSpecifiedTarget
+                );
             }
 
             if let Some((app_gui, _)) = run_pe_rule(&rule, "gui_app.exe") {
@@ -1239,4 +1343,3 @@ mod pe_integration_tests {
         }
     }
 }
-

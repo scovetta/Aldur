@@ -81,11 +81,7 @@ impl EnableControlFlowIntegrity {
     ];
 
     /// LTO-related symbols/sections that indicate LTO is enabled
-    const LTO_INDICATORS: &'static [&'static str] = &[
-        ".llvm.lto",
-        "__llvm_prf",
-        "__llvm_coverage",
-    ];
+    const LTO_INDICATORS: &'static [&'static str] = &[".llvm.lto", "__llvm_prf", "__llvm_coverage"];
 
     /// Check for CFI via symbols
     fn has_cfi_symbols(elf: &ElfBinary) -> bool {
@@ -126,9 +122,7 @@ impl EnableControlFlowIntegrity {
 
             // Check for CFI flags in producer or command line
             let producer = &cu.compiler_info.producer;
-            if producer.contains("-fsanitize=cfi")
-                || producer.contains("sanitize=cfi")
-            {
+            if producer.contains("-fsanitize=cfi") || producer.contains("sanitize=cfi") {
                 has_cfi = true;
             }
 
@@ -155,10 +149,7 @@ impl Rule for EnableControlFlowIntegrity {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -217,7 +208,11 @@ impl Rule for EnableControlFlowIntegrity {
                 self.log_not_applicable(
                     context,
                     "NotApplicable_InvalidMetadata",
-                    &[&file_name, self.name(), "Not an executable or shared library"],
+                    &[
+                        &file_name,
+                        self.name(),
+                        "Not an executable or shared library",
+                    ],
                 );
                 return;
             }
@@ -241,11 +236,7 @@ impl Rule for EnableControlFlowIntegrity {
                 if !is_clang {
                     // Check if it's a Rust binary (Rust uses LLVM backend)
                     if !elf.is_rust_binary {
-                        self.log_not_applicable(
-                            context,
-                            "NotApplicable_NotClang",
-                            &[&file_name],
-                        );
+                        self.log_not_applicable(context, "NotApplicable_NotClang", &[&file_name]);
                         return;
                     }
                 }
@@ -269,8 +260,8 @@ impl Rule for EnableControlFlowIntegrity {
         }
 
         // Check for LTO indicators without DWARF
-        let has_lto = Self::has_lto_indicators(elf) ||
-            dwarf_result.as_ref().map(|d| d.has_lto()).unwrap_or(false);
+        let has_lto = Self::has_lto_indicators(elf)
+            || dwarf_result.as_ref().map(|d| d.has_lto()).unwrap_or(false);
 
         if has_lto {
             self.log_fail(

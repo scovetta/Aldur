@@ -43,10 +43,7 @@ impl RustMachOEnableLTO {
                 "NotApplicable_NoDebugInfo",
                 "'{0}' does not contain debug information to determine LTO usage.",
             )
-            .with_message(
-                "NotApplicable_NotRust",
-                "'{0}' is not a Rust binary.",
-            )
+            .with_message("NotApplicable_NotRust", "'{0}' is not a Rust binary.")
             .with_message(
                 "NotApplicable_InvalidMetadata",
                 "'{0}' was not evaluated for check '{1}' as the analysis is not relevant \
@@ -67,12 +64,8 @@ impl RustMachOEnableLTO {
     ];
 
     /// LTO-related symbols that indicate LTO was used
-    const LTO_SYMBOLS: &'static [&'static str] = &[
-        ".llvm.lto",
-        "__llvm_lto",
-        "llvm.used",
-        ".lto_discard",
-    ];
+    const LTO_SYMBOLS: &'static [&'static str] =
+        &[".llvm.lto", "__llvm_lto", "llvm.used", ".lto_discard"];
 
     /// Check if the binary is a Rust binary by looking for Rust-specific symbols or DWARF info
     fn is_rust_binary(macho: &MachOBinary) -> bool {
@@ -85,8 +78,7 @@ impl RustMachOEnableLTO {
         if let Ok(dwarf) = DwarfInfo::parse(macho.data()) {
             for cu in &dwarf.compilation_units {
                 if cu.compiler_info.producer.contains("rustc")
-                    || cu.compiler_info.language
-                        == aldur_parsers::dwarf::DwarfLanguage::Rust
+                    || cu.compiler_info.language == aldur_parsers::dwarf::DwarfLanguage::Rust
                 {
                     return true;
                 }
@@ -160,10 +152,7 @@ impl Rule for RustMachOEnableLTO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

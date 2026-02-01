@@ -92,16 +92,11 @@ impl Config {
 
     /// Check if a rule is enabled
     pub fn is_rule_enabled(&self, rule_id: &str) -> bool {
-        self.rules
-            .get(rule_id)
-            .map(|r| r.enabled)
-            .unwrap_or(true)
+        self.rules.get(rule_id).map(|r| r.enabled).unwrap_or(true)
     }
 
     /// Get rule level override
     pub fn rule_level(&self, rule_id: &str) -> Option<&str> {
-        self.rules
-            .get(rule_id)
-            .and_then(|r| r.level.as_deref())
+        self.rules.get(rule_id).and_then(|r| r.level.as_deref())
     }
 }

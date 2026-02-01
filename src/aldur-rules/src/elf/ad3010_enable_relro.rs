@@ -18,10 +18,14 @@ impl EnableReadOnlyRelocations {
     pub fn new() -> Self {
         let descriptor = RuleDescriptor::new(AD3010, "EnableReadOnlyRelocations")
             .with_category(RuleCategory::Security)
-            .with_tags(&["critical", "memory-safety", "android-cdd", "rhel-annocheck", "openssf"])
-            .with_short_description(
-                "Enable read-only relocations (RELRO).",
-            )
+            .with_tags(&[
+                "critical",
+                "memory-safety",
+                "android-cdd",
+                "rhel-annocheck",
+                "openssf",
+            ])
+            .with_short_description("Enable read-only relocations (RELRO).")
             .with_full_description(
                 "This check ensures that some relocation data is marked as read only after the \
                  executable is loaded, and moved below the '.data' section in memory. This \
@@ -62,10 +66,7 @@ impl Rule for EnableReadOnlyRelocations {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

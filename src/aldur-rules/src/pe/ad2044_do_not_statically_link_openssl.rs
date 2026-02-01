@@ -32,12 +32,7 @@ const OPENSSL_STATIC_SYMBOLS: &[&str] = &[
 ];
 
 /// DLL references that indicate dynamic linking
-const OPENSSL_DLL_PATTERNS: &[&str] = &[
-    "libssl",
-    "libcrypto",
-    "ssleay32",
-    "libeay32",
-];
+const OPENSSL_DLL_PATTERNS: &[&str] = &["libssl", "libcrypto", "ssleay32", "libeay32"];
 
 pub struct DoNotStaticallyLinkOpenSSLPE {
     descriptor: RuleDescriptor,
@@ -57,10 +52,7 @@ impl DoNotStaticallyLinkOpenSSLPE {
             )
             .with_fix_hint("Use CNG/CAPI or dynamically link OpenSSL")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' does not appear to statically link OpenSSL.",
-            )
+            .with_message("Pass", "'{0}' does not appear to statically link OpenSSL.")
             .with_message(
                 "Pass_DynamicLink",
                 "'{0}' uses dynamically linked OpenSSL DLLs.",
@@ -86,7 +78,9 @@ impl DoNotStaticallyLinkOpenSSLPE {
         let imported_dlls = pe.imported_dlls();
         let has_dynamic_openssl = imported_dlls.iter().any(|dll| {
             let dll_lower = dll.to_lowercase();
-            OPENSSL_DLL_PATTERNS.iter().any(|pattern| dll_lower.contains(pattern))
+            OPENSSL_DLL_PATTERNS
+                .iter()
+                .any(|pattern| dll_lower.contains(pattern))
         });
 
         if has_dynamic_openssl {
@@ -97,7 +91,9 @@ impl DoNotStaticallyLinkOpenSSLPE {
         // When statically linked, these functions would be exported or present as internal symbols
         let exports = pe.exported_symbols();
         let has_static_exports = exports.iter().any(|sym| {
-            OPENSSL_STATIC_SYMBOLS.iter().any(|pattern| sym.contains(pattern))
+            OPENSSL_STATIC_SYMBOLS
+                .iter()
+                .any(|pattern| sym.contains(pattern))
         });
 
         (has_static_exports, false)
@@ -115,10 +111,7 @@ impl Rule for DoNotStaticallyLinkOpenSSLPE {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

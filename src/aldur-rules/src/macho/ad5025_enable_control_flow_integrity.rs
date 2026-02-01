@@ -30,10 +30,7 @@ impl EnableControlFlowIntegrityMachO {
             )
             .with_fix_hint("Compile with -flto -fsanitize=cfi (Clang only)")
             .with_default_level(FailureLevel::Note)
-            .with_message(
-                "Pass",
-                "'{0}' has Control Flow Integrity (CFI) enabled.",
-            )
+            .with_message("Pass", "'{0}' has Control Flow Integrity (CFI) enabled.")
             .with_message(
                 "Pass_CfiSymbols",
                 "'{0}' has CFI symbols present, indicating CFI is enabled.",
@@ -79,8 +76,8 @@ impl EnableControlFlowIntegrityMachO {
     fn check_dwarf_for_cfi(macho: &MachOBinary) -> (bool, bool) {
         if let Ok(dwarf_info) = DwarfInfo::parse(macho.data()) {
             if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                let has_cfi = dwarf_info.has_flag("-fsanitize=cfi")
-                    || dwarf_info.has_flag("sanitize=cfi");
+                let has_cfi =
+                    dwarf_info.has_flag("-fsanitize=cfi") || dwarf_info.has_flag("sanitize=cfi");
                 let has_lto = dwarf_info.has_flag("-flto");
 
                 return (has_cfi, has_lto);
@@ -101,10 +98,7 @@ impl Rule for EnableControlFlowIntegrityMachO {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -173,7 +167,12 @@ impl Rule for EnableControlFlowIntegrityMachO {
             self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
         } else if has_lto {
             // Has LTO but not CFI - could add CFI
-            self.log_fail(context, FailureLevel::Note, "Note_LtoWithoutCfi", &[&file_name]);
+            self.log_fail(
+                context,
+                FailureLevel::Note,
+                "Note_LtoWithoutCfi",
+                &[&file_name],
+            );
         } else {
             self.log_fail(context, FailureLevel::Note, "Note_NoCfi", &[&file_name]);
         }

@@ -226,17 +226,15 @@ fn main() -> Result<()> {
     // Initialize logging
     let subscriber = tracing_subscriber::fmt()
         .with_env_filter(
-            tracing_subscriber::EnvFilter::from_default_env()
-                .add_directive(if cli.verbose {
-                    tracing::Level::DEBUG.into()
-                } else {
-                    tracing::Level::INFO.into()
-                }),
+            tracing_subscriber::EnvFilter::from_default_env().add_directive(if cli.verbose {
+                tracing::Level::DEBUG.into()
+            } else {
+                tracing::Level::INFO.into()
+            }),
         )
         .with_target(false)
         .finish();
-    tracing::subscriber::set_global_default(subscriber)
-        .context("Failed to set up logging")?;
+    tracing::subscriber::set_global_default(subscriber).context("Failed to set up logging")?;
 
     match cli.command {
         Commands::Analyze(args) => {
@@ -315,8 +313,7 @@ fn dump_binary(args: DumpArgs) -> Result<()> {
         anyhow::bail!("File not found: {}", path.display());
     }
 
-    let binary = aldur_parsers::load_binary(path)
-        .context("Failed to load binary")?;
+    let binary = aldur_parsers::load_binary(path).context("Failed to load binary")?;
 
     println!("File: {}", path.display());
     println!("Format: {}", binary.format());
@@ -335,7 +332,10 @@ fn dump_binary(args: DumpArgs) -> Result<()> {
                 println!("\nPE Details:");
                 println!("  Image Base: 0x{:016x}", pe.image_base);
                 println!("  Entry Point: 0x{:08x}", pe.entry_point);
-                println!("  Linker Version: {}.{}", pe.linker_version_major, pe.linker_version_minor);
+                println!(
+                    "  Linker Version: {}.{}",
+                    pe.linker_version_major, pe.linker_version_minor
+                );
                 println!("  DYNAMICBASE: {}", pe.is_dynamic_base());
                 println!("  HIGH_ENTROPY_VA: {}", pe.is_high_entropy_va());
                 println!("  NX_COMPAT: {}", pe.is_nx_compat());
@@ -345,8 +345,13 @@ fn dump_binary(args: DumpArgs) -> Result<()> {
                 if args.sections {
                     println!("\nSections:");
                     for section in &pe.sections {
-                        println!("  {} - VA: 0x{:08x}, Size: {}, Chars: 0x{:08x}",
-                            section.name, section.virtual_address, section.virtual_size, section.characteristics);
+                        println!(
+                            "  {} - VA: 0x{:08x}, Size: {}, Chars: 0x{:08x}",
+                            section.name,
+                            section.virtual_address,
+                            section.virtual_size,
+                            section.characteristics
+                        );
                     }
                 }
             }
@@ -368,11 +373,19 @@ fn dump_binary(args: DumpArgs) -> Result<()> {
                 println!("\nMach-O Details:");
                 println!("  Fat Binary: {}", macho.is_fat);
                 println!("  PIE: {}", macho.is_pie());
-                println!("  Allows Stack Execution: {}", macho.allows_stack_execution());
+                println!(
+                    "  Allows Stack Execution: {}",
+                    macho.allows_stack_execution()
+                );
                 println!("  Architectures: {}", macho.architectures.len());
                 for (i, arch) in macho.architectures.iter().enumerate() {
-                    println!("    [{}] Type: {:?}, 64-bit: {}, PIE: {}",
-                        i, arch.file_type, arch.is_64_bit, arch.is_pie());
+                    println!(
+                        "    [{}] Type: {:?}, 64-bit: {}, PIE: {}",
+                        i,
+                        arch.file_type,
+                        arch.is_64_bit,
+                        arch.is_pie()
+                    );
                 }
             }
         }

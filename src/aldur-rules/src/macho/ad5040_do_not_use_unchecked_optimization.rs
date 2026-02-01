@@ -15,9 +15,7 @@ use crate::rule_ids::AD5040;
 
 /// Symbols that indicate Swift runtime usage
 const SWIFT_RUNTIME_SYMBOLS: &[&str] = &[
-    "swift_",
-    "_swift_",
-    "$s",  // Swift 5 mangled prefix
+    "swift_", "_swift_", "$s",  // Swift 5 mangled prefix
     "_$s", // Swift 5 mangled prefix with underscore
     "$S",  // Swift 4 mangled prefix
     "_$S", // Swift 4 mangled prefix with underscore
@@ -85,15 +83,18 @@ impl DoNotUseUncheckedOptimization {
     /// Check if the binary appears to be a Swift binary
     fn is_swift_binary(symbols: &[String]) -> bool {
         symbols.iter().any(|sym| {
-            SWIFT_RUNTIME_SYMBOLS.iter().any(|prefix| sym.starts_with(prefix))
+            SWIFT_RUNTIME_SYMBOLS
+                .iter()
+                .any(|prefix| sym.starts_with(prefix))
         })
     }
 
     /// Check if the binary has Swift safety check symbols
     fn has_safety_checks(symbols: &[String]) -> bool {
-        let safety_symbols_found = SAFETY_CHECK_SYMBOLS.iter().filter(|check_sym| {
-            symbols.iter().any(|sym| sym.contains(*check_sym))
-        }).count();
+        let safety_symbols_found = SAFETY_CHECK_SYMBOLS
+            .iter()
+            .filter(|check_sym| symbols.iter().any(|sym| sym.contains(*check_sym)))
+            .count();
 
         // If we find at least some safety check symbols, the binary likely has checks enabled
         safety_symbols_found >= 2
@@ -150,10 +151,7 @@ impl Rule for DoNotUseUncheckedOptimization {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -227,18 +225,19 @@ mod tests {
             "_swift_allocObject".to_string(),
             "swift_release".to_string(),
         ];
-        assert!(DoNotUseUncheckedOptimization::is_swift_binary(&swift_symbols));
+        assert!(DoNotUseUncheckedOptimization::is_swift_binary(
+            &swift_symbols
+        ));
 
-        let swift5_symbols = vec![
-            "$s4Main3appAA0B0Vvp".to_string(),
-        ];
-        assert!(DoNotUseUncheckedOptimization::is_swift_binary(&swift5_symbols));
+        let swift5_symbols = vec!["$s4Main3appAA0B0Vvp".to_string()];
+        assert!(DoNotUseUncheckedOptimization::is_swift_binary(
+            &swift5_symbols
+        ));
 
-        let non_swift_symbols = vec![
-            "_main".to_string(),
-            "_printf".to_string(),
-        ];
-        assert!(!DoNotUseUncheckedOptimization::is_swift_binary(&non_swift_symbols));
+        let non_swift_symbols = vec!["_main".to_string(), "_printf".to_string()];
+        assert!(!DoNotUseUncheckedOptimization::is_swift_binary(
+            &non_swift_symbols
+        ));
     }
 
     #[test]
@@ -248,12 +247,16 @@ mod tests {
             "swift_willThrow".to_string(),
             "swift_beginAccess".to_string(),
         ];
-        assert!(DoNotUseUncheckedOptimization::has_safety_checks(&safe_symbols));
+        assert!(DoNotUseUncheckedOptimization::has_safety_checks(
+            &safe_symbols
+        ));
 
         let unsafe_symbols = vec![
             "_swift_allocObject".to_string(),
             "_swift_release".to_string(),
         ];
-        assert!(!DoNotUseUncheckedOptimization::has_safety_checks(&unsafe_symbols));
+        assert!(!DoNotUseUncheckedOptimization::has_safety_checks(
+            &unsafe_symbols
+        ));
     }
 }

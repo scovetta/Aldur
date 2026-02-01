@@ -14,8 +14,18 @@ use crate::rule_ids::AD2051;
 /// Known vulnerable library patterns
 /// Format: (dll_name_pattern, min_major, min_minor, description)
 const VULNERABLE_LIBRARIES: &[(&str, u32, u32, &str)] = &[
-    ("msxml6", 6, 30, "MSXML6.dll v6.30 or earlier has known vulnerabilities"),
-    ("xmllite", 1, 3, "XMLlite.dll v1.3 or earlier has known vulnerabilities"),
+    (
+        "msxml6",
+        6,
+        30,
+        "MSXML6.dll v6.30 or earlier has known vulnerabilities",
+    ),
+    (
+        "xmllite",
+        1,
+        3,
+        "XMLlite.dll v1.3 or earlier has known vulnerabilities",
+    ),
 ];
 
 pub struct CheckMinimumLibraryVersions {
@@ -27,9 +37,7 @@ impl CheckMinimumLibraryVersions {
         let descriptor = RuleDescriptor::new(AD2051, "CheckMinimumLibraryVersions")
             .with_category(RuleCategory::Security)
             .with_tags(&["recommended", "windows-only"])
-            .with_short_description(
-                "Do not use very old versions of known vulnerable libraries.",
-            )
+            .with_short_description("Do not use very old versions of known vulnerable libraries.")
             .with_full_description(
                 "Per SDL requirements, binaries must not use very old versions of \
                  MSXML6.dll (v6.30 or earlier) or XMLlite.dll (v1.3 or earlier). These \
@@ -88,10 +96,7 @@ impl Rule for CheckMinimumLibraryVersions {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,

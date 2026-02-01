@@ -69,16 +69,16 @@ const BANNED_APIS: &[&str] = &[
     "memcpy",  // No overlap checking, no size validation - use memcpy_s
     "memmove", // No size validation - use memmove_s
     // === Thread-unsafe functions with static buffers ===
-    "strtok",   // Static internal state, data races - use strtok_s
+    "strtok", // Static internal state, data races - use strtok_s
     "wcstok",
-    "asctime",  // Returns static buffer - use asctime_s
-    "ctime",    // Returns static buffer - use ctime_s
-    "gmtime",   // Returns static struct - use gmtime_s
+    "asctime",   // Returns static buffer - use asctime_s
+    "ctime",     // Returns static buffer - use ctime_s
+    "gmtime",    // Returns static struct - use gmtime_s
     "localtime", // Returns static struct - use localtime_s
-    "strerror", // May return static buffer - use strerror_s
+    "strerror",  // May return static buffer - use strerror_s
     // === Environment/system functions with race conditions ===
-    "getenv",  // Data races, invalidated pointer - use getenv_s
-    "tmpnam",  // TOCTOU race condition - use tmpnam_s
+    "getenv", // Data races, invalidated pointer - use getenv_s
+    "tmpnam", // TOCTOU race condition - use tmpnam_s
     // === Numeric conversion without error detection ===
     "atoi",  // No error detection, UB on overflow - use strtol
     "atol",  // No error detection, UB on overflow - use strtol
@@ -101,17 +101,17 @@ const BANNED_APIS: &[&str] = &[
 
 /// Critical banned APIs that are especially dangerous (removed from C standard or guaranteed overflow)
 const CRITICAL_BANNED_APIS: &[&str] = &[
-    "gets",      // REMOVED from C11 - no bounds checking possible
-    "_getws",    // Wide char version of gets
-    "strcpy",    // Buffer overflow risk - use strcpy_s or StringCchCopy
-    "wcscpy",    // Wide char strcpy
-    "lstrcpy",   // Windows strcpy
-    "strcat",    // Buffer overflow risk - use strcat_s or StringCchCat
-    "wcscat",    // Wide char strcat
-    "lstrcat",   // Windows strcat
-    "sprintf",   // Buffer overflow + format string - use snprintf or sprintf_s
-    "vsprintf",  // Buffer overflow + format string - use vsnprintf or vsprintf_s
-    "wsprintf",  // Windows sprintf
+    "gets",     // REMOVED from C11 - no bounds checking possible
+    "_getws",   // Wide char version of gets
+    "strcpy",   // Buffer overflow risk - use strcpy_s or StringCchCopy
+    "wcscpy",   // Wide char strcpy
+    "lstrcpy",  // Windows strcpy
+    "strcat",   // Buffer overflow risk - use strcat_s or StringCchCat
+    "wcscat",   // Wide char strcat
+    "lstrcat",  // Windows strcat
+    "sprintf",  // Buffer overflow + format string - use snprintf or sprintf_s
+    "vsprintf", // Buffer overflow + format string - use vsnprintf or vsprintf_s
+    "wsprintf", // Windows sprintf
 ];
 
 pub struct DoNotUseBannedApisPE {
@@ -167,10 +167,7 @@ impl Rule for DoNotUseBannedApisPE {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
@@ -213,7 +210,12 @@ impl Rule for DoNotUseBannedApisPE {
 
         if !critical_found.is_empty() {
             let apis = critical_found.join(", ");
-            self.log_fail(context, FailureLevel::Error, "Error_Critical", &[&file_name, &apis]);
+            self.log_fail(
+                context,
+                FailureLevel::Error,
+                "Error_Critical",
+                &[&file_name, &apis],
+            );
             return;
         }
 
@@ -226,7 +228,12 @@ impl Rule for DoNotUseBannedApisPE {
 
         if !banned_found.is_empty() {
             let apis = banned_found.join(", ");
-            self.log_fail(context, FailureLevel::Warning, "Warning", &[&file_name, &apis]);
+            self.log_fail(
+                context,
+                FailureLevel::Warning,
+                "Warning",
+                &[&file_name, &apis],
+            );
         } else {
             self.log_pass(context, "Pass", &[&file_name]);
         }

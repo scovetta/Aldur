@@ -103,10 +103,7 @@ pub struct MultiTargetSummary {
 
 impl MultiTargetSummary {
     /// Build a summary from analysis results
-    pub fn from_results(
-        results: &AnalysisResult,
-        rules: &[Box<dyn aldur_core::Rule>],
-    ) -> Self {
+    pub fn from_results(results: &AnalysisResult, rules: &[Box<dyn aldur_core::Rule>]) -> Self {
         let mut summary = Self::default();
 
         // Build rule name lookup
@@ -138,7 +135,8 @@ impl MultiTargetSummary {
 
             for result in results {
                 // Update rule summary
-                let rule_summary = summary.rule_summaries
+                let rule_summary = summary
+                    .rule_summaries
                     .entry(result.rule_id.clone())
                     .or_insert_with(|| RuleSummary {
                         rule_id: result.rule_id.clone(),
@@ -156,7 +154,9 @@ impl MultiTargetSummary {
                     }
                     ResultKind::Fail => {
                         rule_summary.fail_count += 1;
-                        rule_summary.failed_targets.push(Self::extract_filename(target));
+                        rule_summary
+                            .failed_targets
+                            .push(Self::extract_filename(target));
                         target_summary.failed_rules.push(result.rule_id.clone());
 
                         match result.level {
@@ -193,7 +193,8 @@ impl MultiTargetSummary {
 
         // Sort targets by error count (worst first)
         summary.target_summaries.sort_by(|a, b| {
-            b.error_count.cmp(&a.error_count)
+            b.error_count
+                .cmp(&a.error_count)
                 .then(b.warning_count.cmp(&a.warning_count))
         });
 
@@ -237,20 +238,52 @@ impl MultiTargetSummary {
         let reset = if use_colors { "\x1b[0m" } else { "" };
 
         writeln!(writer)?;
-        writeln!(writer, "{}╔══════════════════════════════════════════════════════════════╗{}", bold, reset)?;
-        writeln!(writer, "{}║             MULTI-TARGET SECURITY SUMMARY                    ║{}", bold, reset)?;
-        writeln!(writer, "{}╚══════════════════════════════════════════════════════════════╝{}", bold, reset)?;
+        writeln!(
+            writer,
+            "{}╔══════════════════════════════════════════════════════════════╗{}",
+            bold, reset
+        )?;
+        writeln!(
+            writer,
+            "{}║             MULTI-TARGET SECURITY SUMMARY                    ║{}",
+            bold, reset
+        )?;
+        writeln!(
+            writer,
+            "{}╚══════════════════════════════════════════════════════════════╝{}",
+            bold, reset
+        )?;
         writeln!(writer)?;
 
         // Overall statistics
         writeln!(writer, "{}📊 Overall Statistics{}", bold, reset)?;
         writeln!(writer, "─────────────────────────────────────────")?;
         writeln!(writer, "  Total binaries analyzed: {}", self.total_targets)?;
-        writeln!(writer, "  {}✓ Clean (no issues):{} {}", green, reset, self.clean_targets)?;
-        writeln!(writer, "  {}⚠ Warnings only:{} {}", yellow, reset, self.targets_with_warnings_only)?;
-        writeln!(writer, "  {}✗ With errors:{} {}", red, reset, self.targets_with_errors)?;
-        writeln!(writer, "  Overall security score: {}{}%{}",
-            if self.overall_score >= 80 { green } else if self.overall_score >= 60 { yellow } else { red },
+        writeln!(
+            writer,
+            "  {}✓ Clean (no issues):{} {}",
+            green, reset, self.clean_targets
+        )?;
+        writeln!(
+            writer,
+            "  {}⚠ Warnings only:{} {}",
+            yellow, reset, self.targets_with_warnings_only
+        )?;
+        writeln!(
+            writer,
+            "  {}✗ With errors:{} {}",
+            red, reset, self.targets_with_errors
+        )?;
+        writeln!(
+            writer,
+            "  Overall security score: {}{}%{}",
+            if self.overall_score >= 80 {
+                green
+            } else if self.overall_score >= 60 {
+                yellow
+            } else {
+                red
+            },
             self.overall_score,
             reset
         )?;
@@ -261,32 +294,51 @@ impl MultiTargetSummary {
             writeln!(writer, "{}🔥 Top Issues by Frequency{}", bold, reset)?;
             writeln!(writer, "─────────────────────────────────────────")?;
             for (i, (rule_id, count)) in self.top_issues.iter().enumerate().take(5) {
-                let rule_name = self.rule_summaries
+                let rule_name = self
+                    .rule_summaries
                     .get(rule_id)
                     .map(|s| s.rule_name.as_str())
                     .unwrap_or(rule_id);
-                writeln!(writer, "  {}. {} ({}) - {} binaries", i + 1, rule_id, rule_name, count)?;
+                writeln!(
+                    writer,
+                    "  {}. {} ({}) - {} binaries",
+                    i + 1,
+                    rule_id,
+                    rule_name,
+                    count
+                )?;
             }
             writeln!(writer)?;
         }
 
         // Worst offenders
-        let worst: Vec<_> = self.target_summaries
+        let worst: Vec<_> = self
+            .target_summaries
             .iter()
             .filter(|t| t.error_count > 0)
             .take(5)
             .collect();
 
         if !worst.is_empty() {
-            writeln!(writer, "{}🚨 Binaries Needing Most Attention{}", bold, reset)?;
+            writeln!(
+                writer,
+                "{}🚨 Binaries Needing Most Attention{}",
+                bold, reset
+            )?;
             writeln!(writer, "─────────────────────────────────────────")?;
             for target in worst {
                 writeln!(
                     writer,
                     "  {}• {}{}: {}{}E{} / {}{}W{} (score: {}%)",
-                    red, target.target, reset,
-                    red, target.error_count, reset,
-                    yellow, target.warning_count, reset,
+                    red,
+                    target.target,
+                    reset,
+                    red,
+                    target.error_count,
+                    reset,
+                    yellow,
+                    target.warning_count,
+                    reset,
                     target.security_score
                 )?;
             }
@@ -299,9 +351,7 @@ impl MultiTargetSummary {
 
         // Sort by pass rate (lowest first to show areas needing improvement)
         let mut sorted_rules: Vec<_> = self.rule_summaries.values().collect();
-        sorted_rules.sort_by(|a, b| {
-            a.pass_rate().partial_cmp(&b.pass_rate()).unwrap()
-        });
+        sorted_rules.sort_by(|a, b| a.pass_rate().partial_cmp(&b.pass_rate()).unwrap());
 
         // Find longest rule name for alignment
         let max_name_len = sorted_rules
@@ -319,12 +369,20 @@ impl MultiTargetSummary {
             let rate = rule.pass_rate();
             let bar_len = (rate / 5.0) as usize; // 20 chars = 100%
             let bar = "█".repeat(bar_len) + &"░".repeat(20 - bar_len);
-            let color = if rate >= 90.0 { green } else if rate >= 70.0 { yellow } else { red };
+            let color = if rate >= 90.0 {
+                green
+            } else if rate >= 70.0 {
+                yellow
+            } else {
+                red
+            };
 
             writeln!(
                 writer,
                 "  [{}{}{}] {:>5.1}% {:width$} {} ({}/{})",
-                color, bar, reset,
+                color,
+                bar,
+                reset,
                 rate,
                 rule.rule_name,
                 rule.rule_id,
@@ -350,8 +408,14 @@ impl MultiTargetSummary {
         md.push_str("|--------|-------|\n");
         md.push_str(&format!("| Total binaries | {} |\n", self.total_targets));
         md.push_str(&format!("| ✅ Clean | {} |\n", self.clean_targets));
-        md.push_str(&format!("| ⚠️ Warnings only | {} |\n", self.targets_with_warnings_only));
-        md.push_str(&format!("| ❌ With errors | {} |\n", self.targets_with_errors));
+        md.push_str(&format!(
+            "| ⚠️ Warnings only | {} |\n",
+            self.targets_with_warnings_only
+        ));
+        md.push_str(&format!(
+            "| ❌ With errors | {} |\n",
+            self.targets_with_errors
+        ));
         md.push_str(&format!("| Security Score | {}% |\n\n", self.overall_score));
 
         // Top issues
@@ -360,7 +424,8 @@ impl MultiTargetSummary {
             md.push_str("| Rule | Name | Count |\n");
             md.push_str("|------|------|-------|\n");
             for (rule_id, count) in &self.top_issues {
-                let rule_name = self.rule_summaries
+                let rule_name = self
+                    .rule_summaries
                     .get(rule_id)
                     .map(|s| s.rule_name.as_str())
                     .unwrap_or(rule_id);

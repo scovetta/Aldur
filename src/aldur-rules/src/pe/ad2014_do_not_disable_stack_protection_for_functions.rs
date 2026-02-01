@@ -7,7 +7,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD2014;
 
@@ -17,38 +17,35 @@ pub struct DoNotDisableStackProtectionForFunctions {
 
 impl DoNotDisableStackProtectionForFunctions {
     pub fn new() -> Self {
-        let descriptor =
-            RuleDescriptor::new(AD2014, "DoNotDisableStackProtectionForFunctions")
-                .with_category(RuleCategory::Security)
-                .with_tags(&["recommended", "memory-safety", "windows-only"])
-                .with_short_description(
-                    "Do not disable stack protection for individual functions.",
-                )
-                .with_full_description(
-                    "Application code should not disable stack protection for specific functions \
+        let descriptor = RuleDescriptor::new(AD2014, "DoNotDisableStackProtectionForFunctions")
+            .with_category(RuleCategory::Security)
+            .with_tags(&["recommended", "memory-safety", "windows-only"])
+            .with_short_description("Do not disable stack protection for individual functions.")
+            .with_full_description(
+                "Application code should not disable stack protection for specific functions \
                  using #pragma strict_gs_check(off), #pragma runtime_checks, or \
                  __declspec(safebuffers). These mechanisms bypass the security provided by /GS.",
-                )
+            )
             .with_fix_hint("Remove #pragma strict_gs_check(off) and __declspec(safebuffers)")
-                .with_default_level(FailureLevel::Warning)
-                .with_message(
-                    "Pass",
-                    "'{0}' does not disable stack protection for any functions.",
-                )
-                .with_message(
-                    "Warning_DisabledForFunctions",
-                    "'{0}' may have disabled stack protection for some functions. Check for use \
+            .with_default_level(FailureLevel::Warning)
+            .with_message(
+                "Pass",
+                "'{0}' does not disable stack protection for any functions.",
+            )
+            .with_message(
+                "Warning_DisabledForFunctions",
+                "'{0}' may have disabled stack protection for some functions. Check for use \
                  of #pragma strict_gs_check(off), #pragma runtime_checks, or \
                  __declspec(safebuffers) in source code.",
-                )
-                .with_message(
-                    "NotApplicable_PdbNotFound",
-                    "'{0}' does not have an associated PDB file.",
-                )
-                .with_message(
-                    "NotApplicable_InvalidMetadata",
-                    "'{0}' was not evaluated for check '{1}': {2}.",
-                );
+            )
+            .with_message(
+                "NotApplicable_PdbNotFound",
+                "'{0}' does not have an associated PDB file.",
+            )
+            .with_message(
+                "NotApplicable_InvalidMetadata",
+                "'{0}' was not evaluated for check '{1}': {2}.",
+            );
 
         Self { descriptor }
     }

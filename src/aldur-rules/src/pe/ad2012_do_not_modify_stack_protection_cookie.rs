@@ -32,7 +32,10 @@ impl DoNotModifyStackProtectionCookie {
             )
             .with_fix_hint("Remove custom __security_cookie definitions; use compiler default")
             .with_default_level(FailureLevel::Error)
-            .with_message("Pass", "'{0}' uses the default stack protection cookie value.")
+            .with_message(
+                "Pass",
+                "'{0}' uses the default stack protection cookie value.",
+            )
             .with_message(
                 "Error_ModifiedCookie",
                 "'{0}' has a modified stack protection cookie value. The default value \
@@ -138,7 +141,10 @@ impl Rule for DoNotModifyStackProtectionCookie {
         self.log_pass(
             context,
             "Pass",
-            &[&file_name, &format!("expected default: {}", expected_cookie)],
+            &[
+                &file_name,
+                &format!("expected default: {}", expected_cookie),
+            ],
         );
     }
 }

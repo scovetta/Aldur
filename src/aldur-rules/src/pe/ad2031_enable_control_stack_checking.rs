@@ -8,7 +8,7 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::{PeBinary, PdbFile};
+use aldur_parsers::{PdbFile, PeBinary};
 
 use crate::rule_ids::AD2031;
 
@@ -32,14 +32,8 @@ impl EnableControlStackChecking {
             )
             .with_fix_hint("Compile with /Gs or /Gs0 for aggressive stack probing")
             .with_default_level(FailureLevel::Warning)
-            .with_message(
-                "Pass",
-                "'{0}' has proper control stack checking enabled.",
-            )
-            .with_message(
-                "Pass_HasChkstk",
-                "'{0}' uses __chkstk for stack probing.",
-            )
+            .with_message("Pass", "'{0}' has proper control stack checking enabled.")
+            .with_message("Pass_HasChkstk", "'{0}' uses __chkstk for stack probing.")
             .with_message(
                 "Warning_LargeThreshold",
                 "'{0}' may have stack checking disabled or set to a large threshold. \

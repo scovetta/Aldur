@@ -261,8 +261,8 @@ impl DwarfInfo {
 
     /// Parse DWARF from raw bytes
     pub fn parse(data: &[u8]) -> Result<Self> {
-        let object = object::File::parse(data)
-            .map_err(|e| AldurError::DwarfParseError(e.to_string()))?;
+        let object =
+            object::File::parse(data).map_err(|e| AldurError::DwarfParseError(e.to_string()))?;
 
         let endian = if object.is_little_endian() {
             RunTimeEndian::Little
@@ -281,8 +281,8 @@ impl DwarfInfo {
         let dwarf_sections = gimli::DwarfSections::load(load_section)
             .map_err(|e| AldurError::DwarfParseError(e.to_string()))?;
 
-        let dwarf: Dwarf<EndianSlice<RunTimeEndian>> = dwarf_sections
-            .borrow(|section| EndianSlice::new(section, endian));
+        let dwarf: Dwarf<EndianSlice<RunTimeEndian>> =
+            dwarf_sections.borrow(|section| EndianSlice::new(section, endian));
 
         let mut result = DwarfInfo {
             compilation_units: Vec::new(),
@@ -454,10 +454,16 @@ impl DwarfInfo {
         let parts: Vec<&str> = s.split('.').collect();
         if parts.len() >= 2 {
             let major = parts[0].parse().ok()?;
-            let minor_str: String = parts[1].chars().take_while(|c| c.is_ascii_digit()).collect();
+            let minor_str: String = parts[1]
+                .chars()
+                .take_while(|c| c.is_ascii_digit())
+                .collect();
             let minor = minor_str.parse().ok()?;
             let patch = if parts.len() > 2 {
-                let patch_str: String = parts[2].chars().take_while(|c| c.is_ascii_digit()).collect();
+                let patch_str: String = parts[2]
+                    .chars()
+                    .take_while(|c| c.is_ascii_digit())
+                    .collect();
                 patch_str.parse().unwrap_or(0)
             } else {
                 0
@@ -469,7 +475,9 @@ impl DwarfInfo {
 
     /// Check if any compilation unit has LTO enabled
     pub fn has_lto(&self) -> bool {
-        self.compilation_units.iter().any(|cu| cu.parsed_info.has_lto)
+        self.compilation_units
+            .iter()
+            .any(|cu| cu.parsed_info.has_lto)
     }
 
     /// Check if all compilation units have stack clash protection
@@ -477,18 +485,23 @@ impl DwarfInfo {
         if self.compilation_units.is_empty() {
             return false;
         }
-        self.compilation_units.iter().all(|cu| cu.parsed_info.has_stack_clash_protection)
+        self.compilation_units
+            .iter()
+            .all(|cu| cu.parsed_info.has_stack_clash_protection)
     }
 
     /// Check if any compilation unit has stack protector
     pub fn has_stack_protector(&self) -> bool {
-        self.compilation_units.iter().any(|cu| cu.parsed_info.has_stack_protector)
+        self.compilation_units
+            .iter()
+            .any(|cu| cu.parsed_info.has_stack_protector)
     }
 
     /// Get the minimum optimization level across all compilation units
     /// Returns None if no optimization info is available
     pub fn min_optimization_level(&self) -> Option<i32> {
-        let levels: Vec<i32> = self.compilation_units
+        let levels: Vec<i32> = self
+            .compilation_units
             .iter()
             .filter_map(|cu| {
                 cu.parsed_info.optimization_level.as_ref().and_then(|opt| {
@@ -520,9 +533,9 @@ impl DwarfInfo {
 
     /// Check if a specific compiler flag is present in any compilation unit
     pub fn has_flag(&self, flag: &str) -> bool {
-        self.compilation_units.iter().any(|cu| {
-            cu.parsed_info.flags.iter().any(|f| f == flag)
-        })
+        self.compilation_units
+            .iter()
+            .any(|cu| cu.parsed_info.flags.iter().any(|f| f == flag))
     }
 
     /// Check if a specific compiler flag is absent from all compilation units
@@ -546,7 +559,8 @@ mod tests {
 
     #[test]
     fn test_parse_producer_gcc() {
-        let producer = "GNU C17 12.2.0 -mtune=generic -march=x86-64 -g -O2 -fstack-protector-strong";
+        let producer =
+            "GNU C17 12.2.0 -mtune=generic -march=x86-64 -g -O2 -fstack-protector-strong";
         let info = DwarfInfo::parse_producer(producer);
 
         assert_eq!(info.compiler_type, CompilerType::Gcc);

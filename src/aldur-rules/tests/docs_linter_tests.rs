@@ -28,10 +28,7 @@ fn docs_dir() -> PathBuf {
 /// Get all rule IDs from the codebase
 fn get_all_rule_ids() -> HashSet<String> {
     let rules = aldur_rules::all_rules();
-    rules
-        .iter()
-        .map(|r| r.descriptor().id.clone())
-        .collect()
+    rules.iter().map(|r| r.descriptor().id.clone()).collect()
 }
 
 /// Get all rule IDs from documentation files
@@ -178,9 +175,15 @@ fn test_rule_id_format() {
         if !id.starts_with("AD") {
             invalid_ids.push((id.clone(), "does not start with 'AD'".to_string()));
         } else if id.len() != 6 {
-            invalid_ids.push((id.clone(), format!("should be 6 characters (AD + 4 digits), got {}", id.len())));
+            invalid_ids.push((
+                id.clone(),
+                format!("should be 6 characters (AD + 4 digits), got {}", id.len()),
+            ));
         } else if !id[2..].chars().all(|c| c.is_ascii_digit()) {
-            invalid_ids.push((id.clone(), "digits after 'AD' are not all numeric".to_string()));
+            invalid_ids.push((
+                id.clone(),
+                "digits after 'AD' are not all numeric".to_string(),
+            ));
         }
     }
 
@@ -264,7 +267,9 @@ fn test_documentation_files_have_required_sections() {
                 }
 
                 // Description or Overview
-                if !content_lower.contains("## description") && !content_lower.contains("## overview") {
+                if !content_lower.contains("## description")
+                    && !content_lower.contains("## overview")
+                {
                     // Allow if there's a paragraph after the title
                     let lines: Vec<&str> = content.lines().collect();
                     if lines.len() < 3 || lines[2].is_empty() {
@@ -403,7 +408,10 @@ fn test_rule_count_matches_readme() {
     // This is a soft check - just print warnings rather than failing
     // because the README format might vary
     if !warnings.is_empty() {
-        eprintln!("Documentation linter warnings:\n  - {}", warnings.join("\n  - "));
+        eprintln!(
+            "Documentation linter warnings:\n  - {}",
+            warnings.join("\n  - ")
+        );
         eprintln!(
             "\nActual rule counts: PE={}, ELF={}, Mach-O={}, Total={}",
             pe_count,

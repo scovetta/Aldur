@@ -27,9 +27,7 @@ impl PeEnableClangSafeStack {
         let descriptor = RuleDescriptor::new(AD2038, "PeEnableClangSafeStack")
             .with_category(RuleCategory::Security)
             .with_tags(&["hardening", "memory-safety", "windows-only"])
-            .with_short_description(
-                "Enable Clang SafeStack for PE binaries built with Clang.",
-            )
+            .with_short_description("Enable Clang SafeStack for PE binaries built with Clang.")
             .with_full_description(
                 "PE binaries built with Clang should consider using SafeStack to provide \
                  strong protection against stack buffer overflows. SafeStack separates the \
@@ -176,10 +174,7 @@ impl Rule for PeEnableClangSafeStack {
         &self.descriptor
     }
 
-    fn can_analyze(
-        &self,
-        context: &AnalysisContext,
-    ) -> (AnalysisApplicability, Option<String>) {
+    fn can_analyze(&self, context: &AnalysisContext) -> (AnalysisApplicability, Option<String>) {
         let Some(binary) = context.binary() else {
             return (
                 AnalysisApplicability::NotApplicableDueToMissingTarget,
