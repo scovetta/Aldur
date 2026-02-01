@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Build
+        working-directory: src
+        run: cargo build --release
+
+      - name: Run tests
+        working-directory: src
+        run: cargo test
+
+      - name: Run clippy
+        working-directory: src
+        run: cargo clippy -- -D warnings
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Check formatting
+        working-directory: src
+        run: cargo fmt -- --check
+        if: matrix.os == 'ubuntu-latest'
+
+  # Test the action itself
+  test-action:
+    name: Test Action
+    runs-on: ubuntu-latest
+    needs: build
+
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Build aldur
+        working-directory: src
+        run: cargo build --release
+
+      - name: Create test binary
+        run: |
+          echo 'fn main() { println!("Hello"); }' > test.rs
+          rustc -o test_binary test.rs
+
+      - name: Test aldur on itself
+        working-directory: src
+        run: |
+          ./target/release/aldur analyze \
+            --format text \
+            --show-passed \
+            --statistics \
+            ./target/release/aldur
+
+      - name: Test SARIF output
+        working-directory: src
+        run: |
+          ./target/release/aldur analyze \
+            --format sarif \
+            --output ../test-results.sarif \
+            ./target/release/aldur
+
+          # Validate SARIF structure
+          python3 -c "import json; json.load(open('../test-results.sarif'))"
+          echo "✓ SARIF output is valid JSON"

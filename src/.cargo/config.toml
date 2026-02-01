@@ -1,0 +1,38 @@
+[target.x86_64-pc-windows-gnu]
+linker = "x86_64-w64-mingw32-gcc"
+
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+rustflags = [
+    "-C", "link-arg=-Wl,-z,relro",
+    "-C", "link-arg=-Wl,-z,now",
+    "-C", "link-arg=-Wl,-z,nodlopen",
+]
+
+# Enable security hardening flags for Linux targets
+# These are passed to the linker for additional binary hardening
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    # Full RELRO (already default in Rust, but explicit)
+    "-C", "link-arg=-Wl,-z,relro",
+    "-C", "link-arg=-Wl,-z,now",
+    # Note: The following flags require nightly Rust and are commented out:
+    # CET/Shadow Stack: -Z cf-protection=full (AD3015, AD3016, AD3033)
+    # CFI: -Z sanitizer=cfi (requires -C lto=fat) (AD3036)
+    # Stack clash protection and SLH are not available in Rust
+]
+
+[target.x86_64-unknown-linux-musl]
+rustflags = [
+    "-C", "link-arg=-Wl,-z,relro",
+    "-C", "link-arg=-Wl,-z,now",
+    "-C", "link-arg=-Wl,-z,nodlopen",
+]
+
+# macOS targets require osxcross or native macOS for linking
+# These are best built on macOS or via GitHub Actions
+[target.x86_64-apple-darwin]
+# linker = "o64-clang"  # Requires osxcross
+
+[target.aarch64-apple-darwin]
+# linker = "oa64-clang"  # Requires osxcross

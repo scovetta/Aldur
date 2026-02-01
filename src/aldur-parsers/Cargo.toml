@@ -1,0 +1,24 @@
+[package]
+name = "aldur-parsers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Binary parsers for PE, ELF, Mach-O, PDB, and DWARF"
+
+[dependencies]
+aldur-core.workspace = true
+
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+goblin.workspace = true
+pdb.workspace = true
+gimli.workspace = true
+object.workspace = true
+scroll.workspace = true
+memmap2.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

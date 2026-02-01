@@ -1,0 +1,255 @@
+name: 'Aldur-rs Security Scanner'
+description: 'Analyze PE, ELF, and Mach-O binaries for security vulnerabilities using aldur'
+author: 'Microsoft'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  targets:
+    description: 'Files, directories, or glob patterns to analyze (space-separated)'
+    required: true
+  output:
+    description: 'Output file path for results (SARIF format by default)'
+    required: false
+    default: 'aldur-results.sarif'
+  format:
+    description: 'Output format: sarif, text, text-color, or github-actions'
+    required: false
+    default: 'sarif'
+  annotations:
+    description: 'Show results as GitHub Actions annotations (errors/warnings in PR)'
+    required: false
+    default: 'true'
+  recurse:
+    description: 'Recurse into subdirectories'
+    required: false
+    default: 'true'
+  show-passed:
+    description: 'Include passing rules in output'
+    required: false
+    default: 'false'
+  level:
+    description: 'Minimum failure level to report (error, warning, note)'
+    required: false
+    default: ''
+  scan-archives:
+    description: 'Scan binaries inside archives (ZIP, TAR, APK, IPA, MSIX, etc.)'
+    required: false
+    default: 'true'
+  version:
+    description: 'Version of aldur to use (defaults to latest)'
+    required: false
+    default: 'latest'
+  upload-sarif:
+    description: 'Upload SARIF results to GitHub Code Scanning'
+    required: false
+    default: 'true'
+  fail-on-error:
+    description: 'Fail the workflow if errors are found'
+    required: false
+    default: 'true'
+
+outputs:
+  sarif-file:
+    description: 'Path to the generated SARIF file'
+    value: ${{ steps.run-aldur.outputs.sarif-file }}
+  errors:
+    description: 'Number of errors found'
+    value: ${{ steps.run-aldur.outputs.errors }}
+  warnings:
+    description: 'Number of warnings found'
+    value: ${{ steps.run-aldur.outputs.warnings }}
+  files-analyzed:
+    description: 'Number of files analyzed'
+    value: ${{ steps.run-aldur.outputs.files-analyzed }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Detect platform
+      id: platform
+      shell: bash
+      run: |
+        case "${{ runner.os }}-${{ runner.arch }}" in
+          Linux-X64)
+            echo "target=x86_64-unknown-linux-musl" >> $GITHUB_OUTPUT
+            echo "archive=tar.gz" >> $GITHUB_OUTPUT
+            echo "ext=" >> $GITHUB_OUTPUT
+            ;;
+          Linux-ARM64)
+            echo "target=aarch64-unknown-linux-gnu" >> $GITHUB_OUTPUT
+            echo "archive=tar.gz" >> $GITHUB_OUTPUT
+            echo "ext=" >> $GITHUB_OUTPUT
+            ;;
+          macOS-X64)
+            echo "target=x86_64-apple-darwin" >> $GITHUB_OUTPUT
+            echo "archive=tar.gz" >> $GITHUB_OUTPUT
+            echo "ext=" >> $GITHUB_OUTPUT
+            ;;
+          macOS-ARM64)
+            echo "target=aarch64-apple-darwin" >> $GITHUB_OUTPUT
+            echo "archive=tar.gz" >> $GITHUB_OUTPUT
+            echo "ext=" >> $GITHUB_OUTPUT
+            ;;
+          Windows-X64)
+            echo "target=x86_64-pc-windows-msvc" >> $GITHUB_OUTPUT
+            echo "archive=zip" >> $GITHUB_OUTPUT
+            echo "ext=.exe" >> $GITHUB_OUTPUT
+            ;;
+          Windows-ARM64)
+            echo "target=aarch64-pc-windows-msvc" >> $GITHUB_OUTPUT
+            echo "archive=zip" >> $GITHUB_OUTPUT
+            echo "ext=.exe" >> $GITHUB_OUTPUT
+            ;;
+          *)
+            echo "::error::Unsupported platform: ${{ runner.os }}-${{ runner.arch }}"
+            exit 1
+            ;;
+        esac
+
+    - name: Download aldur
+      id: download
+      shell: bash
+      run: |
+        set -e
+
+        INSTALL_DIR="${{ runner.temp }}/aldur"
+        mkdir -p "$INSTALL_DIR"
+
+        VERSION="${{ inputs.version }}"
+        TARGET="${{ steps.platform.outputs.target }}"
+        ARCHIVE="${{ steps.platform.outputs.archive }}"
+        EXT="${{ steps.platform.outputs.ext }}"
+
+        # Get the download URL
+        if [ "$VERSION" = "latest" ]; then
+          RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/latest"
+        else
+          RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/tags/v${VERSION}"
+        fi
+
+        echo "Fetching release info from: $RELEASE_URL"
+
+        # Get asset download URL
+        ASSET_NAME="aldur-.*-${TARGET}.${ARCHIVE}"
+        DOWNLOAD_URL=$(curl -sL "$RELEASE_URL" | grep -oP "browser_download_url.*${TARGET}\.${ARCHIVE}" | head -1 | cut -d'"' -f3)
+
+        if [ -z "$DOWNLOAD_URL" ]; then
+          echo "::error::Could not find release asset for ${TARGET}"
+          exit 1
+        fi
+
+        echo "Downloading from: $DOWNLOAD_URL"
+
+        # Download and extract
+        cd "$INSTALL_DIR"
+        if [ "$ARCHIVE" = "tar.gz" ]; then
+          curl -sL "$DOWNLOAD_URL" | tar xz
+        else
+          curl -sL "$DOWNLOAD_URL" -o aldur.zip
+          unzip -q aldur.zip
+          rm aldur.zip
+        fi
+
+        # Find the binary
+        BINARY_PATH=$(find "$INSTALL_DIR" -name "aldur${EXT}" -type f | head -1)
+        if [ -z "$BINARY_PATH" ]; then
+          echo "::error::Could not find aldur binary after extraction"
+          exit 1
+        fi
+
+        chmod +x "$BINARY_PATH"
+        echo "binary-path=$BINARY_PATH" >> $GITHUB_OUTPUT
+        echo "Successfully installed aldur to: $BINARY_PATH"
+
+    - name: Run Aldur
+      id: run-aldur
+      shell: bash
+      run: |
+        set -e
+
+        ALDUR="${{ steps.download.outputs.binary-path }}"
+        OUTPUT_FILE="${{ inputs.output }}"
+
+        # Build base command arguments
+        BASE_ARGS="analyze"
+
+        if [ "${{ inputs.recurse }}" = "true" ]; then
+          BASE_ARGS="$BASE_ARGS --recurse"
+        fi
+
+        if [ "${{ inputs.show-passed }}" = "true" ]; then
+          BASE_ARGS="$BASE_ARGS --show-passed"
+        fi
+
+        if [ -n "${{ inputs.level }}" ]; then
+          BASE_ARGS="$BASE_ARGS --level ${{ inputs.level }}"
+        fi
+
+        if [ "${{ inputs.scan-archives }}" = "false" ]; then
+          BASE_ARGS="$BASE_ARGS --scan-archives=false"
+        fi
+
+        BASE_ARGS="$BASE_ARGS --statistics"
+
+        # Run with github-actions format for annotations (if enabled)
+        if [ "${{ inputs.annotations }}" = "true" ]; then
+          echo "::group::Running aldur with annotations"
+          ANNOTATION_ARGS="$BASE_ARGS --format github-actions ${{ inputs.targets }}"
+          echo "Running: aldur $ANNOTATION_ARGS"
+          set +e
+          "$ALDUR" $ANNOTATION_ARGS
+          ANNOTATION_EXIT=$?
+          set -e
+          echo "::endgroup::"
+        fi
+
+        # Run with requested format for output file
+        ARGS="$BASE_ARGS --output $OUTPUT_FILE --format ${{ inputs.format }} ${{ inputs.targets }}"
+
+        echo "Running: aldur $ARGS"
+
+        # Run aldur and capture exit code
+        set +e
+        "$ALDUR" $ARGS
+        EXIT_CODE=$?
+        set -e
+
+        # Parse results for summary
+        if [ -f "$OUTPUT_FILE" ] && [ "${{ inputs.format }}" = "sarif" ]; then
+          ERRORS=$(grep -c '"level": "error"' "$OUTPUT_FILE" 2>/dev/null || echo "0")
+          WARNINGS=$(grep -c '"level": "warning"' "$OUTPUT_FILE" 2>/dev/null || echo "0")
+          FILES=$(grep -c '"artifactLocation"' "$OUTPUT_FILE" 2>/dev/null || echo "0")
+        else
+          ERRORS="0"
+          WARNINGS="0"
+          FILES="0"
+        fi
+
+        echo "sarif-file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
+        echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+        echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+        echo "files-analyzed=$FILES" >> $GITHUB_OUTPUT
+
+        # Create summary
+        echo "## 🔍 Aldur-rs Security Scan Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| ❌ Errors | $ERRORS |" >> $GITHUB_STEP_SUMMARY
+        echo "| ⚠️ Warnings | $WARNINGS |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ "$EXIT_CODE" -ne 0 ] && [ "${{ inputs.fail-on-error }}" = "true" ]; then
+          echo "::error::aldur found security issues (exit code: $EXIT_CODE)"
+          exit $EXIT_CODE
+        fi
+
+    - name: Upload SARIF to GitHub Code Scanning
+      if: inputs.upload-sarif == 'true' && inputs.format == 'sarif' && always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.output }}
+        category: aldur
+      continue-on-error: true
