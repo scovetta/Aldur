@@ -492,6 +492,7 @@ Aldur implements comprehensive security rules organized by binary format.
 | AD2052 | [RequireAuthenticode](docs/rules/AD2052.RequireAuthenticode.md) | Security | ✓ | ✓ |
 | AD2053 | [AllowIsolation](docs/rules/AD2053.AllowIsolation.md) | Security | ✓ | ✓ |
 | AD2054 | [EnableReturnFlowGuard](docs/rules/AD2054.EnableReturnFlowGuard.md) | Security | ✓ | ✓ |
+| AD2060 | [DetectPackedBinary](docs/rules/AD2060.DetectPackedBinary.md) | Security | ✓ | ✓ |
 | AD3034 | [RustEnableControlFlowGuard](docs/rules/AD3034.RustEnableControlFlowGuard.md) | Security | ✗ | ✓ |
 
 ### ELF (Linux/Unix) Rules — 41 rules
@@ -538,6 +539,7 @@ Aldur implements comprehensive security rules organized by binary format.
 | AD3045 | [EnableStackVariableInitialization](docs/rules/AD3045.EnableStackVariableInitialization.md) | Security | ✗ | ✓ | ✗ |
 | AD3050 | [EnableGccDefs](docs/rules/AD3050.EnableGccDefs.md) | Security | ✓ | ✓ | ✗ |
 | AD3051 | [CheckFortifySourceLevel](docs/rules/AD3051.CheckFortifySourceLevel.md) | Security | ✓ | ✓ | ✗ |
+| AD3060 | [DetectPackedBinary](docs/rules/AD3060.DetectPackedBinary.md) | Security | ✓ | ✓ | ✓ |
 | AD4002 | [ReportElfOrMachoCompilerData](docs/rules/AD4002.ReportElfOrMachoCompilerData.md) | Reporting | ✓ | ✓ | ✓ |
 
 ### Mach-O (macOS) Rules — 32 rules
@@ -576,6 +578,7 @@ Aldur implements comprehensive security rules organized by binary format.
 | AD5030 | [EnableExceptionHandlingMachO](docs/rules/AD5030.EnableExceptionHandlingMachO.md) | Security | ✓ | ✓ | ✓ |
 | AD5031 | [CheckNotEncrypted](docs/rules/AD5031.CheckNotEncrypted.md) | Security | ✓ | ✓ | ✓ |
 | AD5040 | [DoNotUseUncheckedOptimization](docs/rules/AD5040.DoNotUseUncheckedOptimization.md) | Security | ✓ | ✓ | ✓ |
+| AD5060 | [DetectPackedBinary](docs/rules/AD5060.DetectPackedBinary.md) | Security | ✓ | ✓ | ✓ |
 
 ## Output Formats
 
