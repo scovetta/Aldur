@@ -171,42 +171,53 @@ runs:
     - name: Run Aldur
       id: run-aldur
       shell: bash
+      env:
+        INPUT_BINARY_PATH: ${{ inputs.binary-path }}
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_TARGETS: ${{ inputs.targets }}
+        INPUT_LEVEL: ${{ inputs.level }}
+        INPUT_RECURSE: ${{ inputs.recurse }}
+        INPUT_SHOW_PASSED: ${{ inputs.show-passed }}
+        INPUT_SCAN_ARCHIVES: ${{ inputs.scan-archives }}
+        INPUT_ANNOTATIONS: ${{ inputs.annotations }}
+        DOWNLOAD_BINARY_PATH: ${{ steps.download.outputs.binary-path }}
       run: |
         set -e
 
         # Use local binary if provided, otherwise use downloaded binary
-        if [ -n "${{ inputs.binary-path }}" ]; then
-          ALDUR="${{ inputs.binary-path }}"
+        if [ -n "$INPUT_BINARY_PATH" ]; then
+          ALDUR="$INPUT_BINARY_PATH"
         else
-          ALDUR="${{ steps.download.outputs.binary-path }}"
+          ALDUR="$DOWNLOAD_BINARY_PATH"
         fi
-        OUTPUT_FILE="${{ inputs.output }}"
+        OUTPUT_FILE="$INPUT_OUTPUT"
 
         # Build base command arguments
         BASE_ARGS="analyze"
 
-        if [ "${{ inputs.recurse }}" = "true" ]; then
+        if [ "$INPUT_RECURSE" = "true" ]; then
           BASE_ARGS="$BASE_ARGS --recurse"
         fi
 
-        if [ "${{ inputs.show-passed }}" = "true" ]; then
+        if [ "$INPUT_SHOW_PASSED" = "true" ]; then
           BASE_ARGS="$BASE_ARGS --show-passed"
         fi
 
-        if [ -n "${{ inputs.level }}" ]; then
-          BASE_ARGS="$BASE_ARGS --level ${{ inputs.level }}"
+        if [ -n "$INPUT_LEVEL" ]; then
+          BASE_ARGS="$BASE_ARGS --level $INPUT_LEVEL"
         fi
 
-        if [ "${{ inputs.scan-archives }}" = "false" ]; then
+        if [ "$INPUT_SCAN_ARCHIVES" = "false" ]; then
           BASE_ARGS="$BASE_ARGS --scan-archives=false"
         fi
 
         BASE_ARGS="$BASE_ARGS --statistics"
 
         # Run with github-actions format for annotations (if enabled)
-        if [ "${{ inputs.annotations }}" = "true" ]; then
+        if [ "$INPUT_ANNOTATIONS" = "true" ]; then
           echo "::group::Running Aldur with annotations"
-          ANNOTATION_ARGS="$BASE_ARGS --format github-actions ${{ inputs.targets }}"
+          ANNOTATION_ARGS="$BASE_ARGS --format github-actions $INPUT_TARGETS"
           echo "Running: aldur $ANNOTATION_ARGS"
           set +e
           "$ALDUR" $ANNOTATION_ARGS
@@ -216,7 +227,7 @@ runs:
         fi
 
         # Run with requested format for output file
-        ARGS="$BASE_ARGS --output $OUTPUT_FILE --format ${{ inputs.format }} ${{ inputs.targets }}"
+        ARGS="$BASE_ARGS --output $OUTPUT_FILE --format $INPUT_FORMAT $INPUT_TARGETS"
 
         echo "Running: aldur $ARGS"
 
@@ -227,7 +238,7 @@ runs:
         set -e
 
         # Parse results for summary
-        if [ -f "$OUTPUT_FILE" ] && [ "${{ inputs.format }}" = "sarif" ]; then
+        if [ -f "$OUTPUT_FILE" ] && [ "$INPUT_FORMAT" = "sarif" ]; then
           ERRORS=$(grep -c '"level": "error"' "$OUTPUT_FILE" 2>/dev/null || echo "0")
           WARNINGS=$(grep -c '"level": "warning"' "$OUTPUT_FILE" 2>/dev/null || echo "0")
           FILES=$(grep -c '"artifactLocation"' "$OUTPUT_FILE" 2>/dev/null || echo "0")
