@@ -329,7 +329,7 @@ impl AnalyzeCommand {
                     let help = desc
                         .fix_hint
                         .as_ref()
-                        .map(|hint| aldur_sarif::schema::MultiformatMessageString::text(hint));
+                        .map(aldur_sarif::schema::MultiformatMessageString::text);
                     sarif_logger.add_rule(aldur_sarif::ReportingDescriptor {
                         id: desc.id.clone(),
                         name: Some(desc.name.clone()),
