@@ -96,6 +96,18 @@ jobs:
           echo 'fn main() { println!("Hello"); }' > test.rs
           rustc -o test_binary test.rs
 
+      - name: Set binary paths
+        id: paths
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            echo "aldur=src/target/release/aldur.exe" >> $GITHUB_OUTPUT
+            echo "test_binary=test_binary.exe" >> $GITHUB_OUTPUT
+          else
+            echo "aldur=src/target/release/aldur" >> $GITHUB_OUTPUT
+            echo "test_binary=test_binary" >> $GITHUB_OUTPUT
+          fi
+
       # Test CLI directly
       - name: Test aldur CLI on itself
         working-directory: src
@@ -114,10 +126,10 @@ jobs:
         id: action-sarif
         uses: ./
         with:
-          targets: 'src/target/release/aldur'
+          targets: ${{ steps.paths.outputs.aldur }}
           format: sarif
           output: action-results.sarif
-          binary-path: src/target/release/aldur
+          binary-path: ${{ steps.paths.outputs.aldur }}
           upload-sarif: false
           fail-on-error: false
           annotations: false
@@ -140,10 +152,10 @@ jobs:
       - name: Test Action - Text format
         uses: ./
         with:
-          targets: 'src/target/release/aldur'
+          targets: ${{ steps.paths.outputs.aldur }}
           format: text
           output: action-results.txt
-          binary-path: src/target/release/aldur
+          binary-path: ${{ steps.paths.outputs.aldur }}
           upload-sarif: false
           fail-on-error: false
           annotations: false
@@ -160,10 +172,10 @@ jobs:
       - name: Test Action - Annotations
         uses: ./
         with:
-          targets: 'src/target/release/aldur'
+          targets: ${{ steps.paths.outputs.aldur }}
           format: sarif
           output: action-annotated.sarif
-          binary-path: src/target/release/aldur
+          binary-path: ${{ steps.paths.outputs.aldur }}
           upload-sarif: false
           fail-on-error: false
           annotations: true
@@ -172,10 +184,10 @@ jobs:
       - name: Test Action - Multiple targets
         uses: ./
         with:
-          targets: 'src/target/release/aldur test_binary'
+          targets: '${{ steps.paths.outputs.aldur }} ${{ steps.paths.outputs.test_binary }}'
           format: sarif
           output: multi-target.sarif
-          binary-path: src/target/release/aldur
+          binary-path: ${{ steps.paths.outputs.aldur }}
           upload-sarif: false
           fail-on-error: false
           annotations: false
