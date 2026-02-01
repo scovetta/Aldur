@@ -39,6 +39,7 @@ mod ad3044_enable_shadow_call_stack;
 mod ad3045_enable_stack_variable_init;
 mod ad3050_enable_gcc_defs;
 mod ad3051_check_fortify_level;
+mod ad3060_detect_packed_binary;
 mod ad4002_report_elf_macho_compiler_data;
 pub mod compiler_utils;
 
@@ -81,6 +82,7 @@ pub use ad3044_enable_shadow_call_stack::EnableShadowCallStack;
 pub use ad3045_enable_stack_variable_init::EnableStackVariableInitialization;
 pub use ad3050_enable_gcc_defs::EnableGccDefs;
 pub use ad3051_check_fortify_level::CheckFortifySourceLevel;
+pub use ad3060_detect_packed_binary::DetectPackedBinaryELF;
 pub use ad4002_report_elf_macho_compiler_data::ReportElfOrMachoCompilerData;
 
 use aldur_core::Rule;
@@ -128,5 +130,6 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
         Box::new(ReportElfOrMachoCompilerData::new()),
         Box::new(EnableGccDefs::new()),
         Box::new(CheckFortifySourceLevel::new()),
+        Box::new(DetectPackedBinaryELF::new()),
     ]
 }

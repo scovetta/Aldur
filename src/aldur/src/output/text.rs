@@ -214,10 +214,10 @@ impl<'a> TextFormatter<'a> {
     ) -> std::io::Result<()> {
         let (icon, rule_style): (&str, fn(&str) -> ColoredString) =
             match (&result.kind, &result.level) {
-                (ResultKind::Pass, _) => ("✓", |s| s.green()),
-                (ResultKind::Fail, FailureLevel::Error) => ("✗", |s| s.red().bold()),
-                (ResultKind::Fail, FailureLevel::Warning) => ("⚠", |s| s.yellow()),
-                (ResultKind::Fail, FailureLevel::Note) => ("ℹ", |s| s.blue()),
+                (ResultKind::Pass, _) => ("✅", |s| s.green()),
+                (ResultKind::Fail, FailureLevel::Error) => ("❌", |s| s.red().bold()),
+                (ResultKind::Fail, FailureLevel::Warning) => ("⚠️ ", |s| s.yellow()),
+                (ResultKind::Fail, FailureLevel::Note) => ("ℹ️ ", |s| s.blue()),
                 _ => ("•", |s| s.normal()),
             };
 

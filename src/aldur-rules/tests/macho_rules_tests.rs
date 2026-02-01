@@ -625,7 +625,7 @@ mod all_rules_tests {
     #[test]
     fn test_all_rules_count() {
         let rules = all_rules();
-        assert_eq!(rules.len(), 32, "Expected 32 Mach-O rules");
+        assert_eq!(rules.len(), 33, "Expected 33 Mach-O rules");
     }
 
     #[test]

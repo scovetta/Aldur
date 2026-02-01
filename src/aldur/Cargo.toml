@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "Aldur binary security analyzer CLI"
+description = "Binary security analyzer for PE, ELF, and Mach-O binaries"
 
 [[bin]]
 name = "aldur"

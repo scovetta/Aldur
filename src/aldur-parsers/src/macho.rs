@@ -215,6 +215,8 @@ pub struct MachOBinary {
     pub min_os_version: Option<MinOSVersion>,
     /// Has __RESTRICT segment
     pub has_restrict_segment: bool,
+    /// Packer detection information
+    pub packer_info: crate::packer::PackerInfo,
 }
 
 impl MachOBinary {
@@ -312,6 +314,10 @@ impl MachOBinary {
         // Extract minimum OS version from load commands
         let min_os_version = Self::extract_min_os_version(&mach);
 
+        // Detect if the binary is packed
+        let segment_names: Vec<&str> = segments.iter().map(|s| s.name.as_str()).collect();
+        let packer_info = crate::packer::detect_packer(&data, &segment_names);
+
         let binary = MachOBinary {
             path,
             valid: true,
@@ -328,6 +334,7 @@ impl MachOBinary {
             has_library_validation,
             min_os_version,
             has_restrict_segment,
+            packer_info,
             data,
         };
 
@@ -697,6 +704,16 @@ impl MachOBinary {
     /// Check if there are any W^X (write XOR execute) violations
     pub fn has_wxorx_violation(&self) -> bool {
         !self.get_wxorx_violating_segments().is_empty()
+    }
+
+    /// Check if this binary appears to be packed
+    pub fn is_packed(&self) -> bool {
+        self.packer_info.is_packed
+    }
+
+    /// Get packer information
+    pub fn packer_info(&self) -> &crate::packer::PackerInfo {
+        &self.packer_info
     }
 }
 

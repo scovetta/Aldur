@@ -1,26 +1,18 @@
-<table>
- <tr>
-  <td>
-   <img src="logo.jpg" width="200"/>
-  </td>
-  <td>
-    <h1>Aldur: A Comprehensive Binary Hardening Checker</h1>
-  </td>
- </tr>
-</table>
+# Aldur: A Comprehensive Binary Hardening Checker
+<img align="left" width="200" height="200" src="logo.jpg" />
+
+Aldur is a high-performance, cross-platform binary security analyzer written in Rust. It inspects PE (Windows), ELF (Linux/Unix), and Mach-O (macOS) binaries for security vulnerabilities, misconfigurations, and missing hardening features, and is aware of MSVC, gcc, Clang, and Rust compilers.
 
 [![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Latest release](https://img.shields.io/github/v/release/scovetta/aldur)](Latest release)
-
-Aldur is a high-performance, cross-platform binary security analyzer written in Rust. It inspects PE (Windows), ELF (Linux/Unix), and Mach-O (macOS) binaries for security vulnerabilities, misconfigurations, and missing hardening features, and is aware of MSVC, gcc, Clang, and Rust compilers.
+[![Latest release](https://img.shields.io/github/v/release/scovetta/aldur)](/scovetta/Aldur/releases/)
 
 ## Features
 
 - 🔍 **Multi-format support**: Analyzes PE, ELF, and Mach-O binaries
 - ⚡ **High performance**: Written in Rust with parallel analysis support
-- 📊 **Useful output**: Industry-standard Static Analysis Results Interchange Format (SARIF) or text
-- 🔒 **Comprehensive security checks**: 125 security rules covering compiler flags, memory protections, and exploit mitigations
+- 📊 **Useful output**: Static Analysis Results Interchange Format (SARIF) or text output
+- 🔒 **Comprehensive security checks**: 125+ security rules covering compiler flags, memory protections, and exploit mitigations
 - 🖥️ **Cross-platform**: Runs on Windows, Linux, and macOS
 - 🔧 **PDB support**: Cross-platform Windows PDB analysis (no Windows SDK required)
 - 📁 **Flexible input**: Analyze individual files, directories, archives, or glob patterns
@@ -112,7 +104,9 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: Build project
         run: cargo build --release
@@ -498,6 +492,7 @@ Aldur implements comprehensive security rules organized by binary format.
 | AD2052 | [RequireAuthenticode](docs/rules/AD2052.RequireAuthenticode.md) | Security | ✓ | ✓ |
 | AD2053 | [AllowIsolation](docs/rules/AD2053.AllowIsolation.md) | Security | ✓ | ✓ |
 | AD2054 | [EnableReturnFlowGuard](docs/rules/AD2054.EnableReturnFlowGuard.md) | Security | ✓ | ✓ |
+| AD2060 | [DetectPackedBinary](docs/rules/AD2060.DetectPackedBinary.md) | Security | ✓ | ✓ |
 | AD3034 | [RustEnableControlFlowGuard](docs/rules/AD3034.RustEnableControlFlowGuard.md) | Security | ✗ | ✓ |
 
 ### ELF (Linux/Unix) Rules — 41 rules
@@ -544,6 +539,7 @@ Aldur implements comprehensive security rules organized by binary format.
 | AD3045 | [EnableStackVariableInitialization](docs/rules/AD3045.EnableStackVariableInitialization.md) | Security | ✗ | ✓ | ✗ |
 | AD3050 | [EnableGccDefs](docs/rules/AD3050.EnableGccDefs.md) | Security | ✓ | ✓ | ✗ |
 | AD3051 | [CheckFortifySourceLevel](docs/rules/AD3051.CheckFortifySourceLevel.md) | Security | ✓ | ✓ | ✗ |
+| AD3060 | [DetectPackedBinary](docs/rules/AD3060.DetectPackedBinary.md) | Security | ✓ | ✓ | ✓ |
 | AD4002 | [ReportElfOrMachoCompilerData](docs/rules/AD4002.ReportElfOrMachoCompilerData.md) | Reporting | ✓ | ✓ | ✓ |
 
 ### Mach-O (macOS) Rules — 32 rules
@@ -582,6 +578,7 @@ Aldur implements comprehensive security rules organized by binary format.
 | AD5030 | [EnableExceptionHandlingMachO](docs/rules/AD5030.EnableExceptionHandlingMachO.md) | Security | ✓ | ✓ | ✓ |
 | AD5031 | [CheckNotEncrypted](docs/rules/AD5031.CheckNotEncrypted.md) | Security | ✓ | ✓ | ✓ |
 | AD5040 | [DoNotUseUncheckedOptimization](docs/rules/AD5040.DoNotUseUncheckedOptimization.md) | Security | ✓ | ✓ | ✓ |
+| AD5060 | [DetectPackedBinary](docs/rules/AD5060.DetectPackedBinary.md) | Security | ✓ | ✓ | ✓ |
 
 ## Output Formats
 

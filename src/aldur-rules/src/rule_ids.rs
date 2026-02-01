@@ -49,6 +49,7 @@ pub const AD2051: &str = "AD2051"; // CheckMinimumLibraryVersions
 pub const AD2052: &str = "AD2052"; // RequireAuthenticode
 pub const AD2053: &str = "AD2053"; // AllowIsolation
 pub const AD2054: &str = "AD2054"; // EnableReturnFlowGuard
+pub const AD2060: &str = "AD2060"; // DetectPackedBinaryPE
 
 // ELF Rules
 pub const AD3001: &str = "AD3001"; // EnablePositionIndependentExecutable
@@ -91,6 +92,7 @@ pub const AD3044: &str = "AD3044"; // EnableShadowCallStack
 pub const AD3045: &str = "AD3045"; // EnableStackVariableInitialization
 pub const AD3050: &str = "AD3050"; // EnableGccDefs
 pub const AD3051: &str = "AD3051"; // CheckFortifySourceLevel
+pub const AD3060: &str = "AD3060"; // DetectPackedBinaryELF
 
 // Mach-O Rules
 pub const AD5001: &str = "AD5001"; // EnablePositionIndependentExecutableMachO
@@ -125,8 +127,8 @@ pub const AD5029: &str = "AD5029"; // EnableArmMTEMachO
 pub const AD5030: &str = "AD5030"; // EnableExceptionHandlingMachO
 pub const AD5031: &str = "AD5031"; // CheckNotEncrypted
 pub const AD5040: &str = "AD5040"; // DoNotUseUncheckedOptimization
-
-// Reporting Rules
+pub const AD5060: &str = "AD5060"; // DetectPackedBinaryMachO
+                                   // Reporting Rules
 pub const AD4001: &str = "AD4001"; // ReportPECompilerData
 pub const AD4002: &str = "AD4002"; // ReportElfOrMachoCompilerData
 

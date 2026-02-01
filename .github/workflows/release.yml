@@ -64,10 +64,12 @@ jobs:
             archive: tar.gz
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@772c4490b37ea1c65caf6a53089a38ea1510cf4a # 1.93.0
         with:
           targets: ${{ matrix.target }}
 
@@ -133,10 +135,12 @@ jobs:
       contents: read
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@772c4490b37ea1c65caf6a53089a38ea1510cf4a # 1.93.0
 
       - name: Install cargo-sbom
         run: cargo install cargo-sbom
@@ -175,7 +179,9 @@ jobs:
       attestations: write  # For GitHub attestations
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4

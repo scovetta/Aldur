@@ -32,6 +32,7 @@ mod ad5029_enable_arm_mte;
 mod ad5030_enable_exception_handling;
 mod ad5031_check_not_encrypted;
 mod ad5040_do_not_use_unchecked_optimization;
+mod ad5060_detect_packed_binary;
 
 pub use ad5001_enable_pie::EnablePositionIndependentExecutableMachO;
 pub use ad5002_do_not_allow_executable_stack::DoNotAllowExecutableStack;
@@ -65,6 +66,7 @@ pub use ad5029_enable_arm_mte::EnableArmMTEMachO;
 pub use ad5030_enable_exception_handling::EnableExceptionHandlingMachO;
 pub use ad5031_check_not_encrypted::CheckNotEncrypted;
 pub use ad5040_do_not_use_unchecked_optimization::DoNotUseUncheckedOptimization;
+pub use ad5060_detect_packed_binary::DetectPackedBinaryMachO;
 
 use aldur_core::Rule;
 
@@ -103,5 +105,6 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
         Box::new(EnableExceptionHandlingMachO::new()),
         Box::new(CheckNotEncrypted::new()),
         Box::new(DoNotUseUncheckedOptimization::new()),
+        Box::new(DetectPackedBinaryMachO::new()),
     ]
 }

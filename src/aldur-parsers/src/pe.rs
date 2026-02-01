@@ -267,6 +267,8 @@ pub struct PeBinary {
     pub clr_runtime_header_size: u32,
     /// Whether the PE has a certificate table (Authenticode)
     pub has_certificate_table: bool,
+    /// Packer detection information
+    pub packer_info: crate::packer::PackerInfo,
 }
 
 impl PeBinary {
@@ -391,6 +393,10 @@ impl PeBinary {
         // Parse load config if available
         let load_config = Self::parse_load_config(&pe, &data);
 
+        // Detect if the binary is packed
+        let section_names: Vec<&str> = sections.iter().map(|s| s.name.as_str()).collect();
+        let packer_info = crate::packer::detect_packer(&data, &section_names);
+
         // Now we can move data
         let binary = PeBinary {
             path,
@@ -419,6 +425,7 @@ impl PeBinary {
             clr_runtime_header_rva,
             clr_runtime_header_size,
             has_certificate_table,
+            packer_info,
             data,
         };
 
@@ -741,6 +748,16 @@ impl PeBinary {
     /// Check if this is a .NET/managed binary
     pub fn is_dotnet(&self) -> bool {
         self.is_dotnet
+    }
+
+    /// Check if this binary appears to be packed
+    pub fn is_packed(&self) -> bool {
+        self.packer_info.is_packed
+    }
+
+    /// Get packer information
+    pub fn packer_info(&self) -> &crate::packer::PackerInfo {
+        &self.packer_info
     }
 
     /// Check if CastGuard is enabled (/guard:cast)

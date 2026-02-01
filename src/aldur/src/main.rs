@@ -17,9 +17,9 @@ mod summary;
 
 use analyze::AnalyzeCommand;
 
-/// Aldur - Binary security analyzer
+/// Aldur
 ///
-/// Analyzes PE, ELF, and Mach-O binaries for security vulnerabilities.
+/// Binary security analyzer for PE, ELF, and Mach-O binaries
 #[derive(Parser)]
 #[command(name = "aldur")]
 #[command(author = "Michael Scovetta")]
