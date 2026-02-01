@@ -194,7 +194,7 @@ Box::new(MyNewRule::new()),
 
 ### 4. Add Documentation
 
-Create `docs/AD3099.MyNewRule.md` with:
+Create `docs/rules/AD3099.MyNewRule.md` with:
 
 - Summary table (ID, Name, Category, Severity, Applies to)
 - Description of what the rule checks

@@ -81,7 +81,7 @@ impl RuleDescriptor {
         let name = name.into();
         Self {
             help_uri: format!(
-                "https://github.com/scovetta/Aldur/blob/main/docs/{}.{}.md",
+                "https://github.com/scovetta/Aldur/blob/main/docs/rules/{}.{}.md",
                 id, name
             ),
             id,
