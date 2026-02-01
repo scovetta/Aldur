@@ -34,7 +34,7 @@ impl std::fmt::Display for ResultKind {
 }
 
 /// The severity level of a failure
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum FailureLevel {
     /// No failure
@@ -42,15 +42,10 @@ pub enum FailureLevel {
     /// Informational note
     Note,
     /// Warning
+    #[default]
     Warning,
     /// Error
     Error,
-}
-
-impl Default for FailureLevel {
-    fn default() -> Self {
-        FailureLevel::Warning
-    }
 }
 
 impl std::fmt::Display for FailureLevel {
