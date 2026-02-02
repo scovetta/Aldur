@@ -42,8 +42,8 @@ jobs:
 ```yaml
 - name: Install aldur
   run: |
-    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-    tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+    tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
     chmod +x aldur
 
 - name: Run security scan
@@ -69,8 +69,8 @@ steps:
     displayName: 'Install aldur'
     inputs:
       script: |
-        curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-        tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+        curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+        tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
 
   - task: CmdLine@2
     displayName: 'Run Binary Security Analysis'
@@ -92,8 +92,8 @@ security-scan:
   image: ubuntu:latest
   script:
     - apt-get update && apt-get install -y curl
-    - curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-    - tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+    - curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+    - tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
     - ./aldur analyze -o results.sarif -r ./build/
   artifacts:
     reports:
@@ -110,8 +110,8 @@ pipeline {
         stage('Security Scan') {
             steps {
                 sh '''
-                    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-                    tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+                    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+                    tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
                     ./aldur analyze -o results.sarif -r ./build/
                 '''
                 recordIssues(tools: [sarif(pattern: 'results.sarif')])
@@ -135,8 +135,8 @@ jobs:
       - run:
           name: Install aldur
           command: |
-            curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-            tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+            curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+            tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
       - run:
           name: Run security scan
           command: ./aldur analyze -o results.sarif -r ./build/

@@ -51,8 +51,8 @@ hide:
 
 ```bash
 # Download and extract
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
 
 # Analyze a binary
 ./aldur analyze /path/to/binary
@@ -67,14 +67,14 @@ tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
 
     ---
 
-    [:fontawesome-brands-linux: Linux x64](https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz)
-    [:fontawesome-brands-linux: Linux ARM64](https://github.com/scovetta/aldur/releases/latest/download/aldur-aarch64-unknown-linux-gnu.tar.gz)
+    [:fontawesome-brands-linux: Linux x64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz)
+    [:fontawesome-brands-linux: Linux ARM64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-unknown-linux-gnu.tar.gz)
 
-    [:fontawesome-brands-windows: Windows x64](https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-pc-windows-msvc.zip)
-    [:fontawesome-brands-windows: Windows ARM64](https://github.com/scovetta/aldur/releases/latest/download/aldur-aarch64-pc-windows-msvc.zip)
+    [:fontawesome-brands-windows: Windows x64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-pc-windows-msvc.zip)
+    [:fontawesome-brands-windows: Windows ARM64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-pc-windows-msvc.zip)
 
-    [:fontawesome-brands-apple: macOS x64](https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-apple-darwin.tar.gz)
-    [:fontawesome-brands-apple: macOS ARM64](https://github.com/scovetta/aldur/releases/latest/download/aldur-aarch64-apple-darwin.tar.gz)
+    [:fontawesome-brands-apple: macOS x64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-apple-darwin.tar.gz)
+    [:fontawesome-brands-apple: macOS ARM64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-apple-darwin.tar.gz)
 
     [All Releases :material-arrow-right:](https://github.com/scovetta/aldur/releases){ .md-button }
 
