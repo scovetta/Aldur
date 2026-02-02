@@ -18,7 +18,7 @@ aldur-rules.workspace = true
 aldur-sarif.workspace = true
 
 anyhow.workspace = true
-atty = "0.2"
+
 chrono = { version = "0.4", features = ["serde"] }
 clap.workspace = true
 colored = "2"
