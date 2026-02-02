@@ -64,6 +64,8 @@ jobs:
             archive: tar.gz
 
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -140,6 +142,8 @@ jobs:
       contents: read
       attestations: write
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -184,6 +188,8 @@ jobs:
       attestations: write  # For GitHub attestations
 
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@bf82d13b9b10051d224345ab9184f5ede0a94289
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -267,7 +273,7 @@ jobs:
 
       # Attest SBOM files to the release artifacts
       - name: Generate SBOM attestation (SPDX)
-        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34  # v2.0.0
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34  # v3.0.0
         with:
           subject-path: |
             artifacts/*.tar.gz
@@ -275,7 +281,7 @@ jobs:
           sbom-path: artifacts/aldur-sbom.spdx.json
 
       - name: Generate SBOM attestation (CycloneDX)
-        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34  # v2.0.0
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34  # v3.0.0
         with:
           subject-path: |
             artifacts/*.tar.gz
