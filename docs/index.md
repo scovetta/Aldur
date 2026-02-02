@@ -76,7 +76,7 @@ tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
     [:fontawesome-brands-apple: macOS x64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-apple-darwin.tar.gz)
     [:fontawesome-brands-apple: macOS ARM64](https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-apple-darwin.tar.gz)
 
-    [All Releases :material-arrow-right:](https://github.com/scovetta/aldur/releases){ .md-button }
+    [All Releases :material-arrow-right:](https://github.com/scovetta/Aldur/releases){ .md-button }
 
 -   :material-github:{ .lg .middle } **GitHub Action**
 
