@@ -270,9 +270,12 @@ jobs:
           cd artifacts
           # Sign the checksums file using keyless signing (OIDC)
           cosign sign-blob --yes \
-            --output-signature checksums-sha256.txt.sig \
-            --output-certificate checksums-sha256.txt.pem \
+            --bundle checksums-sha256.txt.bundle \
             checksums-sha256.txt
+
+          # Extract signature and certificate from bundle for backward compatibility
+          jq -r '.Payload.signature' checksums-sha256.txt.bundle | base64 -d > checksums-sha256.txt.sig
+          jq -r '.VerificationMaterial.x509CertificateChain.certificates[0].rawBytes' checksums-sha256.txt.bundle | base64 -d > checksums-sha256.txt.pem
 
       # Attest SBOM files to the release artifacts
       - name: Generate SBOM attestation (SPDX)
@@ -332,10 +335,9 @@ jobs:
             # Verify SHA-256 checksums
             sha256sum -c checksums-sha256.txt
 
-            # Verify cosign signature (requires cosign installed)
+            # Verify cosign signature using bundle (requires cosign installed)
             cosign verify-blob \
-              --signature checksums-sha256.txt.sig \
-              --certificate checksums-sha256.txt.pem \
+              --bundle checksums-sha256.txt.bundle \
               --certificate-identity-regexp "https://github.com/${{ github.repository }}/.*" \
               --certificate-oidc-issuer https://token.actions.githubusercontent.com \
               checksums-sha256.txt
@@ -368,6 +370,7 @@ jobs:
             artifacts/*.zip
             artifacts/checksums-sha256.txt
             artifacts/checksums-sha512.txt
+            artifacts/checksums-sha256.txt.bundle
             artifacts/checksums-sha256.txt.sig
             artifacts/checksums-sha256.txt.pem
             artifacts/aldur-sbom.spdx.json
