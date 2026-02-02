@@ -708,17 +708,17 @@ impl PeBinary {
     /// Check if the imports section is marked as executable
     pub fn imports_section_executable(&self) -> bool {
         // Check .idata section
-        if let Some(section) = self.find_section(".idata") {
-            if section.is_executable() {
-                return true;
-            }
+        if let Some(section) = self.find_section(".idata")
+            && section.is_executable()
+        {
+            return true;
         }
 
         // Check .rdata section (imports can be merged here)
-        if let Some(section) = self.find_section(".rdata") {
-            if section.is_executable() {
-                return true;
-            }
+        if let Some(section) = self.find_section(".rdata")
+            && section.is_executable()
+        {
+            return true;
         }
 
         false
@@ -732,12 +732,12 @@ impl PeBinary {
                 if path.exists() {
                     return Some(path);
                 }
-                if let Some(parent) = self.path.parent() {
-                    if let Some(filename) = path.file_name() {
-                        let local_path = parent.join(filename);
-                        if local_path.exists() {
-                            return Some(local_path);
-                        }
+                if let Some(parent) = self.path.parent()
+                    && let Some(filename) = path.file_name()
+                {
+                    let local_path = parent.join(filename);
+                    if local_path.exists() {
+                        return Some(local_path);
                     }
                 }
             }
@@ -870,10 +870,10 @@ impl PeBinary {
             }
             // Check exports
             for export in &pe.exports {
-                if let Some(name) = export.name {
-                    if !name.is_ascii() {
-                        unicode_syms.push(name.to_string());
-                    }
+                if let Some(name) = export.name
+                    && !name.is_ascii()
+                {
+                    unicode_syms.push(name.to_string());
                 }
             }
         }

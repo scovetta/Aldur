@@ -249,10 +249,10 @@ impl<'a> GitHubActionsFormatter<'a> {
     /// Normalize path for display (try to make relative)
     fn normalize_path(path: &str) -> String {
         // If running in GitHub Actions, try to make path relative to workspace
-        if let Ok(workspace) = std::env::var("GITHUB_WORKSPACE") {
-            if let Some(relative) = path.strip_prefix(&workspace) {
-                return relative.trim_start_matches(['/', '\\']).to_string();
-            }
+        if let Ok(workspace) = std::env::var("GITHUB_WORKSPACE")
+            && let Some(relative) = path.strip_prefix(&workspace)
+        {
+            return relative.trim_start_matches(['/', '\\']).to_string();
         }
 
         // If path is absolute (starts with / or drive letter), get just the filename
@@ -260,10 +260,8 @@ impl<'a> GitHubActionsFormatter<'a> {
             || path.starts_with('\\')
             || (path.len() >= 2 && path.chars().nth(1) == Some(':'));
 
-        if is_absolute {
-            if let Some(pos) = path.rfind(['/', '\\']) {
-                return path[pos + 1..].to_string();
-            }
+        if is_absolute && let Some(pos) = path.rfind(['/', '\\']) {
+            return path[pos + 1..].to_string();
         }
 
         // Return relative paths as-is

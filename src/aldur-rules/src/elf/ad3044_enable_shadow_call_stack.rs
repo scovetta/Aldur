@@ -212,14 +212,14 @@ impl Rule for EnableShadowCallStack {
         // Try DWARF debug info for more details
         let dwarf_result = DwarfInfo::parse(elf.data());
 
-        if let Ok(ref dwarf) = dwarf_result {
-            if dwarf.has_debug_info {
-                let (_is_clang_or_gcc, has_scs) = Self::check_dwarf_for_scs(dwarf);
+        if let Ok(ref dwarf) = dwarf_result
+            && dwarf.has_debug_info
+        {
+            let (_is_clang_or_gcc, has_scs) = Self::check_dwarf_for_scs(dwarf);
 
-                if has_scs {
-                    self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
-                    return;
-                }
+            if has_scs {
+                self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
+                return;
             }
         }
 

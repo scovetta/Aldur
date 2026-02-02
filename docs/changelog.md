@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added supply chain security with artifact attestations
 - Added SBOM attestations for dependency transparency
 
-## [0.1.0] - TBD
+## [0.1.1] - Inital Public Release
 
 ### Added
 
@@ -69,5 +69,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 For the full list of security rules, see the [Rules Reference](rules/index.md).
 
-[Unreleased]: https://github.com/scovetta/Aldur/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/scovetta/Aldur/releases/tag/v0.1.0
+[Unreleased]: https://github.com/scovetta/Aldur/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/scovetta/Aldur/releases/tag/v0.1.1

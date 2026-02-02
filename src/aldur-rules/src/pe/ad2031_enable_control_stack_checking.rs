@@ -126,17 +126,17 @@ impl Rule for EnableControlStackChecking {
                         if let Some(pos) = cmdline.find("/Gs") {
                             let after_gs = &cmdline[pos + 3..];
                             if let Some(end) = after_gs.find(|c: char| !c.is_ascii_digit()) {
-                                if let Ok(threshold) = after_gs[..end].parse::<u32>() {
-                                    if threshold > 8192 {
-                                        has_large_threshold = true;
-                                    }
+                                if let Ok(threshold) = after_gs[..end].parse::<u32>()
+                                    && threshold > 8192
+                                {
+                                    has_large_threshold = true;
                                 }
                             } else if !after_gs.is_empty() {
                                 // Parse to end of string
-                                if let Ok(threshold) = after_gs.trim().parse::<u32>() {
-                                    if threshold > 8192 {
-                                        has_large_threshold = true;
-                                    }
+                                if let Ok(threshold) = after_gs.trim().parse::<u32>()
+                                    && threshold > 8192
+                                {
+                                    has_large_threshold = true;
                                 }
                             }
                         }

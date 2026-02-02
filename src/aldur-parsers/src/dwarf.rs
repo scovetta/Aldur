@@ -296,10 +296,10 @@ impl DwarfInfo {
             result.has_debug_info = true;
             result.dwarf_version = result.dwarf_version.max(header.version());
 
-            if let Ok(unit) = dwarf.unit(header) {
-                if let Some(cu) = Self::parse_compilation_unit(&dwarf, &unit) {
-                    result.compilation_units.push(cu);
-                }
+            if let Ok(unit) = dwarf.unit(header)
+                && let Some(cu) = Self::parse_compilation_unit(&dwarf, &unit)
+            {
+                result.compilation_units.push(cu);
             }
         }
 

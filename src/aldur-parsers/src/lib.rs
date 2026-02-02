@@ -19,7 +19,7 @@ pub use dwarf::DwarfInfo;
 pub use elf::ElfBinary;
 pub use macho::MachOBinary;
 pub use memory::{
-    BinaryData, MemoryBudget, MemoryBudgetExceeded, DEFAULT_HEAP_BUDGET, DEFAULT_MMAP_THRESHOLD,
+    BinaryData, DEFAULT_HEAP_BUDGET, DEFAULT_MMAP_THRESHOLD, MemoryBudget, MemoryBudgetExceeded,
 };
 pub use pdb::PdbFile;
 pub use pe::PeBinary;

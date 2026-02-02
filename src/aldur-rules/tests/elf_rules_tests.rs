@@ -117,9 +117,11 @@ mod ad3003_stack_protector_tests {
         );
         assert!(!results.is_empty());
         // May pass or be not applicable depending on symbol visibility
-        assert!(results
-            .iter()
-            .any(|r| r.kind == ResultKind::Pass || r.kind == ResultKind::NotApplicable));
+        assert!(
+            results
+                .iter()
+                .any(|r| r.kind == ResultKind::Pass || r.kind == ResultKind::NotApplicable)
+        );
     }
 
     #[test]

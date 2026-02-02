@@ -58,38 +58,39 @@ impl EnableOptimizationMachO {
 
     /// Check optimization level from DWARF
     fn check_optimization(macho: &MachOBinary) -> Option<i32> {
-        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Check for optimization flags
-                if dwarf_info.has_flag("-O3") || dwarf_info.has_flag("-Ofast") {
-                    return Some(3);
-                }
-                if dwarf_info.has_flag("-O2") || dwarf_info.has_flag("-Os") {
-                    return Some(2);
-                }
-                if dwarf_info.has_flag("-O1") {
-                    return Some(1);
-                }
-                if dwarf_info.has_flag("-O0") {
-                    return Some(0);
-                }
+        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Check for optimization flags
+            if dwarf_info.has_flag("-O3") || dwarf_info.has_flag("-Ofast") {
+                return Some(3);
+            }
+            if dwarf_info.has_flag("-O2") || dwarf_info.has_flag("-Os") {
+                return Some(2);
+            }
+            if dwarf_info.has_flag("-O1") {
+                return Some(1);
+            }
+            if dwarf_info.has_flag("-O0") {
+                return Some(0);
+            }
 
-                // Check optimization level from compilation units
-                for cu in &dwarf_info.compilation_units {
-                    if let Some(ref opt_level_str) = cu.parsed_info.optimization_level {
-                        // Parse the optimization level string (e.g., "-O2" -> 2)
-                        if opt_level_str.contains("O3") || opt_level_str.contains("Ofast") {
-                            return Some(3);
-                        }
-                        if opt_level_str.contains("O2") || opt_level_str.contains("Os") {
-                            return Some(2);
-                        }
-                        if opt_level_str.contains("O1") {
-                            return Some(1);
-                        }
-                        if opt_level_str.contains("O0") {
-                            return Some(0);
-                        }
+            // Check optimization level from compilation units
+            for cu in &dwarf_info.compilation_units {
+                if let Some(ref opt_level_str) = cu.parsed_info.optimization_level {
+                    // Parse the optimization level string (e.g., "-O2" -> 2)
+                    if opt_level_str.contains("O3") || opt_level_str.contains("Ofast") {
+                        return Some(3);
+                    }
+                    if opt_level_str.contains("O2") || opt_level_str.contains("Os") {
+                        return Some(2);
+                    }
+                    if opt_level_str.contains("O1") {
+                        return Some(1);
+                    }
+                    if opt_level_str.contains("O0") {
+                        return Some(0);
                     }
                 }
             }

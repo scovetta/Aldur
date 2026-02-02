@@ -12,7 +12,7 @@ use aldur_core::{
     RuleDescriptor,
 };
 use aldur_parsers::ElfBinary;
-use goblin::elf::{sym::STB_WEAK, Elf};
+use goblin::elf::{Elf, sym::STB_WEAK};
 
 use crate::rule_ids::AD3050;
 
@@ -73,18 +73,18 @@ impl EnableGccDefs {
                 if sym.st_shndx == 0 && sym.st_name != 0 {
                     // Skip weak symbols as they're allowed to be undefined
                     let bind = sym.st_bind();
-                    if bind != STB_WEAK {
-                        if let Some(name) = elf.dynstrtab.get_at(sym.st_name) {
-                            // Skip common special symbols
-                            if !name.is_empty()
-                                && !name.starts_with("__gmon")
-                                && !name.starts_with("_ITM")
-                                && !name.starts_with("__cxa_")
-                                && name != "__libc_start_main"
-                                && name != "__stack_chk_fail"
-                            {
-                                undefined.push(name.to_string());
-                            }
+                    if bind != STB_WEAK
+                        && let Some(name) = elf.dynstrtab.get_at(sym.st_name)
+                    {
+                        // Skip common special symbols
+                        if !name.is_empty()
+                            && !name.starts_with("__gmon")
+                            && !name.starts_with("_ITM")
+                            && !name.starts_with("__cxa_")
+                            && name != "__libc_start_main"
+                            && name != "__stack_chk_fail"
+                        {
+                            undefined.push(name.to_string());
                         }
                     }
                 }

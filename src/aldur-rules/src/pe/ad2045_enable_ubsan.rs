@@ -80,25 +80,26 @@ impl EnableUBSanPE {
         let mut is_gcc_clang = false;
 
         // Check DWARF for UBSan flags
-        if let Some(dwarf_info) = pe.dwarf_info() {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Check if GCC or Clang
-                for cu in &dwarf_info.compilation_units {
-                    use aldur_parsers::dwarf::CompilerType;
-                    match cu.parsed_info.compiler_type {
-                        CompilerType::Gcc | CompilerType::Clang => {
-                            is_gcc_clang = true;
-                        }
-                        _ => {}
+        if let Some(dwarf_info) = pe.dwarf_info()
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Check if GCC or Clang
+            for cu in &dwarf_info.compilation_units {
+                use aldur_parsers::dwarf::CompilerType;
+                match cu.parsed_info.compiler_type {
+                    CompilerType::Gcc | CompilerType::Clang => {
+                        is_gcc_clang = true;
                     }
+                    _ => {}
                 }
+            }
 
-                let has_ubsan = dwarf_info.has_flag("-fsanitize=undefined")
-                    || dwarf_info.has_flag("sanitize=undefined");
+            let has_ubsan = dwarf_info.has_flag("-fsanitize=undefined")
+                || dwarf_info.has_flag("sanitize=undefined");
 
-                if has_ubsan {
-                    return (true, true, is_gcc_clang);
-                }
+            if has_ubsan {
+                return (true, true, is_gcc_clang);
             }
         }
 

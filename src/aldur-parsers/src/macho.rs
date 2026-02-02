@@ -425,10 +425,10 @@ impl MachOBinary {
             Mach::Fat(fat) => {
                 // Try to get from the first architecture
                 for i in 0..fat.narches {
-                    if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
-                        if let Some(ver) = Self::extract_min_os_version_from_macho(macho) {
-                            return Some(ver);
-                        }
+                    if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i)
+                        && let Some(ver) = Self::extract_min_os_version_from_macho(macho)
+                    {
+                        return Some(ver);
                     }
                 }
                 None
@@ -524,10 +524,10 @@ impl MachOBinary {
                 Mach::Fat(fat) => {
                     // Check all architectures in fat binary
                     for i in 0..fat.narches {
-                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
-                            if Self::macho_has_symbols(macho, symbols) {
-                                return true;
-                            }
+                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i)
+                            && Self::macho_has_symbols(macho, symbols)
+                        {
+                            return true;
                         }
                     }
                 }
@@ -577,10 +577,10 @@ impl MachOBinary {
                 }
                 Mach::Fat(fat) => {
                     for i in 0..fat.narches {
-                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i) {
-                            if Self::macho_has_symbols_exact(macho, symbols) {
-                                return true;
-                            }
+                        if let Ok(goblin::mach::SingleArch::MachO(ref macho)) = fat.get(i)
+                            && Self::macho_has_symbols_exact(macho, symbols)
+                        {
+                            return true;
                         }
                     }
                 }

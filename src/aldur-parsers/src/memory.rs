@@ -12,8 +12,8 @@ use std::fs::File;
 use std::io::Read;
 use std::ops::Deref;
 use std::path::Path;
-use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 /// Default threshold for switching from heap allocation to mmap (10 MB)
 pub const DEFAULT_MMAP_THRESHOLD: u64 = 10 * 1024 * 1024;
