@@ -12,7 +12,7 @@ use aldur_core::{
     RuleDescriptor,
 };
 use aldur_parsers::ElfBinary;
-use goblin::elf::{sym::STB_WEAK, Elf};
+use goblin::elf::{Elf, sym::STB_WEAK};
 
 use crate::rule_ids::AD3050;
 

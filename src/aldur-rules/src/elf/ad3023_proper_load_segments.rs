@@ -7,8 +7,8 @@ use aldur_core::{
     AnalysisApplicability, AnalysisContext, BinaryFormat, FailureLevel, Rule, RuleCategory,
     RuleDescriptor,
 };
-use aldur_parsers::elf::ph_type;
 use aldur_parsers::ElfBinary;
+use aldur_parsers::elf::ph_type;
 
 use crate::rule_ids::AD3023;
 

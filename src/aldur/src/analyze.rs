@@ -2,8 +2,8 @@
 
 use std::io::IsTerminal;
 use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Instant;
 
 use anyhow::{Context, Result};
@@ -15,13 +15,13 @@ use walkdir::WalkDir;
 use aldur_core::{AnalysisConfig, AnalysisContext, AnalysisResult, Rule, RuleDescriptor};
 use aldur_sarif::SarifLogger;
 
+use crate::AnalyzeArgs;
 use crate::archive::{ArchiveConfig, ArchiveExtractor, ExtractedBinary};
 use crate::baseline::{Baseline, BaselineComparison};
 use crate::custom_profiles::CustomProfileRegistry;
 use crate::output::{GitHubActionsFormatter, OutputFormat, TextFormatter};
 use crate::profiles;
 use crate::summary::MultiTargetSummary;
-use crate::AnalyzeArgs;
 
 /// Represents a file to analyze, either directly from disk or extracted from an archive
 struct AnalysisTarget {

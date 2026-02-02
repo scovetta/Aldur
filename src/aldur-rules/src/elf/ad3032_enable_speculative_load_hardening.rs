@@ -10,7 +10,7 @@ use aldur_core::{
 };
 use aldur_parsers::{DwarfInfo, ElfBinary};
 
-use crate::elf::compiler_utils::{check_compiler_support, detect_compiler, CompilerFeature};
+use crate::elf::compiler_utils::{CompilerFeature, check_compiler_support, detect_compiler};
 use crate::rule_ids::AD3032;
 
 pub struct EnableSpeculativeLoadHardening {

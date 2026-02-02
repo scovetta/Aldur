@@ -24,7 +24,7 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 
-use crate::profiles::{get_profile, SecurityProfile};
+use crate::profiles::{SecurityProfile, get_profile};
 use aldur_core::RuleDescriptor;
 
 /// A custom profile definition loaded from a file
@@ -317,10 +317,12 @@ profile:nonexistent
 "#;
         let result = CustomProfileRegistry::parse(content);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("Unknown base profile"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Unknown base profile")
+        );
     }
 
     #[test]
