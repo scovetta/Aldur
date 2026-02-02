@@ -1,5 +1,6 @@
 //! Analyze command implementation
 
+use std::io::IsTerminal;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
@@ -143,7 +144,7 @@ impl AnalyzeCommand {
         };
 
         // Collect target files with a spinner for large directories
-        let spinner = if !self.args.quiet && atty::is(atty::Stream::Stderr) {
+        let spinner = if !self.args.quiet && std::io::stderr().is_terminal() {
             let sp = ProgressBar::new_spinner();
             sp.set_style(
                 ProgressStyle::default_spinner()
@@ -406,7 +407,7 @@ impl AnalyzeCommand {
                     }
                 }
             } else {
-                let use_colors = atty::is(atty::Stream::Stdout);
+                let use_colors = std::io::stdout().is_terminal();
                 let mut stdout = std::io::stdout();
                 summary.write_text(&mut stdout, use_colors)?;
             }
