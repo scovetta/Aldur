@@ -29,42 +29,43 @@ pub fn detect_compiler(elf: &ElfBinary) -> DetectedCompiler {
     }
 
     // Try to get compiler info from DWARF debug info
-    if let Ok(dwarf_info) = DwarfInfo::parse(elf.data()) {
-        if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-            for cu in &dwarf_info.compilation_units {
-                let producer = &cu.compiler_info.producer;
+    if let Ok(dwarf_info) = DwarfInfo::parse(elf.data())
+        && dwarf_info.has_debug_info
+        && !dwarf_info.compilation_units.is_empty()
+    {
+        for cu in &dwarf_info.compilation_units {
+            let producer = &cu.compiler_info.producer;
 
-                if producer.contains("rustc") {
-                    return DetectedCompiler {
-                        compiler_type: CompilerType::Rustc,
-                        name: "rustc".to_string(),
-                        is_definitive: true,
-                    };
-                } else if producer.contains("clang") {
-                    return DetectedCompiler {
-                        compiler_type: CompilerType::Clang,
-                        name: "Clang".to_string(),
-                        is_definitive: true,
-                    };
-                } else if producer.contains("GNU") || producer.contains("GCC") {
-                    return DetectedCompiler {
-                        compiler_type: CompilerType::Gcc,
-                        name: "GCC".to_string(),
-                        is_definitive: true,
-                    };
-                } else if producer.contains("Go") {
-                    return DetectedCompiler {
-                        compiler_type: CompilerType::Go,
-                        name: "Go".to_string(),
-                        is_definitive: true,
-                    };
-                } else if producer.contains("Intel") || producer.contains("ICC") {
-                    return DetectedCompiler {
-                        compiler_type: CompilerType::Icc,
-                        name: "ICC".to_string(),
-                        is_definitive: true,
-                    };
-                }
+            if producer.contains("rustc") {
+                return DetectedCompiler {
+                    compiler_type: CompilerType::Rustc,
+                    name: "rustc".to_string(),
+                    is_definitive: true,
+                };
+            } else if producer.contains("clang") {
+                return DetectedCompiler {
+                    compiler_type: CompilerType::Clang,
+                    name: "Clang".to_string(),
+                    is_definitive: true,
+                };
+            } else if producer.contains("GNU") || producer.contains("GCC") {
+                return DetectedCompiler {
+                    compiler_type: CompilerType::Gcc,
+                    name: "GCC".to_string(),
+                    is_definitive: true,
+                };
+            } else if producer.contains("Go") {
+                return DetectedCompiler {
+                    compiler_type: CompilerType::Go,
+                    name: "Go".to_string(),
+                    is_definitive: true,
+                };
+            } else if producer.contains("Intel") || producer.contains("ICC") {
+                return DetectedCompiler {
+                    compiler_type: CompilerType::Icc,
+                    name: "ICC".to_string(),
+                    is_definitive: true,
+                };
             }
         }
     }

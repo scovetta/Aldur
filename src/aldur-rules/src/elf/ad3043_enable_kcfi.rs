@@ -231,20 +231,20 @@ impl Rule for EnableKernelCFI {
         // Try DWARF debug info for more details
         let dwarf_result = DwarfInfo::parse(elf.data());
 
-        if let Ok(ref dwarf) = dwarf_result {
-            if dwarf.has_debug_info {
-                let (is_clang_or_gcc, has_kcfi) = Self::check_dwarf_for_kcfi(dwarf);
+        if let Ok(ref dwarf) = dwarf_result
+            && dwarf.has_debug_info
+        {
+            let (is_clang_or_gcc, has_kcfi) = Self::check_dwarf_for_kcfi(dwarf);
 
-                if has_kcfi {
-                    self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
-                    return;
-                }
+            if has_kcfi {
+                self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
+                return;
+            }
 
-                // Only suggest KCFI for kernel/embedded binaries
-                if !Self::is_kernel_binary(elf) && is_clang_or_gcc {
-                    self.log_not_applicable(context, "NotApplicable_NotKernel", &[&file_name]);
-                    return;
-                }
+            // Only suggest KCFI for kernel/embedded binaries
+            if !Self::is_kernel_binary(elf) && is_clang_or_gcc {
+                self.log_not_applicable(context, "NotApplicable_NotKernel", &[&file_name]);
+                return;
             }
         }
 

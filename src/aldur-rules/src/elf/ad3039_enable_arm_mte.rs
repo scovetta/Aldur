@@ -86,20 +86,21 @@ impl EnableArmMTE {
     /// Check if the binary has ARM MTE enabled by looking at DWARF info
     fn has_mte_in_dwarf(elf: &ElfBinary) -> bool {
         // Check DWARF producer strings for MTE-related flags
-        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Check for -fsanitize=memtag or -fsanitize=hwaddress flags
-                for cu in &dwarf_info.compilation_units {
-                    // Check parsed flags for sanitizer options
-                    for flag in &cu.parsed_info.flags {
-                        if flag.contains("memtag") || flag.contains("hwaddress") {
-                            return true;
-                        }
-                    }
-                    // Check producer string for +memtag (from -march=armv8.5-a+memtag)
-                    if cu.compiler_info.producer.contains("+memtag") {
+        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Check for -fsanitize=memtag or -fsanitize=hwaddress flags
+            for cu in &dwarf_info.compilation_units {
+                // Check parsed flags for sanitizer options
+                for flag in &cu.parsed_info.flags {
+                    if flag.contains("memtag") || flag.contains("hwaddress") {
                         return true;
                     }
+                }
+                // Check producer string for +memtag (from -march=armv8.5-a+memtag)
+                if cu.compiler_info.producer.contains("+memtag") {
+                    return true;
                 }
             }
         }

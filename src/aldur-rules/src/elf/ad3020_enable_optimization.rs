@@ -54,28 +54,29 @@ impl EnableOptimization {
     }
 
     fn check_optimization(elf: &ElfBinary) -> Option<(i32, String)> {
-        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Get the first optimization level we find
-                for cu in &dwarf_info.compilation_units {
-                    if let Some(ref opt) = cu.parsed_info.optimization_level {
-                        let level = match opt.as_str() {
-                            "-O0" => 0,
-                            "-O1" | "-O" => 1,
-                            "-O2" => 2,
-                            "-O3" => 3,
-                            "-Os" => 2,
-                            "-Oz" => 2,
-                            "-Ofast" => 3,
-                            "-Og" => 1,
-                            _ => continue,
-                        };
-                        return Some((level, opt.clone()));
-                    }
+        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Get the first optimization level we find
+            for cu in &dwarf_info.compilation_units {
+                if let Some(ref opt) = cu.parsed_info.optimization_level {
+                    let level = match opt.as_str() {
+                        "-O0" => 0,
+                        "-O1" | "-O" => 1,
+                        "-O2" => 2,
+                        "-O3" => 3,
+                        "-Os" => 2,
+                        "-Oz" => 2,
+                        "-Ofast" => 3,
+                        "-Og" => 1,
+                        _ => continue,
+                    };
+                    return Some((level, opt.clone()));
                 }
-                // If we have debug info but no optimization flag, assume -O0
-                return Some((0, "-O0".to_string()));
             }
+            // If we have debug info but no optimization flag, assume -O0
+            return Some((0, "-O0".to_string()));
         }
         None
     }

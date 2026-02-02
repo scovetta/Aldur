@@ -74,14 +74,15 @@ impl EnableControlFlowIntegrityMachO {
 
     /// Check DWARF for CFI flags
     fn check_dwarf_for_cfi(macho: &MachOBinary) -> (bool, bool) {
-        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                let has_cfi =
-                    dwarf_info.has_flag("-fsanitize=cfi") || dwarf_info.has_flag("sanitize=cfi");
-                let has_lto = dwarf_info.has_flag("-flto");
+        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            let has_cfi =
+                dwarf_info.has_flag("-fsanitize=cfi") || dwarf_info.has_flag("sanitize=cfi");
+            let has_lto = dwarf_info.has_flag("-flto");
 
-                return (has_cfi, has_lto);
-            }
+            return (has_cfi, has_lto);
         }
         (false, false)
     }

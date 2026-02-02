@@ -107,13 +107,13 @@ impl Rule for EnableSpectreMitigations {
 
         // Check if this is a non-MSVC binary (Rust, GCC, Clang, etc.)
         // The /Qspectre flag is MSVC-specific
-        if let Some(pe) = binary.as_ref().as_any().downcast_ref::<PeBinary>() {
-            if let Some(compiler) = super::msvc_utils::detect_non_msvc_compiler(pe) {
-                return (
-                    AnalysisApplicability::NotApplicableToSpecifiedTarget,
-                    Some(format!("Not an MSVC binary (detected {})", compiler)),
-                );
-            }
+        if let Some(pe) = binary.as_ref().as_any().downcast_ref::<PeBinary>()
+            && let Some(compiler) = super::msvc_utils::detect_non_msvc_compiler(pe)
+        {
+            return (
+                AnalysisApplicability::NotApplicableToSpecifiedTarget,
+                Some(format!("Not an MSVC binary (detected {})", compiler)),
+            );
         }
 
         (AnalysisApplicability::ApplicableToSpecifiedTarget, None)
@@ -163,10 +163,11 @@ impl Rule for EnableSpectreMitigations {
             }
 
             // Check for /Qspectre in command line
-            if let Some(ref cmdline) = compiland.command_line {
-                if cmdline.contains("/Qspectre") && !cmdline.contains("/Qspectre-") {
-                    has_spectre_flag = true;
-                }
+            if let Some(ref cmdline) = compiland.command_line
+                && cmdline.contains("/Qspectre")
+                && !cmdline.contains("/Qspectre-")
+            {
+                has_spectre_flag = true;
             }
         }
 

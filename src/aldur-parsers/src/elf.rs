@@ -466,18 +466,18 @@ impl ElfBinary {
         if let Ok(elf) = Elf::parse(&self.data) {
             // Check dynamic symbols
             for sym in elf.dynsyms.iter() {
-                if let Some(name) = elf.dynstrtab.get_at(sym.st_name) {
-                    if symbols.iter().any(|s| name.contains(s)) {
-                        return true;
-                    }
+                if let Some(name) = elf.dynstrtab.get_at(sym.st_name)
+                    && symbols.iter().any(|s| name.contains(s))
+                {
+                    return true;
                 }
             }
             // Check regular symbols
             for sym in elf.syms.iter() {
-                if let Some(name) = elf.strtab.get_at(sym.st_name) {
-                    if symbols.iter().any(|s| name.contains(s)) {
-                        return true;
-                    }
+                if let Some(name) = elf.strtab.get_at(sym.st_name)
+                    && symbols.iter().any(|s| name.contains(s))
+                {
+                    return true;
                 }
             }
         }
@@ -523,14 +523,14 @@ impl ElfBinary {
     /// Get the list of shared libraries this binary depends on (DT_NEEDED entries)
     pub fn get_needed_libraries(&self) -> Vec<String> {
         let mut libs = Vec::new();
-        if let Ok(elf) = Elf::parse(&self.data) {
-            if let Some(ref dynamic) = elf.dynamic {
-                for dyn_entry in &dynamic.dyns {
-                    if dyn_entry.d_tag == dyn_tag::DT_NEEDED {
-                        if let Some(name) = elf.dynstrtab.get_at(dyn_entry.d_val as usize) {
-                            libs.push(name.to_string());
-                        }
-                    }
+        if let Ok(elf) = Elf::parse(&self.data)
+            && let Some(ref dynamic) = elf.dynamic
+        {
+            for dyn_entry in &dynamic.dyns {
+                if dyn_entry.d_tag == dyn_tag::DT_NEEDED
+                    && let Some(name) = elf.dynstrtab.get_at(dyn_entry.d_val as usize)
+                {
+                    libs.push(name.to_string());
                 }
             }
         }
@@ -550,18 +550,18 @@ impl ElfBinary {
         if let Ok(elf) = Elf::parse(&self.data) {
             // Get dynamic symbol names
             for sym in elf.dynsyms.iter() {
-                if let Some(name) = elf.dynstrtab.get_at(sym.st_name) {
-                    if !name.is_empty() {
-                        names.push(name.to_string());
-                    }
+                if let Some(name) = elf.dynstrtab.get_at(sym.st_name)
+                    && !name.is_empty()
+                {
+                    names.push(name.to_string());
                 }
             }
             // Get regular symbol names
             for sym in elf.syms.iter() {
-                if let Some(name) = elf.strtab.get_at(sym.st_name) {
-                    if !name.is_empty() {
-                        names.push(name.to_string());
-                    }
+                if let Some(name) = elf.strtab.get_at(sym.st_name)
+                    && !name.is_empty()
+                {
+                    names.push(name.to_string());
                 }
             }
         }
@@ -643,10 +643,10 @@ impl ElfBinary {
     pub fn has_section(&self, section_name: &str) -> bool {
         if let Ok(elf) = Elf::parse(&self.data) {
             for section in &elf.section_headers {
-                if let Some(name) = elf.shdr_strtab.get_at(section.sh_name) {
-                    if name == section_name {
-                        return true;
-                    }
+                if let Some(name) = elf.shdr_strtab.get_at(section.sh_name)
+                    && name == section_name
+                {
+                    return true;
                 }
             }
         }
@@ -678,19 +678,19 @@ fn detect_rust_binary(elf: &Elf) -> bool {
 
     // Check dynamic symbols
     for sym in elf.dynsyms.iter() {
-        if let Some(name) = elf.dynstrtab.get_at(sym.st_name) {
-            if check_symbol(name) {
-                return true;
-            }
+        if let Some(name) = elf.dynstrtab.get_at(sym.st_name)
+            && check_symbol(name)
+        {
+            return true;
         }
     }
 
     // Check regular symbols
     for sym in elf.syms.iter() {
-        if let Some(name) = elf.strtab.get_at(sym.st_name) {
-            if check_symbol(name) {
-                return true;
-            }
+        if let Some(name) = elf.strtab.get_at(sym.st_name)
+            && check_symbol(name)
+        {
+            return true;
         }
     }
 

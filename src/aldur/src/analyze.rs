@@ -270,11 +270,11 @@ impl AnalyzeCommand {
             .map(|b| BaselineComparison::compare(&results, b));
 
         // If new_only flag is set, filter results to only show new issues
-        if self.args.new_only {
-            if let Some(ref comp) = comparison {
-                results.results = comp.new_issues.clone();
-                results.results.extend(comp.passing_results.clone());
-            }
+        if self.args.new_only
+            && let Some(ref comp) = comparison
+        {
+            results.results = comp.new_issues.clone();
+            results.results.extend(comp.passing_results.clone());
         }
 
         // Save baseline if requested
@@ -401,10 +401,10 @@ impl AnalyzeCommand {
                 println!("{}", md);
 
                 // Also write to GITHUB_STEP_SUMMARY if available
-                if let Ok(summary_path) = std::env::var("GITHUB_STEP_SUMMARY") {
-                    if let Err(e) = std::fs::write(&summary_path, &md) {
-                        warn!("Failed to write GitHub step summary: {}", e);
-                    }
+                if let Ok(summary_path) = std::env::var("GITHUB_STEP_SUMMARY")
+                    && let Err(e) = std::fs::write(&summary_path, &md)
+                {
+                    warn!("Failed to write GitHub step summary: {}", e);
                 }
             } else {
                 let use_colors = std::io::stdout().is_terminal();
@@ -414,21 +414,21 @@ impl AnalyzeCommand {
         }
 
         // Print baseline comparison summary
-        if let Some(ref comp) = comparison {
-            if !self.args.quiet {
-                println!("\n📊 Baseline Comparison:");
-                println!("  New issues:      {}", comp.new_issues.len());
-                println!("  Existing issues: {}", comp.existing_issues.len());
-                println!("  Fixed issues:    {}", comp.fixed_issues.len());
+        if let Some(ref comp) = comparison
+            && !self.args.quiet
+        {
+            println!("\n📊 Baseline Comparison:");
+            println!("  New issues:      {}", comp.new_issues.len());
+            println!("  Existing issues: {}", comp.existing_issues.len());
+            println!("  Fixed issues:    {}", comp.fixed_issues.len());
 
-                if !comp.fixed_issues.is_empty() {
-                    println!("\n✅ Fixed since baseline:");
-                    for fixed in comp.fixed_issues.iter().take(5) {
-                        println!("   - {} in {}", fixed.rule_id, fixed.target_name);
-                    }
-                    if comp.fixed_issues.len() > 5 {
-                        println!("   ... and {} more", comp.fixed_issues.len() - 5);
-                    }
+            if !comp.fixed_issues.is_empty() {
+                println!("\n✅ Fixed since baseline:");
+                for fixed in comp.fixed_issues.iter().take(5) {
+                    println!("   - {} in {}", fixed.rule_id, fixed.target_name);
+                }
+                if comp.fixed_issues.len() > 5 {
+                    println!("   ... and {} more", comp.fixed_issues.len() - 5);
                 }
             }
         }
@@ -489,12 +489,12 @@ impl AnalyzeCommand {
                 .collect();
 
         for result in &mut results.results {
-            if let Some(descriptor) = rule_descriptors.get(&result.rule_id) {
-                if let Some(level) = profile.get_rule_level(descriptor) {
-                    // Only upgrade severity, never downgrade
-                    if level > result.level {
-                        result.level = level;
-                    }
+            if let Some(descriptor) = rule_descriptors.get(&result.rule_id)
+                && let Some(level) = profile.get_rule_level(descriptor)
+            {
+                // Only upgrade severity, never downgrade
+                if level > result.level {
+                    result.level = level;
                 }
             }
         }

@@ -83,15 +83,16 @@ impl EnableArmMTEMachO {
     /// Check for MTE indicators
     fn check_mte(macho: &MachOBinary) -> (bool, bool) {
         // Check DWARF for MTE flags
-        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                let has_mte = dwarf_info.has_flag("-fsanitize=hwaddress")
-                    || dwarf_info.has_flag("memtag")
-                    || dwarf_info.has_flag("-march=armv8.5-a+memtag");
+        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            let has_mte = dwarf_info.has_flag("-fsanitize=hwaddress")
+                || dwarf_info.has_flag("memtag")
+                || dwarf_info.has_flag("-march=armv8.5-a+memtag");
 
-                if has_mte {
-                    return (true, true);
-                }
+            if has_mte {
+                return (true, true);
             }
         }
 

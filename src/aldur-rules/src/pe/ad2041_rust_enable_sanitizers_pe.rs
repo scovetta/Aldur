@@ -85,14 +85,14 @@ impl RustEnableSanitizersPE {
     /// Check if the binary is a Rust binary by looking for DWARF info
     fn is_rust_binary(pe: &PeBinary) -> bool {
         // Check for DWARF debug info with Rust producer
-        if pe.has_dwarf_debug_info() {
-            if let Ok(dwarf) = DwarfInfo::load(pe.path()) {
-                for cu in &dwarf.compilation_units {
-                    if cu.compiler_info.producer.contains("rustc")
-                        || cu.compiler_info.language == aldur_parsers::dwarf::DwarfLanguage::Rust
-                    {
-                        return true;
-                    }
+        if pe.has_dwarf_debug_info()
+            && let Ok(dwarf) = DwarfInfo::load(pe.path())
+        {
+            for cu in &dwarf.compilation_units {
+                if cu.compiler_info.producer.contains("rustc")
+                    || cu.compiler_info.language == aldur_parsers::dwarf::DwarfLanguage::Rust
+                {
+                    return true;
                 }
             }
         }

@@ -70,18 +70,19 @@ impl EnableSpeculativeLoadHardening {
     /// Check for indicators of speculative load hardening
     fn check_slh(elf: &ElfBinary) -> (bool, bool) {
         // Try to get definitive answer from DWARF debug info
-        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Check if -mspeculative-load-hardening flag is present
-                let has_slh = dwarf_info.has_flag("-mspeculative-load-hardening")
-                    || dwarf_info.has_flag("speculative-load-hardening");
-                let explicitly_disabled = dwarf_info.has_flag("-mno-speculative-load-hardening");
+        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Check if -mspeculative-load-hardening flag is present
+            let has_slh = dwarf_info.has_flag("-mspeculative-load-hardening")
+                || dwarf_info.has_flag("speculative-load-hardening");
+            let explicitly_disabled = dwarf_info.has_flag("-mno-speculative-load-hardening");
 
-                if has_slh && !explicitly_disabled {
-                    return (true, true); // (has_slh, is_definitive)
-                } else if explicitly_disabled {
-                    return (false, true);
-                }
+            if has_slh && !explicitly_disabled {
+                return (true, true); // (has_slh, is_definitive)
+            } else if explicitly_disabled {
+                return (false, true);
             }
         }
 

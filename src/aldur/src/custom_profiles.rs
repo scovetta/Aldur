@@ -66,10 +66,10 @@ impl CustomProfile {
         }
 
         // If we have a base profile, delegate to it
-        if let Some(ref base_name) = self.base_profile {
-            if let Some(base) = get_profile(base_name) {
-                return base.matches_rule(descriptor);
-            }
+        if let Some(ref base_name) = self.base_profile
+            && let Some(base) = get_profile(base_name)
+        {
+            return base.matches_rule(descriptor);
         }
 
         // No base profile and not explicitly included = not matched

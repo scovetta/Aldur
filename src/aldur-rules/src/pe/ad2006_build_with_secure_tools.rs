@@ -123,13 +123,13 @@ impl Rule for BuildWithSecureTools {
 
         // Check if this is a non-MSVC binary (Rust, GCC, Clang, etc.)
         // This rule checks MSVC-specific compiler versions
-        if let Some(pe) = binary.as_ref().as_any().downcast_ref::<PeBinary>() {
-            if let Some(compiler) = super::msvc_utils::detect_non_msvc_compiler(pe) {
-                return (
-                    AnalysisApplicability::NotApplicableToSpecifiedTarget,
-                    Some(format!("Not an MSVC binary (detected {})", compiler)),
-                );
-            }
+        if let Some(pe) = binary.as_ref().as_any().downcast_ref::<PeBinary>()
+            && let Some(compiler) = super::msvc_utils::detect_non_msvc_compiler(pe)
+        {
+            return (
+                AnalysisApplicability::NotApplicableToSpecifiedTarget,
+                Some(format!("Not an MSVC binary (detected {})", compiler)),
+            );
         }
 
         (AnalysisApplicability::ApplicableToSpecifiedTarget, None)

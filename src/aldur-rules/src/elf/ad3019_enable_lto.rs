@@ -53,10 +53,10 @@ impl EnableLTO {
 
     fn check_lto(elf: &ElfBinary) -> Option<bool> {
         // First try DWARF info
-        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data()) {
-            if dwarf_info.has_debug_info {
-                return Some(dwarf_info.has_lto());
-            }
+        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data())
+            && dwarf_info.has_debug_info
+        {
+            return Some(dwarf_info.has_lto());
         }
 
         // Fallback: check for LTO-related sections or symbols

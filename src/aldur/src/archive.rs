@@ -467,10 +467,10 @@ impl ArchiveExtractor {
                     let dest_path = dest_dir.join(&sanitized);
 
                     // Create parent directories
-                    if let Some(parent) = dest_path.parent() {
-                        if std::fs::create_dir_all(parent).is_err() {
-                            return Ok(true);
-                        }
+                    if let Some(parent) = dest_path.parent()
+                        && std::fs::create_dir_all(parent).is_err()
+                    {
+                        return Ok(true);
                     }
 
                     // Extract the file

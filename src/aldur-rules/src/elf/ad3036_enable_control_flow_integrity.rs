@@ -228,34 +228,34 @@ impl Rule for EnableControlFlowIntegrity {
         // Try DWARF debug info for more details
         let dwarf_result = DwarfInfo::parse(elf.data());
 
-        if let Ok(ref dwarf) = dwarf_result {
-            if dwarf.has_debug_info {
-                let (is_clang, has_lto, has_cfi) = Self::check_dwarf_for_cfi(dwarf);
+        if let Ok(ref dwarf) = dwarf_result
+            && dwarf.has_debug_info
+        {
+            let (is_clang, has_lto, has_cfi) = Self::check_dwarf_for_cfi(dwarf);
 
-                // Not a Clang binary - CFI is Clang-specific
-                if !is_clang {
-                    // Check if it's a Rust binary (Rust uses LLVM backend)
-                    if !elf.is_rust_binary {
-                        self.log_not_applicable(context, "NotApplicable_NotClang", &[&file_name]);
-                        return;
-                    }
-                }
-
-                if has_cfi {
-                    self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
+            // Not a Clang binary - CFI is Clang-specific
+            if !is_clang {
+                // Check if it's a Rust binary (Rust uses LLVM backend)
+                if !elf.is_rust_binary {
+                    self.log_not_applicable(context, "NotApplicable_NotClang", &[&file_name]);
                     return;
                 }
+            }
 
-                if has_lto {
-                    // Has LTO but no CFI - could enable CFI
-                    self.log_fail(
-                        context,
-                        FailureLevel::Warning,
-                        "Warning_LtoWithoutCfi",
-                        &[&file_name],
-                    );
-                    return;
-                }
+            if has_cfi {
+                self.log_pass(context, "Pass_DwarfConfirmed", &[&file_name]);
+                return;
+            }
+
+            if has_lto {
+                // Has LTO but no CFI - could enable CFI
+                self.log_fail(
+                    context,
+                    FailureLevel::Warning,
+                    "Warning_LtoWithoutCfi",
+                    &[&file_name],
+                );
+                return;
             }
         }
 

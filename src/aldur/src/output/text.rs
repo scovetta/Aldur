@@ -237,15 +237,15 @@ impl<'a> TextFormatter<'a> {
         )?;
 
         // Write fix hint for failures
-        if result.kind == ResultKind::Fail {
-            if let Some(hint) = self.get_fix_hint(result, rule_map) {
-                writeln!(
-                    writer,
-                    "      {} {}",
-                    self.style("→", |s| s.dimmed()),
-                    self.style(&hint, |s| s.italic())
-                )?;
-            }
+        if result.kind == ResultKind::Fail
+            && let Some(hint) = self.get_fix_hint(result, rule_map)
+        {
+            writeln!(
+                writer,
+                "      {} {}",
+                self.style("→", |s| s.dimmed()),
+                self.style(&hint, |s| s.italic())
+            )?;
         }
 
         Ok(())
@@ -279,10 +279,10 @@ impl<'a> TextFormatter<'a> {
         }
 
         // Fall back to using the error message template if available
-        if let Some(error_msg) = descriptor.messages.get("Error") {
-            if let Some(hint) = Self::extract_compiler_flag_hint(error_msg) {
-                return Some(hint);
-            }
+        if let Some(error_msg) = descriptor.messages.get("Error")
+            && let Some(hint) = Self::extract_compiler_flag_hint(error_msg)
+        {
+            return Some(hint);
         }
 
         // Last resort: provide the help URI

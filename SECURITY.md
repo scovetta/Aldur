@@ -59,7 +59,7 @@ When scanning archives (ZIP, TAR, etc.), Aldur implements:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.0   | :white_check_mark: |
+| 0.1.x   | :white_check_mark: |
 
 We provide security updates for the latest release. Upgrade to receive security fixes.
 

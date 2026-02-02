@@ -71,14 +71,15 @@ impl EnableAddressSanitizerPE {
     /// Check for ASAN indicators
     fn check_asan(pe: &PeBinary) -> (bool, bool) {
         // Check DWARF for ASAN flags
-        if let Some(dwarf_info) = pe.dwarf_info() {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                let has_asan = dwarf_info.has_flag("-fsanitize=address")
-                    || dwarf_info.has_flag("sanitize=address");
+        if let Some(dwarf_info) = pe.dwarf_info()
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            let has_asan = dwarf_info.has_flag("-fsanitize=address")
+                || dwarf_info.has_flag("sanitize=address");
 
-                if has_asan {
-                    return (true, true);
-                }
+            if has_asan {
+                return (true, true);
             }
         }
 

@@ -176,32 +176,30 @@ impl PdbFile {
                 }
 
                 // Parse line information for source files
-                if let Some(ref st) = string_table {
-                    if let Ok(line_program) = module_info.line_program() {
-                        let mut files = line_program.files();
-                        while let Ok(Some(file_info)) = files.next() {
-                            if let Ok(name_raw) = st.get(file_info.name) {
-                                let name: String = name_raw.to_string().into_owned();
-                                compiland.source_files.push(name.clone());
+                if let Some(ref st) = string_table
+                    && let Ok(line_program) = module_info.line_program()
+                {
+                    let mut files = line_program.files();
+                    while let Ok(Some(file_info)) = files.next() {
+                        if let Ok(name_raw) = st.get(file_info.name) {
+                            let name: String = name_raw.to_string().into_owned();
+                            compiland.source_files.push(name.clone());
 
-                                // Extract checksum info
-                                let (algo, checksum_bytes) = match &file_info.checksum {
-                                    pdb::FileChecksum::None => (None, Vec::new()),
-                                    pdb::FileChecksum::Md5(bytes) => (Some("MD5"), bytes.to_vec()),
-                                    pdb::FileChecksum::Sha1(bytes) => {
-                                        (Some("SHA-1"), bytes.to_vec())
-                                    }
-                                    pdb::FileChecksum::Sha256(bytes) => {
-                                        (Some("SHA-256"), bytes.to_vec())
-                                    }
-                                };
+                            // Extract checksum info
+                            let (algo, checksum_bytes) = match &file_info.checksum {
+                                pdb::FileChecksum::None => (None, Vec::new()),
+                                pdb::FileChecksum::Md5(bytes) => (Some("MD5"), bytes.to_vec()),
+                                pdb::FileChecksum::Sha1(bytes) => (Some("SHA-1"), bytes.to_vec()),
+                                pdb::FileChecksum::Sha256(bytes) => {
+                                    (Some("SHA-256"), bytes.to_vec())
+                                }
+                            };
 
-                                result.source_files.push(SourceFileInfo {
-                                    name: name.to_string(),
-                                    checksum_algorithm: algo.map(|s| s.to_string()),
-                                    checksum: checksum_bytes,
-                                });
-                            }
+                            result.source_files.push(SourceFileInfo {
+                                name: name.to_string(),
+                                checksum_algorithm: algo.map(|s| s.to_string()),
+                                checksum: checksum_bytes,
+                            });
                         }
                     }
                 }

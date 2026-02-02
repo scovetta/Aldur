@@ -14,23 +14,23 @@ use aldur_parsers::{DwarfInfo, PeBinary};
 pub fn detect_non_msvc_compiler(pe: &PeBinary) -> Option<String> {
     // If the binary has DWARF debug info, it was likely built with a non-MSVC compiler
     // (MSVC uses CodeView/PDB format, not DWARF)
-    if pe.has_dwarf_debug_info() {
-        if let Ok(dwarf) = DwarfInfo::load(pe.path()) {
-            for cu in &dwarf.compilation_units {
-                let producer = &cu.compiler_info.producer;
-                if producer.contains("rustc") {
-                    return Some("Rust (rustc)".to_string());
-                } else if producer.contains("clang") {
-                    return Some("Clang".to_string());
-                } else if producer.contains("GNU") || producer.contains("GCC") {
-                    return Some("GCC".to_string());
-                } else if producer.contains("Go") {
-                    return Some("Go".to_string());
-                }
+    if pe.has_dwarf_debug_info()
+        && let Ok(dwarf) = DwarfInfo::load(pe.path())
+    {
+        for cu in &dwarf.compilation_units {
+            let producer = &cu.compiler_info.producer;
+            if producer.contains("rustc") {
+                return Some("Rust (rustc)".to_string());
+            } else if producer.contains("clang") {
+                return Some("Clang".to_string());
+            } else if producer.contains("GNU") || producer.contains("GCC") {
+                return Some("GCC".to_string());
+            } else if producer.contains("Go") {
+                return Some("Go".to_string());
             }
-            // Has DWARF but unknown producer - still not MSVC
-            return Some("non-MSVC compiler".to_string());
         }
+        // Has DWARF but unknown producer - still not MSVC
+        return Some("non-MSVC compiler".to_string());
     }
     None
 }

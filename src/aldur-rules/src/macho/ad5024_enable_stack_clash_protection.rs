@@ -57,17 +57,18 @@ impl EnableStackClashProtectionMachO {
     /// Check for indicators of stack clash protection
     fn check_stack_clash_protection(macho: &MachOBinary) -> (bool, bool) {
         // Try to get definitive answer from DWARF debug info
-        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Check if -fstack-clash-protection flag is present
-                let has_protection = dwarf_info.has_flag("-fstack-clash-protection");
-                let explicitly_disabled = dwarf_info.has_flag("-fno-stack-clash-protection");
+        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Check if -fstack-clash-protection flag is present
+            let has_protection = dwarf_info.has_flag("-fstack-clash-protection");
+            let explicitly_disabled = dwarf_info.has_flag("-fno-stack-clash-protection");
 
-                if has_protection && !explicitly_disabled {
-                    return (true, true); // (has_protection, is_definitive)
-                } else if explicitly_disabled {
-                    return (false, true);
-                }
+            if has_protection && !explicitly_disabled {
+                return (true, true); // (has_protection, is_definitive)
+            } else if explicitly_disabled {
+                return (false, true);
             }
         }
 

@@ -65,19 +65,20 @@ impl EnableStackClashProtection {
     /// Check for indicators of stack clash protection
     fn check_stack_clash_protection(elf: &ElfBinary) -> (bool, bool) {
         // First, try to get definitive answer from DWARF debug info
-        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                // Check if -fstack-clash-protection flag is present
-                let has_protection = dwarf_info.has_flag("-fstack-clash-protection");
-                let explicitly_disabled = dwarf_info.has_flag("-fno-stack-clash-protection");
+        if let Ok(dwarf_info) = DwarfInfo::parse(elf.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            // Check if -fstack-clash-protection flag is present
+            let has_protection = dwarf_info.has_flag("-fstack-clash-protection");
+            let explicitly_disabled = dwarf_info.has_flag("-fno-stack-clash-protection");
 
-                if has_protection && !explicitly_disabled {
-                    return (true, true); // (has_protection, is_definitive)
-                } else if explicitly_disabled {
-                    return (false, true);
-                }
-                // If we have DWARF but no flag, assume not enabled (many producers don't embed flags)
+            if has_protection && !explicitly_disabled {
+                return (true, true); // (has_protection, is_definitive)
+            } else if explicitly_disabled {
+                return (false, true);
             }
+            // If we have DWARF but no flag, assume not enabled (many producers don't embed flags)
         }
 
         // Fallback: Look for __probestack which is used by some implementations

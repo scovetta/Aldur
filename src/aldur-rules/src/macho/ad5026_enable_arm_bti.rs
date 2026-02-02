@@ -63,16 +63,17 @@ impl EnableArmBTIMachO {
     /// Check for BTI indicators
     fn check_bti(macho: &MachOBinary) -> (bool, bool) {
         // Check DWARF for BTI flags
-        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data()) {
-            if dwarf_info.has_debug_info && !dwarf_info.compilation_units.is_empty() {
-                let has_bti = dwarf_info.has_flag("-mbranch-protection=standard")
-                    || dwarf_info.has_flag("-mbranch-protection=bti")
-                    || dwarf_info.has_flag("branch-protection=standard")
-                    || dwarf_info.has_flag("branch-protection=bti");
+        if let Ok(dwarf_info) = DwarfInfo::parse(macho.data())
+            && dwarf_info.has_debug_info
+            && !dwarf_info.compilation_units.is_empty()
+        {
+            let has_bti = dwarf_info.has_flag("-mbranch-protection=standard")
+                || dwarf_info.has_flag("-mbranch-protection=bti")
+                || dwarf_info.has_flag("branch-protection=standard")
+                || dwarf_info.has_flag("branch-protection=bti");
 
-                if has_bti {
-                    return (true, true);
-                }
+            if has_bti {
+                return (true, true);
             }
         }
 

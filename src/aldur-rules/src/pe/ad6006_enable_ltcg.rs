@@ -105,13 +105,13 @@ impl Rule for EnableLinkTimeCodeGeneration {
 
         // Check if this is a non-MSVC binary (Rust, GCC, Clang, etc.)
         // /LTCG is MSVC linker-specific
-        if let Some(pe) = binary.as_ref().as_any().downcast_ref::<PeBinary>() {
-            if let Some(compiler) = super::msvc_utils::detect_non_msvc_compiler(pe) {
-                return (
-                    AnalysisApplicability::NotApplicableToSpecifiedTarget,
-                    Some(format!("Not an MSVC binary (detected {})", compiler)),
-                );
-            }
+        if let Some(pe) = binary.as_ref().as_any().downcast_ref::<PeBinary>()
+            && let Some(compiler) = super::msvc_utils::detect_non_msvc_compiler(pe)
+        {
+            return (
+                AnalysisApplicability::NotApplicableToSpecifiedTarget,
+                Some(format!("Not an MSVC binary (detected {})", compiler)),
+            );
         }
 
         (AnalysisApplicability::ApplicableToSpecifiedTarget, None)
