@@ -3,9 +3,11 @@
 
 Aldur is a high-performance, cross-platform binary security analyzer written in Rust. It inspects PE (Windows), ELF (Linux/Unix), and Mach-O (macOS) binaries for security vulnerabilities, misconfigurations, and missing hardening features, and is aware of MSVC, gcc, Clang, and Rust compilers.
 
-[![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Status: Alpha](https://shields.io/badge/status-alpha-yellow)
+![Rust](https://img.shields.io/badge/rust-stable-orange.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 [![Latest release](https://img.shields.io/github/v/release/scovetta/aldur)](/scovetta/Aldur/releases/)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/scovetta/aldur)](/scovetta/Aldur/issues/)
 
 ## Features
 
@@ -83,7 +85,7 @@ Aldur is available as a GitHub Action for easy integration into CI/CD pipelines.
 ### Basic Usage
 
 ```yaml
-- name: Run aldur security scan
+- name: Run Aldur security scan
   uses: scovetta/aldur@v1
   with:
     targets: 'path/to/binaries'
@@ -133,7 +135,7 @@ jobs:
 | `show-passed` | Include passing rules in output | `false` |
 | `level` | Minimum failure level (`error`, `warning`, `note`) | - |
 | `scan-archives` | Scan binaries inside archives (ZIP, TAR, APK, etc.) | `true` |
-| `version` | aldur version to use | `latest` |
+| `version` | Aldur version to use | `latest` |
 | `upload-sarif` | Upload SARIF results to GitHub Code Scanning | `true` |
 | `fail-on-error` | Fail the workflow if errors are found | `true` |
 
@@ -273,7 +275,7 @@ The `openssf` profile enforces the [OpenSSF Compiler Options Hardening Guide for
 # Use strict profile for CI/CD
 aldur analyze --profile strict ./build/
 
-# Use openssf profile for compliance checking
+# Use OpenSSF profile for compliance checking
 aldur analyze --profile openssf ./build/
 
 # Use android profile for mobile libraries
@@ -688,6 +690,7 @@ Example text output:
 ## Contributing
 
 Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
 ## Security
 
 For information about reporting security vulnerabilities, see [SECURITY.md](SECURITY.md).
