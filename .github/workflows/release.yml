@@ -219,7 +219,9 @@ jobs:
           INPUT_VERSION: ${{ github.event.inputs.version }}
         with:
           script: |
-            const tag = 'v' + process.env.INPUT_VERSION;
+            // Sanitize version: only allow alphanumeric, dots, dashes, and plus
+            const safeVersion = process.env.INPUT_VERSION.replace(/[^a-zA-Z0-9.+-]/g, '');
+            const tag = 'v' + safeVersion;
             try {
               await github.rest.git.createRef({
                 owner: context.repo.owner,
