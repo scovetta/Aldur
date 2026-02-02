@@ -104,7 +104,7 @@ jobs:
           VERSION="${INPUT_VERSION:-$REF_NAME}"
           VERSION="${VERSION#v}"
           # Sanitize version: only allow alphanumeric, dots, dashes, and plus
-          VERSION=$(echo "$VERSION" | tr -cd 'a-zA-Z0-9.-+')
+          VERSION=$(echo "$VERSION" | tr -cd 'a-zA-Z0-9.+-')
           BINARY_NAME="aldur${{ matrix.ext }}"
           ARCHIVE_NAME="aldur-${VERSION}-${{ matrix.target }}"
 
@@ -205,10 +205,10 @@ jobs:
         run: |
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             # Sanitize version: only allow alphanumeric, dots, dashes, and plus
-            SAFE_VERSION=$(echo "$INPUT_VERSION" | tr -cd 'a-zA-Z0-9.-+')
+            SAFE_VERSION=$(echo "$INPUT_VERSION" | tr -cd 'a-zA-Z0-9.+-')
             echo "tag=v${SAFE_VERSION}" >> $GITHUB_OUTPUT
           else
-            SAFE_REF=$(echo "$REF_NAME" | tr -cd 'a-zA-Z0-9.-+')
+            SAFE_REF=$(echo "$REF_NAME" | tr -cd 'a-zA-Z0-9.+-')
             echo "tag=${SAFE_REF}" >> $GITHUB_OUTPUT
           fi
 
