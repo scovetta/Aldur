@@ -223,14 +223,16 @@ impl<'a> GitHubActionsFormatter<'a> {
 
         writeln!(writer, "::endgroup::")?;
 
-        // Set output for the action
-        if std::env::var("GITHUB_OUTPUT").is_ok() {
-            // These would be written to GITHUB_OUTPUT file in the action
-            // For now, we'll use the legacy set-output command format for visibility
-            writeln!(writer)?;
-            writeln!(writer, "::set-output name=errors::{}", errors)?;
-            writeln!(writer, "::set-output name=warnings::{}", warnings)?;
-            writeln!(writer, "::set-output name=passed::{}", passed)?;
+        // Set output for the action using GITHUB_OUTPUT file
+        if let Ok(output_path) = std::env::var("GITHUB_OUTPUT") {
+            use std::fs::OpenOptions;
+            use std::io::Write;
+
+            if let Ok(mut file) = OpenOptions::new().append(true).open(&output_path) {
+                let _ = writeln!(file, "errors={}", errors);
+                let _ = writeln!(file, "warnings={}", warnings);
+                let _ = writeln!(file, "passed={}", passed);
+            }
         }
 
         Ok(())
