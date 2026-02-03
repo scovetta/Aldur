@@ -10,7 +10,7 @@ Every release includes SHA-256 and SHA-512 checksums for all artifacts.
 
 ```bash
 # Download checksums
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/checksums-sha256.txt
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/checksums-sha256.txt
 
 # Verify your downloaded file
 sha256sum -c checksums-sha256.txt --ignore-missing
@@ -28,9 +28,9 @@ Install cosign: [https://docs.sigstore.dev/cosign/installation/](https://docs.si
 
 ```bash
 # Download signature and certificate
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/checksums-sha256.txt
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/checksums-sha256.txt.sig
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/checksums-sha256.txt.pem
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/checksums-sha256.txt
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/checksums-sha256.txt.sig
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/checksums-sha256.txt.pem
 
 # Verify the signature
 cosign verify-blob \
@@ -58,10 +58,10 @@ Install the GitHub CLI: [https://cli.github.com/](https://cli.github.com/)
 
 ```bash
 # Download a release artifact
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
 
 # Verify build provenance attestation
-gh attestation verify aldur-x86_64-unknown-linux-gnu.tar.gz \
+gh attestation verify aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz \
   --owner scovetta
 ```
 
@@ -73,12 +73,12 @@ Each release also includes attested Software Bill of Materials (SBOM) in both SP
 
 ```bash
 # Verify SPDX SBOM attestation
-gh attestation verify aldur-x86_64-unknown-linux-gnu.tar.gz \
+gh attestation verify aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz \
   --owner scovetta \
   --predicate-type https://spdx.dev/Document/v2.3
 
 # Verify CycloneDX SBOM attestation
-gh attestation verify aldur-x86_64-unknown-linux-gnu.tar.gz \
+gh attestation verify aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz \
   --owner scovetta \
   --predicate-type https://cyclonedx.org/bom/v1.4
 ```
@@ -89,7 +89,7 @@ You can extract and view the SBOM directly from the attestation:
 
 ```bash
 # View SPDX SBOM from attestation
-gh attestation verify aldur-x86_64-unknown-linux-gnu.tar.gz \
+gh attestation verify aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz \
   --owner scovetta \
   --predicate-type https://spdx.dev/Document/v2.3 \
   --format json | jq '.[].verificationResult.statement.predicate'
@@ -108,10 +108,10 @@ Each release includes Software Bill of Materials files that list all dependencie
 
 ```bash
 # Download SPDX SBOM
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-sbom.spdx.json
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-sbom.spdx.json
 
 # Download CycloneDX SBOM
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-sbom.cdx.json
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-sbom.cdx.json
 ```
 
 ### Analyze SBOM for Vulnerabilities
@@ -133,11 +133,12 @@ set -e
 
 PLATFORM="x86_64-unknown-linux-gnu"
 OWNER="scovetta"
+VERSION="0.1.1"
 
 echo "Downloading aldur for ${PLATFORM}..."
-BASE_URL="https://github.com/${OWNER}/aldur/releases/latest/download"
+BASE_URL="https://github.com/${OWNER}/Aldur/releases/download/v${VERSION}"
 
-curl -LO "${BASE_URL}/aldur-${PLATFORM}.tar.gz"
+curl -LO "${BASE_URL}/aldur-${VERSION}-${PLATFORM}.tar.gz"
 curl -LO "${BASE_URL}/checksums-sha256.txt"
 curl -LO "${BASE_URL}/checksums-sha256.txt.sig"
 curl -LO "${BASE_URL}/checksums-sha256.txt.pem"
@@ -154,11 +155,11 @@ cosign verify-blob \
   checksums-sha256.txt
 
 echo "Verifying GitHub attestation..."
-gh attestation verify "aldur-${PLATFORM}.tar.gz" --owner "${OWNER}"
+gh attestation verify "aldur-${VERSION}-${PLATFORM}.tar.gz" --owner "${OWNER}"
 
 echo "✅ All verifications passed!"
 echo "Extracting..."
-tar -xzf "aldur-${PLATFORM}.tar.gz"
+tar -xzf "aldur-${VERSION}-${PLATFORM}.tar.gz"
 ./aldur --version
 ```
 

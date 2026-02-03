@@ -40,7 +40,7 @@ All releases include checksums, signatures, and attestations for supply chain se
 
 ```bash
 # Verify SHA-256 checksum
-curl -LO https://github.com/scovetta/aldur/releases/latest/download/checksums-sha256.txt
+curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/checksums-sha256.txt
 sha256sum -c checksums-sha256.txt --ignore-missing
 
 # Verify cosign signature (requires cosign)

@@ -10,22 +10,22 @@ Download the latest release for your platform:
 
     **x86_64 (glibc)**
     ```bash
-    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-gnu.tar.gz
-    tar -xzf aldur-x86_64-unknown-linux-gnu.tar.gz
+    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
+    tar -xzf aldur-0.1.1-x86_64-unknown-linux-gnu.tar.gz
     sudo mv aldur /usr/local/bin/
     ```
 
     **x86_64 (musl - static binary)**
     ```bash
-    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-unknown-linux-musl.tar.gz
-    tar -xzf aldur-x86_64-unknown-linux-musl.tar.gz
+    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-unknown-linux-musl.tar.gz
+    tar -xzf aldur-0.1.1-x86_64-unknown-linux-musl.tar.gz
     sudo mv aldur /usr/local/bin/
     ```
 
     **ARM64**
     ```bash
-    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-aarch64-unknown-linux-gnu.tar.gz
-    tar -xzf aldur-aarch64-unknown-linux-gnu.tar.gz
+    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-unknown-linux-gnu.tar.gz
+    tar -xzf aldur-0.1.1-aarch64-unknown-linux-gnu.tar.gz
     sudo mv aldur /usr/local/bin/
     ```
 
@@ -33,15 +33,15 @@ Download the latest release for your platform:
 
     **Intel (x86_64)**
     ```bash
-    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-apple-darwin.tar.gz
-    tar -xzf aldur-x86_64-apple-darwin.tar.gz
+    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-apple-darwin.tar.gz
+    tar -xzf aldur-0.1.1-x86_64-apple-darwin.tar.gz
     sudo mv aldur /usr/local/bin/
     ```
 
     **Apple Silicon (ARM64)**
     ```bash
-    curl -LO https://github.com/scovetta/aldur/releases/latest/download/aldur-aarch64-apple-darwin.tar.gz
-    tar -xzf aldur-aarch64-apple-darwin.tar.gz
+    curl -LO https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-apple-darwin.tar.gz
+    tar -xzf aldur-0.1.1-aarch64-apple-darwin.tar.gz
     sudo mv aldur /usr/local/bin/
     ```
 
@@ -49,7 +49,7 @@ Download the latest release for your platform:
 
     **x86_64**
     ```powershell
-    Invoke-WebRequest -Uri "https://github.com/scovetta/aldur/releases/latest/download/aldur-x86_64-pc-windows-msvc.zip" -OutFile "aldur.zip"
+    Invoke-WebRequest -Uri "https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-x86_64-pc-windows-msvc.zip" -OutFile "aldur.zip"
     Expand-Archive aldur.zip -DestinationPath C:\Tools\aldur
     # Add to PATH
     $env:PATH += ";C:\Tools\aldur"
@@ -57,7 +57,7 @@ Download the latest release for your platform:
 
     **ARM64**
     ```powershell
-    Invoke-WebRequest -Uri "https://github.com/scovetta/aldur/releases/latest/download/aldur-aarch64-pc-windows-msvc.zip" -OutFile "aldur.zip"
+    Invoke-WebRequest -Uri "https://github.com/scovetta/Aldur/releases/download/v0.1.1/aldur-0.1.1-aarch64-pc-windows-msvc.zip" -OutFile "aldur.zip"
     Expand-Archive aldur.zip -DestinationPath C:\Tools\aldur
     ```
 
