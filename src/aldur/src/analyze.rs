@@ -517,7 +517,7 @@ impl AnalyzeCommand {
         for target in &self.args.targets {
             // Strip trailing path separators to ensure consistent behavior across platforms
             // On Windows, paths ending with backslash may not be recognized by is_dir()
-            let path = PathBuf::from(target.trim_end_matches(|c| c == '/' || c == '\\'));
+            let path = PathBuf::from(target.trim_end_matches(['/', '\\']));
 
             if path.is_file() {
                 // Check if it's an archive
