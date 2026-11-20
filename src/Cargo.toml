@@ -50,12 +50,12 @@ memmap2 = "0.9"
 glob = "0.3"
 
 # Archive handling
-zip = "7.2"
+zip = "9.0"
 tar = "0.4"
 flate2 = "1.0"
 bzip2 = "0.6"
 xz2 = "0.1"
-sevenz-rust2 = "0.20"
+sevenz-rust2 = "0.21"
 lzma-rust2 = "0.15.7"
 
 # Testing
